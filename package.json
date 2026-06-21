@@ -1,0 +1,14 @@
+{
+  "name": "armatusemestre-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Cartelera de cine RDparty.com - scraper de Caribbean Cinemas RD",
+  "scripts": {
+    "scrape:cine": "node scrapers/caribbean-cinemas.mjs",
+    "descubrir:cine": "node scrapers/caribbean-cinemas.mjs --discover",
+    "test:uasd": "node test-uasd.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.45.0"
+  }
+}

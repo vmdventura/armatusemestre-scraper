@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartelera de Cine — RDparty.com</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --bg2: #16161a;
+      --bg3: #1e1e24;
+      --accent: #e63946;
+      --accent2: #ff6b6b;
+      --gold: #ffd700;
+      --text: #f0f0f5;
+      --muted: #888899;
+      --border: rgba(255,255,255,0.07);
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────────────── */
+    header {
+      background: linear-gradient(180deg, #000 0%, transparent 100%);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo span { color: var(--accent); }
+    .updated {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot-live {
+      width: 7px; height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── Hero banner ─────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #1a0005 0%, #0d0d0f 60%);
+      padding: 48px 24px 36px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--muted); font-size: 15px; }
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .source-badge strong { color: var(--text); }
+
+    /* ── Filters ─────────────────────────────── */
+    .filters-bar {
+      padding: 16px 24px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .filter-label { font-size: 12px; color: var(--muted); margin-right: 4px; white-space: nowrap; }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text);
+      white-space: nowrap;
+      transition: all .15s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── Movie grid ──────────────────────────── */
+    .section { padding: 28px 24px; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .movie-card {
+      background: var(--bg2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      cursor: pointer;
+    }
+    .movie-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.5);
+      border-color: rgba(230,57,70,.4);
+    }
+
+    .poster-wrap {
+      position: relative;
+      aspect-ratio: 2/3;
+      overflow: hidden;
+      background: var(--bg3);
+    }
+    .poster-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .35s;
+    }
+    .movie-card:hover .poster-wrap img { transform: scale(1.04); }
+
+    .poster-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.85) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .2s;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px;
+    }
+    .movie-card:hover .poster-overlay { opacity: 1; }
+    .btn-tickets {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .3px;
+    }
+
+    .rating-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 6px;
+      padding: 3px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .format-badges {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+    .fmt {
+      background: rgba(0,0,0,.8);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .5px;
+    }
+    .fmt.imax { border-color: #4fc3f7; color: #4fc3f7; }
+    .fmt.d3   { border-color: #a78bfa; color: #a78bfa; }
+    .fmt.fourdk { border-color: #34d399; color: #34d399; }
+
+    .card-body { padding: 12px 14px 14px; }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .card-meta .sep { opacity: .4; }
+
+    .showtimes-preview { display: flex; flex-wrap: wrap; gap: 5px; }
+    .time-chip {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      transition: background .15s, border-color .15s;
+    }
+    .time-chip:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .more-times {
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--muted);
+      align-self: center;
+    }
+
+    /* ── Theater section ─────────────────────── */
+    .theater-section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .theater-header {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .theater-name {
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .theater-icon { font-size: 18px; }
+    .theater-location { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 28px; }
+    .theater-body { padding: 16px 18px; }
+
+    .theater-movie-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .theater-movie-row:last-child { border-bottom: none; }
+    .theater-movie-poster {
+      width: 44px;
+      height: 66px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--bg3);
+    }
+    .theater-movie-info { flex: 1; min-width: 0; }
+    .theater-movie-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .theater-times { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── Tabs ────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .tab {
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .15s;
+    }
+    .tab.active { color: var(--text); border-color: var(--accent); }
+
+    @media (max-width: 480px) {
+      .movies-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+      .hero { padding: 32px 16px 24px; }
+      .section { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">RD<span>party</span>.com</div>
+  <div class="updated">
+    <span class="dot-live"></span>
+    Actualizado hoy, 9:03 AM
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>🎬 Cartelera de <em>Cine RD</em></h1>
+  <p>Películas en cartelera en la República Dominicana</p>
+  <div class="source-badge">
+    Fuente: <strong>Caribbean Cinemas</strong> &nbsp;·&nbsp; 10 películas
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active">En Cartelera</div>
+  <div class="tab">Próximamente</div>
+  <div class="tab">Por Teatro</div>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <span class="filter-label">Teatro:</span>
+  <div class="chip active">Todos</div>
+  <div class="chip">Acropolis</div>
+  <div class="chip">Blue Mall</div>
+  <div class="chip">Downtown Center</div>
+  <div class="chip">Las Carreras</div>
+  <div class="chip">Sambil</div>
+  <div class="chip">Santiago Mall</div>
+</div>
+
+<!-- NOW SHOWING grid -->
+<div class="section">
+  <div class="section-title">En Cartelera — Sábado 21 de junio 2025</div>
+
+  <div class="movies-grid">
+
+    <!-- Movie 1 -->
+    <div class="movie-card">
+      <div class="poster-wrap">
+        <img src="https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'300\' style=\'background:%231e1e24\'><text x=\'50%25\' y=\'50%25\' fill=\'%23888\' text-anchor=\'middle\' font-size=\'14\'>🎬</text></svg>'"
+             alt="Inside Out 2" />
+        <div class="rating-badge">PG</div>
+        <div class="format-badges">
+          <span class="fmt d3">3D</span>
+          <span class="fmt">2D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Intensamente 2</div>
+        <div class="card-meta">
+          <span>100 min</span>
+          <span class="sep">·</span>
+          <span>Animación</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">12:30</span>
+          <span class="time-chip">14:45</span>
+          <span class="time-chip">17:00</span>
+          <span class="more-times">+4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 2 -->
+    <div class="movie-card">
+      <div class="poster-wrap">
+        <img src="https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGM2NTg4XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'300\' style=\'background:%231e1e24\'></svg>'"
+             alt="Avengers" />
+        <div class="rating-badge">PG-13</div>
+        <div class="format-badges">
+          <span class="fmt imax">IMAX</span>
+          <span class="fmt d3">3D</span>
+          <span class="fmt">2D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Avengers: Doomsday</div>
+        <div class="card-meta">
+          <span>150 min</span>
+          <span class="sep">·</span>
+          <span>Acción</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">11:00</span>
+          <span class="time-chip">14:00</span>
+          <span class="time-chip">17:15</span>
+          <span class="more-times">+5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 3 -->
+    <div class="movie-card">
+      <div class="poster-wrap">
+        <img src="https://m.media-amazon.com/images/M/MV5BYzI5NjM1NWQtZmNhZS00NjcxLTg3ZTEtMjg4ZGZiZmEwMGU3XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'300\' style=\'background:%231e1e24\'></svg>'"
+             alt="Moana 2" />
+        <div class="rating-badge">G</div>
+        <div class="format-badges">
+          <span class="fmt d3">3D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Moana 2</div>
+        <div class="card-meta">
+          <span>100 min</span>
+          <span class="sep">·</span>
+          <span>Animación</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">10:30</span>
+          <span class="time-chip">13:00</span>
+          <span class="time-chip">15:30</span>
+          <span class="more-times">+3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 4 -->
+    <div class="movie-card">
+      <div class="poster-wrap">
+        <img src="https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'300\' style=\'background:%231e1e24\'></svg>'"
+             alt="Deadpool" />
+        <div class="rating-badge">R</div>
+        <div class="format-badges">
+          <span class="fmt fourdk">4DX</span>
+          <span class="fmt">2D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Deadpool & Wolverine</div>
+        <div class="card-meta">
+          <span>128 min</span>
+          <span class="sep">·</span>
+          <span>Comedia</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">13:30</span>
+          <span class="time-chip">16:15</span>
+          <span class="time-chip">19:00</span>
+          <span class="more-times">+3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 5 -->
+    <div class="movie-card">
+      <div class="poster-wrap">
+        <img src="https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVlLTM5YTUtZGMyZmE0YzA2ZjhjXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"
+             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'300\' style=\'background:%231e1e24\'></svg>'"
+             alt="Matrix" />
+        <div class="rating-badge">PG-13</div>
+        <div class="format-badges">
+          <span class="fmt">2D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Thunderbolts*</div>
+        <div class="card-meta">
+          <span>127 min</span>
+          <span class="sep">·</span>
+          <span>Acción</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">12:00</span>
+          <span class="time-chip">15:00</span>
+          <span class="time-chip">18:30</span>
+          <span class="more-times">+2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 6 — placeholder poster -->
+    <div class="movie-card">
+      <div class="poster-wrap" style="background:linear-gradient(135deg,#1a0020,#2d0032);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;">🎭</div>
+        <div class="rating-badge">PG</div>
+        <div class="format-badges">
+          <span class="fmt d3">3D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Lilo & Stitch</div>
+        <div class="card-meta">
+          <span>108 min</span>
+          <span class="sep">·</span>
+          <span>Familiar</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">11:30</span>
+          <span class="time-chip">14:00</span>
+          <span class="time-chip">16:30</span>
+          <span class="more-times">+4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 7 -->
+    <div class="movie-card">
+      <div class="poster-wrap" style="background:linear-gradient(135deg,#001a10,#002d1a);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;">👾</div>
+        <div class="rating-badge">PG-13</div>
+        <div class="format-badges">
+          <span class="fmt imax">IMAX</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Mission: Impossible — Dead Reckoning</div>
+        <div class="card-meta">
+          <span>163 min</span>
+          <span class="sep">·</span>
+          <span>Acción</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">11:00</span>
+          <span class="time-chip">14:30</span>
+          <span class="more-times">+2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movie 8 -->
+    <div class="movie-card">
+      <div class="poster-wrap" style="background:linear-gradient(135deg,#001a2c,#00112a);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;">🤖</div>
+        <div class="rating-badge">PG</div>
+        <div class="format-badges">
+          <span class="fmt d3">3D</span>
+          <span class="fmt">2D</span>
+        </div>
+        <div class="poster-overlay">
+          <button class="btn-tickets">🎟 Comprar Tickets</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">How to Train Your Dragon</div>
+        <div class="card-meta">
+          <span>95 min</span>
+          <span class="sep">·</span>
+          <span>Animación</span>
+        </div>
+        <div class="showtimes-preview">
+          <span class="time-chip">10:00</span>
+          <span class="time-chip">12:30</span>
+          <span class="time-chip">15:00</span>
+          <span class="more-times">+3</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- POR TEATRO -->
+<div class="section">
+  <div class="section-title">Por Teatro</div>
+
+  <!-- Acropolis -->
+  <div class="theater-section">
+    <div class="theater-header">
+      <div>
+        <div class="theater-name"><span class="theater-icon">🏛</span> Caribbean Cinemas Acropolis</div>
+        <div class="theater-location">📍 Santo Domingo, Av. Winston Churchill</div>
+      </div>
+      <span style="color:var(--muted);font-size:12px;">8 películas ›</span>
+    </div>
+    <div class="theater-body">
+      <div class="theater-movie-row">
+        <div style="width:44px;height:66px;border-radius:6px;background:linear-gradient(135deg,#1a0020,#2d0032);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🎭</div>
+        <div class="theater-movie-info">
+          <div class="theater-movie-title">Intensamente 2</div>
+          <div class="theater-times">
+            <span class="time-chip">12:30 <small style="opacity:.6">3D</small></span>
+            <span class="time-chip">14:45 <small style="opacity:.6">2D</small></span>
+            <span class="time-chip">17:00 <small style="opacity:.6">3D</small></span>
+            <span class="time-chip">19:30 <small style="opacity:.6">2D</small></span>
+          </div>
+        </div>
+      </div>
+      <div class="theater-movie-row">
+        <div style="width:44px;height:66px;border-radius:6px;background:linear-gradient(135deg,#001428,#001a35);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🦸</div>
+        <div class="theater-movie-info">
+          <div class="theater-movie-title">Avengers: Doomsday</div>
+          <div class="theater-times">
+            <span class="time-chip">11:00 <small style="opacity:.6">IMAX</small></span>
+            <span class="time-chip">14:00 <small style="opacity:.6">3D</small></span>
+            <span class="time-chip">17:15 <small style="opacity:.6">2D</small></span>
+            <span class="time-chip">20:30 <small style="opacity:.6">IMAX</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blue Mall -->
+  <div class="theater-section">
+    <div class="theater-header">
+      <div>
+        <div class="theater-name"><span class="theater-icon">🏛</span> Caribbean Cinemas Blue Mall</div>
+        <div class="theater-location">📍 Santo Domingo, Av. Winston Churchill</div>
+      </div>
+      <span style="color:var(--muted);font-size:12px;">7 películas ›</span>
+    </div>
+    <div class="theater-body">
+      <div class="theater-movie-row">
+        <div style="width:44px;height:66px;border-radius:6px;background:linear-gradient(135deg,#001a10,#002d1a);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⚡</div>
+        <div class="theater-movie-info">
+          <div class="theater-movie-title">Deadpool & Wolverine</div>
+          <div class="theater-times">
+            <span class="time-chip">13:30 <small style="opacity:.6">4DX</small></span>
+            <span class="time-chip">16:15 <small style="opacity:.6">2D</small></span>
+            <span class="time-chip">19:00 <small style="opacity:.6">4DX</small></span>
+            <span class="time-chip">21:45 <small style="opacity:.6">2D</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  Datos obtenidos de <a href="https://caribbeancinemas.com" target="_blank">caribbeancinemas.com</a>
+  · Actualizado automáticamente 3 veces al día ·
+  <a href="https://github.com/vmdventura/armatusemestre-scraper" target="_blank">GitHub</a>
+  <br><br>
+  <strong>RDparty.com</strong> — La guía de entretenimiento de la República Dominicana
+</footer>
+
+<script>
+  // Simulación de interactividad
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.closest('.filters-bar').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      tab.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.btn-tickets').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      alert('Ir a caribbeancinemas.com para comprar tickets');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+name: Actualizar Cartelera de Cine
+
+on:
+  schedule:
+    # 6AM, 12PM y 7PM UTC → 2AM, 8AM, 3PM hora RD (UTC-4)
+    - cron: '0 6,12,19 * * *'
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Activar modo debug (guarda screenshot y HTML)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-cartelera:
+    name: Scrape Caribbean Cinemas RD
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium (Playwright)
+        run: npx playwright install chromium --with-deps
+
+      - name: Ejecutar scraper
+        id: scraper
+        run: |
+          if [ "${{ github.event.inputs.debug }}" = "true" ]; then
+            node scrapers/caribbean-cinemas.mjs --discover
+          else
+            node scrapers/caribbean-cinemas.mjs
+          fi
+
+      - name: Subir archivos de debug
+        if: always() && github.event.inputs.debug == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-cartelera
+          path: |
+            debug-screenshot.png
+            debug-page.html
+          if-no-files-found: ignore
+          retention-days: 3
+
+      - name: Commit y push de cartelera actualizada
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/billboard.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios en la cartelera."
+          else
+            git commit -m "chore: actualizar cartelera $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            git push origin HEAD
+            echo "Cartelera actualizada y publicada."
+          fi
