@@ -1,0 +1,70 @@
+/* RDparty Cartelera de Cine — Estilos */
+#rdparty-cartelera {
+  --cc-bg: #111113;
+  --cc-card: #1a1a1f;
+  --cc-border: rgba(255,255,255,.08);
+  --cc-accent: #e63946;
+  --cc-gold: #ffd700;
+  --cc-text: #f0f0f5;
+  --cc-muted: #888899;
+  --cc-radius: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--cc-text);
+  background: var(--cc-bg);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+#rdparty-cartelera * { box-sizing: border-box; margin: 0; padding: 0; }
+
+.cc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.cc-title  { font-size: 20px; font-weight: 800; letter-spacing: -.3px; }
+.cc-title span { color: var(--cc-accent); }
+
+.cc-badge { font-size: 11px; color: var(--cc-muted); background: rgba(255,255,255,.05); border: 1px solid var(--cc-border); border-radius: 20px; padding: 4px 10px; display: flex; align-items: center; gap: 6px; }
+.cc-dot   { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: ccPulse 2s infinite; }
+@keyframes ccPulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+.cc-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.cc-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--cc-border); background: rgba(255,255,255,.04); color: var(--cc-muted); transition: all .15s; white-space: nowrap; }
+.cc-chip:hover, .cc-chip.on { background: var(--cc-accent); border-color: var(--cc-accent); color: #fff; }
+
+.cc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+
+.cc-card { background: var(--cc-card); border-radius: var(--cc-radius); overflow: hidden; border: 1px solid var(--cc-border); transition: transform .2s, box-shadow .2s, border-color .2s; cursor: pointer; }
+.cc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.5); border-color: rgba(230,57,70,.35); }
+
+.cc-poster { position: relative; aspect-ratio: 2/3; background: rgba(255,255,255,.05); overflow: hidden; }
+.cc-poster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+.cc-card:hover .cc-poster img { transform: scale(1.04); }
+.cc-poster-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; background: linear-gradient(135deg,#1a001f,#0a001a); }
+
+.cc-poster-overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(0,0,0,.9) 0%,transparent 55%); opacity: 0; transition: opacity .2s; display: flex; align-items: flex-end; padding: 12px; }
+.cc-card:hover .cc-poster-overlay { opacity: 1; }
+.cc-btn-tickets { width: 100%; background: var(--cc-accent); color: #fff; border: none; border-radius: 7px; padding: 8px; font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: .2px; }
+
+.cc-rating { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.15); border-radius: 5px; padding: 2px 6px; font-size: 10px; font-weight: 700; color: var(--cc-gold); }
+.cc-fmts   { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+.cc-fmt    { background: rgba(0,0,0,.8); border: 1px solid rgba(255,255,255,.2); border-radius: 4px; padding: 2px 5px; font-size: 9px; font-weight: 800; color: #fff; }
+.cc-fmt.imax { border-color: #4fc3f7; color: #4fc3f7; }
+.cc-fmt.d3   { border-color: #a78bfa; color: #a78bfa; }
+.cc-fmt.fdx  { border-color: #34d399; color: #34d399; }
+
+.cc-body       { padding: 10px 12px 12px; }
+.cc-card-title { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cc-meta       { font-size: 11px; color: var(--cc-muted); margin-bottom: 8px; }
+.cc-times      { display: flex; flex-wrap: wrap; gap: 4px; }
+.cc-time       { background: rgba(255,255,255,.06); border: 1px solid var(--cc-border); border-radius: 5px; padding: 3px 7px; font-size: 10px; font-weight: 600; transition: background .15s; }
+.cc-time:hover { background: var(--cc-accent); border-color: var(--cc-accent); }
+.cc-more       { font-size: 10px; color: var(--cc-muted); align-self: center; padding-left: 2px; }
+
+.cc-empty   { text-align: center; padding: 40px 20px; color: var(--cc-muted); }
+.cc-loading { text-align: center; padding: 40px; color: var(--cc-muted); font-size: 14px; }
+.cc-footer  { margin-top: 16px; text-align: center; font-size: 11px; color: var(--cc-muted); }
+.cc-footer a { color: var(--cc-accent); text-decoration: none; }
+
+@media (max-width: 480px) {
+  #rdparty-cartelera { padding: 16px; border-radius: 12px; }
+  .cc-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+}
