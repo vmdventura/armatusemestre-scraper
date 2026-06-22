@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "CiudadanoRD",
+    "slug": "ciudadanord",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#002D62"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ciudadanord.app"
+    },
+    "android": {
+      "package": "com.ciudadanord.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#002D62"
+      }
+    },
+    "plugins": []
+  }
+}

@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CiudadanoRD</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --red:    #C8102E;
+      --blue:   #002D62;
+      --white:  #FFFFFF;
+      --bg:     #F4F6FA;
+      --card:   #FFFFFF;
+      --text:   #1A1D2E;
+      --muted:  #7B8099;
+      --border: #E8ECF4;
+      --green:  #1DB954;
+      --amber:  #F5A623;
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px 100px;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: var(--bg);
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.06);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Status bar ── */
+    .statusbar {
+      background: var(--blue);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,.85);
+      letter-spacing: .4px;
+    }
+    .statusbar-icons { display: flex; gap: 6px; align-items: center; }
+    .statusbar-icons svg { width: 14px; height: 14px; fill: rgba(255,255,255,.85); }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(160deg, var(--blue) 0%, #003d8a 100%);
+      padding: 20px 20px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,.05);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -20px; left: 30px;
+      width: 80px; height: 80px;
+      background: var(--red);
+      border-radius: 50%;
+      opacity: .15;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-badge {
+      width: 34px; height: 34px;
+      background: var(--red);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-badge svg { width: 20px; height: 20px; fill: white; }
+    .logo-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -.3px;
+    }
+    .logo-text span { color: #6DAEFF; }
+    .notif-btn {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer;
+      position: relative;
+    }
+    .notif-btn svg { width: 18px; height: 18px; stroke: white; fill: none; }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 8px; height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 1.5px solid var(--blue);
+    }
+    .greeting { font-size: 13px; color: rgba(255,255,255,.65); margin-bottom: 2px; }
+    .date-line { font-size: 15px; font-weight: 600; color: white; }
+
+    /* ── Search bar ── */
+    .search-wrap {
+      padding: 0 20px;
+      margin-top: -16px;
+      position: relative;
+      z-index: 10;
+    }
+    .search {
+      background: white;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0,44,98,.1);
+    }
+    .search svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; flex-shrink: 0; }
+    .search input {
+      border: none; outline: none;
+      font-size: 14px; color: var(--text);
+      font-family: 'Inter', sans-serif;
+      background: transparent;
+      flex: 1;
+    }
+    .search input::placeholder { color: var(--muted); }
+
+    /* ── Scroll container ── */
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scrollbar-width: none;
+    }
+    .scroll::-webkit-scrollbar { display: none; }
+
+    /* ── Section label ── */
+    .section-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: -8px;
+    }
+    .section-label h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-label a {
+      font-size: 12px;
+      color: var(--blue);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ── Quick stats row ── */
+    .quick-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .quick-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+    .quick-card .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 6px;
+    }
+    .quick-card .value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+    .quick-card .value span { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .quick-card .change {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .change.up   { color: var(--red); }
+    .change.down { color: var(--green); }
+    .change.same { color: var(--muted); }
+
+    /* ── Combustibles card ── */
+    .fuel-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+    .fuel-header {
+      background: linear-gradient(90deg, var(--blue), #003d8a);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .fuel-header-left { display: flex; align-items: center; gap: 10px; }
+    .fuel-icon {
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fuel-icon svg { width: 18px; height: 18px; fill: white; }
+    .fuel-title { font-size: 14px; font-weight: 700; color: white; }
+    .fuel-subtitle { font-size: 11px; color: rgba(255,255,255,.65); }
+    .fuel-badge {
+      background: var(--red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .fuel-list { padding: 4px 0; }
+    .fuel-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .fuel-row:last-child { border-bottom: none; }
+    .fuel-row-left { display: flex; align-items: center; gap: 10px; }
+    .fuel-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .fuel-name { font-size: 13px; font-weight: 500; }
+    .fuel-name small { display: block; font-size: 10px; color: var(--muted); font-weight: 400; }
+    .fuel-right { text-align: right; }
+    .fuel-price { font-size: 15px; font-weight: 700; }
+    .fuel-change { font-size: 10px; font-weight: 600; margin-top: 1px; }
+    .fuel-change.up   { color: var(--red); }
+    .fuel-change.down { color: var(--green); }
+
+    /* ── Apagones card ── */
+    .outage-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+    .outage-header {
+      background: linear-gradient(90deg, #1a1a2e, #16213e);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .outage-header-left { display: flex; align-items: center; gap: 10px; }
+    .outage-icon {
+      width: 34px; height: 34px;
+      background: rgba(245,166,35,.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .outage-icon svg { width: 18px; height: 18px; fill: var(--amber); }
+    .outage-title { font-size: 14px; font-weight: 700; color: white; }
+    .outage-subtitle { font-size: 11px; color: rgba(255,255,255,.55); }
+    .outage-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .status-on  { background: rgba(29,185,84,.2); color: var(--green); }
+    .status-off { background: rgba(200,16,46,.2);  color: var(--red); }
+    .outage-body { padding: 14px 16px; }
+    .outage-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .outage-selector::-webkit-scrollbar { display: none; }
+    .sector-chip {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      white-space: nowrap;
+      color: var(--muted);
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      transition: all .15s;
+    }
+    .sector-chip.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+    .outage-timeline { display: flex; flex-direction: column; gap: 8px; }
+    .outage-slot {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #F8F9FC;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .slot-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .slot-dot.on  { background: var(--green); }
+    .slot-dot.off { background: var(--red); }
+    .slot-time { font-size: 13px; font-weight: 600; flex: 1; }
+    .slot-hours { font-size: 11px; color: var(--muted); }
+    .slot-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .slot-badge.on  { background: rgba(29,185,84,.12); color: var(--green); }
+    .slot-badge.off { background: rgba(200,16,46,.08); color: var(--red); }
+
+    /* ── UASD card ── */
+    .uasd-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+    .uasd-header {
+      background: linear-gradient(90deg, #5B2D8E, #7B3FBE);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .uasd-header-left { display: flex; align-items: center; gap: 10px; }
+    .uasd-icon {
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .uasd-title { font-size: 14px; font-weight: 700; color: white; }
+    .uasd-subtitle { font-size: 11px; color: rgba(255,255,255,.65); }
+    .uasd-body { padding: 14px 16px; }
+    .class-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .class-row:last-child { border-bottom: none; }
+    .class-color {
+      width: 4px;
+      height: 40px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .class-info { flex: 1; }
+    .class-name { font-size: 13px; font-weight: 600; }
+    .class-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .class-time {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+    .class-time small { display: block; font-size: 10px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+
+    /* ── Clima card ── */
+    .weather-card {
+      background: linear-gradient(135deg, #0F4C81 0%, #1565C0 60%, #1976D2 100%);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .weather-card::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      background: rgba(255,255,255,.07);
+      border-radius: 50%;
+    }
+    .weather-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .weather-loc { font-size: 16px; font-weight: 700; color: white; }
+    .weather-desc { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 2px; }
+    .weather-emoji { font-size: 48px; line-height: 1; }
+    .weather-temp { font-size: 42px; font-weight: 800; color: white; line-height: 1; margin: 10px 0 6px; }
+    .weather-temp span { font-size: 22px; font-weight: 400; opacity: .7; }
+    .weather-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .weather-stat { flex: 1; }
+    .weather-stat .wlabel { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .5px; }
+    .weather-stat .wval   { font-size: 14px; font-weight: 700; color: white; margin-top: 2px; }
+    .weather-days {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.15);
+    }
+    .wday { text-align: center; }
+    .wday .dname { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.6); text-transform: uppercase; }
+    .wday .demo  { font-size: 18px; margin: 4px 0; }
+    .wday .dtemp { font-size: 13px; font-weight: 700; color: white; }
+
+    /* ── Lotería card ── */
+    .lottery-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+    .lottery-header {
+      background: linear-gradient(90deg, #8B0000, #C8102E);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .lottery-header-left { display: flex; align-items: center; gap: 10px; }
+    .lottery-icon {
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .lottery-title { font-size: 14px; font-weight: 700; color: white; }
+    .lottery-subtitle { font-size: 11px; color: rgba(255,255,255,.65); }
+    .live-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.15);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      background: #76FF03;
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .lottery-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .lottery-game {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .game-left { display: flex; align-items: center; gap: 10px; }
+    .game-badge {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .game-name { font-size: 13px; font-weight: 600; }
+    .game-draw { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .lottery-numbers { display: flex; gap: 5px; }
+    .lnum {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* ── Dólar card ── */
+    .dollar-card {
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .dollar-card::before {
+      content: '$';
+      position: absolute;
+      right: 16px; top: 8px;
+      font-size: 90px;
+      font-weight: 900;
+      color: rgba(255,255,255,.06);
+      line-height: 1;
+    }
+    .dollar-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .dollar-icon {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dollar-icon svg { width: 18px; height: 18px; fill: white; }
+    .dollar-label { font-size: 14px; font-weight: 700; color: white; }
+    .dollar-updated { font-size: 11px; color: rgba(255,255,255,.6); }
+    .dollar-rates { display: flex; gap: 12px; }
+    .rate-box {
+      flex: 1;
+      background: rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .rate-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.65); text-transform: uppercase; letter-spacing: .5px; }
+    .rate-val { font-size: 22px; font-weight: 800; color: white; margin: 4px 0 2px; }
+    .rate-change { font-size: 10px; font-weight: 700; }
+    .rate-change.up   { color: #FF6B6B; }
+    .rate-change.down { color: #69F0AE; }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: sticky;
+      bottom: 0;
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 10px 0 20px;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+    }
+    .nav-item svg { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.8; }
+    .nav-item span { font-size: 10px; font-weight: 600; color: var(--muted); }
+    .nav-item.active svg  { stroke: var(--blue); }
+    .nav-item.active span { color: var(--blue); }
+    .nav-icon-wrap { position: relative; }
+    .nav-badge {
+      position: absolute; top: -2px; right: -4px;
+      width: 8px; height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 1.5px solid white;
+    }
+
+    /* ── Floating update banner ── */
+    .update-banner {
+      background: var(--blue);
+      margin: 0 20px;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .update-banner svg { width: 16px; height: 16px; fill: var(--amber); flex-shrink: 0; }
+    .update-text { font-size: 12px; color: rgba(255,255,255,.9); flex: 1; }
+    .update-text strong { color: white; font-weight: 700; }
+    .update-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue);
+      background: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Desktop label -->
+<div style="position:fixed;top:24px;left:50%;transform:translateX(-50%);background:rgba(0,45,98,.9);color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;z-index:999;letter-spacing:.3px;white-space:nowrap;">
+  CiudadanoRD — Prototipo de interfaz
+</div>
+
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="statusbar-icons">
+      <!-- signal -->
+      <svg viewBox="0 0 24 24"><rect x="1" y="16" width="3" height="6"/><rect x="6" y="11" width="3" height="11"/><rect x="11" y="7" width="3" height="15"/><rect x="16" y="3" width="3" height="19"/></svg>
+      <!-- wifi -->
+      <svg viewBox="0 0 24 24" style="fill:none;stroke:rgba(255,255,255,.85);stroke-width:2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="rgba(255,255,255,.85)"/></svg>
+      <!-- battery -->
+      <svg viewBox="0 0 24 24" style="fill:none;stroke:rgba(255,255,255,.85);stroke-width:2"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2"/><rect x="4" y="9" width="11" height="6" fill="rgba(255,255,255,.85)" stroke="none" rx="1"/></svg>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-badge">
+          <!-- shield icon -->
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 9.74 8 11 4.5-1.26 8-5.75 8-11V6l-8-4z"/></svg>
+        </div>
+        <div class="logo-text">Ciudadano<span>RD</span></div>
+      </div>
+      <button class="notif-btn">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+    </div>
+    <div class="greeting">Buenos días, Santo Domingo 🇩🇴</div>
+    <div class="date-line">Sábado, 21 de junio de 2025</div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Buscar servicios, precios, sectores…" readonly />
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="scroll">
+
+    <!-- Dólar + tasas -->
+    <div class="dollar-card">
+      <div class="dollar-top">
+        <div class="dollar-icon">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <div class="dollar-label">Divisas hoy</div>
+          <div class="dollar-updated">Actualizado hace 12 min · Banco Central RD</div>
+        </div>
+      </div>
+      <div class="dollar-rates">
+        <div class="rate-box">
+          <div class="rate-label">Compra USD</div>
+          <div class="rate-val">58.40</div>
+          <div class="rate-change down">▼ 0.10 vs ayer</div>
+        </div>
+        <div class="rate-box">
+          <div class="rate-label">Venta USD</div>
+          <div class="rate-val">59.20</div>
+          <div class="rate-change up">▲ 0.15 vs ayer</div>
+        </div>
+        <div class="rate-box">
+          <div class="rate-label">Euro</div>
+          <div class="rate-val">63.50</div>
+          <div class="rate-change up">▲ 0.30 vs ayer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update banner -->
+    <div class="update-banner">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div class="update-text"><strong>Nuevos precios combustibles</strong> publicados hoy — Semana del 20/06</div>
+      <button class="update-btn">Ver</button>
+    </div>
+
+    <!-- Combustibles -->
+    <div>
+      <div class="section-label" style="margin-bottom:10px;">
+        <h2>⛽ Combustibles</h2>
+        <a href="#">Histórico →</a>
+      </div>
+      <div class="fuel-card">
+        <div class="fuel-header">
+          <div class="fuel-header-left">
+            <div class="fuel-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 22V5l6-3 6 3v4h3l2 4v9"/><path d="M3 22h18"/><path d="M9 22V12h6v10"/><path d="M17 9h2"/></svg>
+            </div>
+            <div>
+              <div class="fuel-title">Precios MICM</div>
+              <div class="fuel-subtitle">Vigente 20 – 26 junio 2025</div>
+            </div>
+          </div>
+          <div class="fuel-badge">Oficial</div>
+        </div>
+        <div class="fuel-list">
+          <div class="fuel-row">
+            <div class="fuel-row-left">
+              <div class="fuel-dot" style="background:#E53935;"></div>
+              <div class="fuel-name">Gasolina Premium<small>Shell V-Power / Texaco</small></div>
+            </div>
+            <div class="fuel-right">
+              <div class="fuel-price" style="color:#E53935;">RD$293.10</div>
+              <div class="fuel-change up">▲ +2.30 vs sem. ant.</div>
+            </div>
+          </div>
+          <div class="fuel-row">
+            <div class="fuel-row-left">
+              <div class="fuel-dot" style="background:#FB8C00;"></div>
+              <div class="fuel-name">Gasolina Regular<small>Unleaded 87</small></div>
+            </div>
+            <div class="fuel-right">
+              <div class="fuel-price" style="color:#FB8C00;">RD$274.50</div>
+              <div class="fuel-change up">▲ +1.80</div>
+            </div>
+          </div>
+          <div class="fuel-row">
+            <div class="fuel-row-left">
+              <div class="fuel-dot" style="background:#1565C0;"></div>
+              <div class="fuel-name">Gasoil Óptimo<small>Diesel premium</small></div>
+            </div>
+            <div class="fuel-right">
+              <div class="fuel-price" style="color:#1565C0;">RD$236.80</div>
+              <div class="fuel-change down">▼ -0.50</div>
+            </div>
+          </div>
+          <div class="fuel-row">
+            <div class="fuel-row-left">
+              <div class="fuel-dot" style="background:#546E7A;"></div>
+              <div class="fuel-name">Gasoil Regular<small>Diesel corriente</small></div>
+            </div>
+            <div class="fuel-right">
+              <div class="fuel-price" style="color:#546E7A;">RD$221.60</div>
+              <div class="fuel-change down">▼ -1.10</div>
+            </div>
+          </div>
+          <div class="fuel-row">
+            <div class="fuel-row-left">
+              <div class="fuel-dot" style="background:#00897B;"></div>
+              <div class="fuel-name">Gas Natural (GLP)<small>por galón</small></div>
+            </div>
+            <div class="fuel-right">
+              <div class="fuel-price" style="color:#00897B;">RD$130.40</div>
+              <div class="fuel-change" style="color:var(--muted);">— Sin cambio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apagones -->
+    <div>
+      <div class="section-label" style="margin-bottom:10px;">
+        <h2>💡 Apagones hoy</h2>
+        <a href="#">Mi sector →</a>
+      </div>
+      <div class="outage-card">
+        <div class="outage-header">
+          <div class="outage-header-left">
+            <div class="outage-icon">
+              <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div>
+              <div class="outage-title">Tanda EDESUR</div>
+              <div class="outage-subtitle">Horario D.N. · Sábado 21 jun</div>
+            </div>
+          </div>
+          <div class="outage-status status-on">✓ Con luz</div>
+        </div>
+        <div class="outage-body">
+          <div class="outage-selector">
+            <button class="sector-chip active">Piantini</button>
+            <button class="sector-chip">Naco</button>
+            <button class="sector-chip">Los Prados</button>
+            <button class="sector-chip">Evaristo Morales</button>
+            <button class="sector-chip">Bella Vista</button>
+          </div>
+          <div class="outage-timeline">
+            <div class="outage-slot">
+              <div class="slot-dot on"></div>
+              <div class="slot-time">06:00 – 10:00</div>
+              <div class="slot-hours">4 h</div>
+              <div class="slot-badge on">Con luz</div>
+            </div>
+            <div class="outage-slot">
+              <div class="slot-dot off"></div>
+              <div class="slot-time">10:00 – 14:00</div>
+              <div class="slot-hours">4 h</div>
+              <div class="slot-badge off">Apagón</div>
+            </div>
+            <div class="outage-slot">
+              <div class="slot-dot on"></div>
+              <div class="slot-time">14:00 – 18:00</div>
+              <div class="slot-hours">4 h</div>
+              <div class="slot-badge on">Con luz</div>
+            </div>
+            <div class="outage-slot" style="background: rgba(200,16,46,.06);">
+              <div class="slot-dot off"></div>
+              <div class="slot-time">18:00 – 22:00</div>
+              <div class="slot-hours">4 h</div>
+              <div class="slot-badge off">Apagón</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clima -->
+    <div>
+      <div class="section-label" style="margin-bottom:10px;">
+        <h2>🌤 Clima ONAMET</h2>
+        <a href="#">Semana →</a>
+      </div>
+      <div class="weather-card">
+        <div class="weather-top">
+          <div>
+            <div class="weather-loc">Santo Domingo</div>
+            <div class="weather-desc">Parcialmente nublado · ONAMET</div>
+          </div>
+          <div class="weather-emoji">⛅</div>
+        </div>
+        <div class="weather-temp">34<span>°C</span></div>
+        <div class="weather-row">
+          <div class="weather-stat">
+            <div class="wlabel">Humedad</div>
+            <div class="wval">78%</div>
+          </div>
+          <div class="weather-stat">
+            <div class="wlabel">Viento</div>
+            <div class="wval">18 km/h</div>
+          </div>
+          <div class="weather-stat">
+            <div class="wlabel">Sensación</div>
+            <div class="wval">38°C</div>
+          </div>
+          <div class="weather-stat">
+            <div class="wlabel">UV</div>
+            <div class="wval">Alto 8</div>
+          </div>
+        </div>
+        <div class="weather-days">
+          <div class="wday"><div class="dname">Dom</div><div class="demo">🌧</div><div class="dtemp">33°</div></div>
+          <div class="wday"><div class="dname">Lun</div><div class="demo">⛅</div><div class="dtemp">35°</div></div>
+          <div class="wday"><div class="dname">Mar</div><div class="demo">☀️</div><div class="dtemp">36°</div></div>
+          <div class="wday"><div class="dname">Mié</div><div class="demo">🌦</div><div class="dtemp">33°</div></div>
+          <div class="wday"><div class="dname">Jue</div><div class="demo">☀️</div><div class="dtemp">37°</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UASD -->
+    <div>
+      <div class="section-label" style="margin-bottom:10px;">
+        <h2>🎓 Horario UASD</h2>
+        <a href="#">Mi carrera →</a>
+      </div>
+      <div class="uasd-card">
+        <div class="uasd-header">
+          <div class="uasd-header-left">
+            <div class="uasd-icon">🏛</div>
+            <div>
+              <div class="uasd-title">Mis clases hoy</div>
+              <div class="uasd-subtitle">Campus CSA · Período 2025-20</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.15);color:white;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;">3 clases</div>
+        </div>
+        <div class="uasd-body">
+          <div class="class-row">
+            <div class="class-color" style="background:#5B2D8E;"></div>
+            <div class="class-info">
+              <div class="class-name">Cálculo I</div>
+              <div class="class-meta">MAT2110 · Aula 201-B · Prof. Marte</div>
+            </div>
+            <div class="class-time">7:00 AM<small>3 hrs</small></div>
+          </div>
+          <div class="class-row">
+            <div class="class-color" style="background:#1565C0;"></div>
+            <div class="class-info">
+              <div class="class-name">Física General I</div>
+              <div class="class-meta">FIS2210 · Lab. 104 · Prof. García</div>
+            </div>
+            <div class="class-time">10:00 AM<small>4 hrs</small></div>
+          </div>
+          <div class="class-row">
+            <div class="class-color" style="background:#00897B;"></div>
+            <div class="class-info">
+              <div class="class-name">Sociología General</div>
+              <div class="class-meta">SOC1100 · Aula 305 · Prof. Durán</div>
+            </div>
+            <div class="class-time">2:00 PM<small>2 hrs</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lotería -->
+    <div>
+      <div class="section-label" style="margin-bottom:10px;">
+        <h2>🎰 Lotería Nacional</h2>
+        <a href="#">Ver todo →</a>
+      </div>
+      <div class="lottery-card">
+        <div class="lottery-header">
+          <div class="lottery-header-left">
+            <div class="lottery-icon">🎱</div>
+            <div>
+              <div class="lottery-title">Resultados de hoy</div>
+              <div class="lottery-subtitle">Sorteos nacionales · 21 jun 2025</div>
+            </div>
+          </div>
+          <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+        </div>
+        <div class="lottery-body">
+          <div class="lottery-game">
+            <div class="game-left">
+              <div class="game-badge" style="background:#FFF3E0;">🏆</div>
+              <div>
+                <div class="game-name">Lotería Nacional</div>
+                <div class="game-draw">Sorteo 6:00 PM</div>
+              </div>
+            </div>
+            <div class="lottery-numbers">
+              <div class="lnum" style="background:#C8102E;">14</div>
+              <div class="lnum" style="background:#002D62;">27</div>
+              <div class="lnum" style="background:#C8102E;">03</div>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div class="lottery-game">
+            <div class="game-left">
+              <div class="game-badge" style="background:#E8F5E9;">🟢</div>
+              <div>
+                <div class="game-name">Loteka</div>
+                <div class="game-draw">Sorteo 8:55 PM</div>
+              </div>
+            </div>
+            <div class="lottery-numbers">
+              <div class="lnum" style="background:#2E7D32;">31</div>
+              <div class="lnum" style="background:#1B5E20;">08</div>
+              <div class="lnum" style="background:#388E3C;">42</div>
+            </div>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div class="lottery-game">
+            <div class="game-left">
+              <div class="game-badge" style="background:#E3F2FD;">🔵</div>
+              <div>
+                <div class="game-name">Real</div>
+                <div class="game-draw">Sorteo 3:00 PM</div>
+              </div>
+            </div>
+            <div class="lottery-numbers">
+              <div class="lnum" style="background:#0D47A1;">56</div>
+              <div class="lnum" style="background:#1565C0;">19</div>
+              <div class="lnum" style="background:#1976D2;">33</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- spacer -->
+    <div style="height:8px;"></div>
+
+  </div><!-- /scroll -->
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <button class="nav-item active">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span>Inicio</span>
+    </button>
+    <button class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div class="nav-badge"></div>
+      </div>
+      <span>Mi Zona</span>
+    </button>
+    <button class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span>Servicios</span>
+    </button>
+    <button class="nav-item">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </div>
+      <span>Más</span>
+    </button>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+  document.querySelectorAll('.sector-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.sector-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
