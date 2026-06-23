@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CombustiblesDO — Diseño Premium</title>
+  <meta name="hz:slide-selector" content=".screen">
+  <meta name="hz:canvas-width" content="390">
+  <meta name="hz:canvas-height" content="844">
+  <link rel="stylesheet" href="https://use.typekit.net/ruu3zbk.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #040610;
+      display: flex;
+      gap: 40px;
+      padding: 60px 48px;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      flex-wrap: wrap;
+    }
+
+    /* ── PHONE SHELL ── */
+    .screen {
+      position: relative;
+      width: 390px;
+      height: 844px;
+      background: #07091A;
+      overflow: hidden;
+      border-radius: 52px;
+      box-shadow:
+        0 0 0 1.5px rgba(255,255,255,0.11),
+        0 0 0 9px rgba(255,255,255,0.025),
+        0 60px 130px rgba(0,0,0,0.95),
+        0 0 100px rgba(245,158,11,0.035);
+      font-family: "interface", sans-serif;
+    }
+
+    /* Dynamic island / notch */
+    .notch {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 34px;
+      background: #000;
+      border-radius: 100px;
+      z-index: 30;
+    }
+
+    /* Status bar */
+    .sb {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 30px 10px;
+      z-index: 20;
+    }
+    .sb-time {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F1F5F9;
+      letter-spacing: 0.01em;
+    }
+    .sb-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* Content area */
+    .cnt {
+      position: absolute;
+      top: 54px; left: 0; right: 0; bottom: 88px;
+      overflow: hidden;
+      padding: 18px 20px 0;
+    }
+
+    /* Tab bar */
+    .tabs {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 88px;
+      background: rgba(6,8,22,0.97);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-around;
+      padding-top: 12px;
+      z-index: 20;
+    }
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 72px;
+    }
+    .tab-l {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #334155;
+    }
+    .tab.on .tab-l { color: #F59E0B; }
+
+    /* Cards */
+    .card {
+      background: #0C1226;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.055);
+    }
+
+    /* Typography */
+    .headline {
+      font-family: "ff-meta-headline-web-pro", sans-serif;
+      color: #F1F5F9;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .lbl {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #3D4F6B;
+      font-family: "interface", sans-serif;
+    }
+
+    /* Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 9px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      font-family: "interface", sans-serif;
+    }
+    .c-up   { background: rgba(248,113,113,0.14); color: #F87171; }
+    .c-dn   { background: rgba(52,211,153,0.13);  color: #34D399; }
+    .c-neu  { background: rgba(129,140,248,0.12); color: #818CF8; }
+    .c-amb  { background: rgba(245,158,11,0.14);  color: #FBB040; }
+
+    /* Divider */
+    .div { height: 1px; background: rgba(255,255,255,0.05); }
+
+    /* Shared status bar icons */
+    .i-sig { display:block; }
+  </style>
+</head>
+<body>
+
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 1 — PRECIOS (Home)
+══════════════════════════════════════════ -->
+<div class="screen" data-canvas-width="390" data-canvas-height="844">
+  <div class="notch"></div>
+
+  <!-- Ambient glow top-right -->
+  <div style="position:absolute;top:-100px;right:-80px;width:300px;height:300px;
+    background:radial-gradient(circle,rgba(245,158,11,0.13) 0%,transparent 68%);
+    border-radius:50%;pointer-events:none;"></div>
+
+  <!-- Status bar -->
+  <div class="sb">
+    <span class="sb-time">9:41</span>
+    <div class="sb-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12">
+        <rect x="0" y="6" width="3" height="6" rx="1" fill="#F1F5F9"/>
+        <rect x="4.5" y="4" width="3" height="8" rx="1" fill="#F1F5F9"/>
+        <rect x="9" y="2" width="3" height="10" rx="1" fill="#F1F5F9"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#F1F5F9"/>
+      </svg>
+      <svg width="15" height="11" viewBox="0 0 15 11">
+        <path d="M7.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="#F1F5F9"/>
+        <path d="M3 5.5C4.4 4.1 5.9 3.5 7.5 3.5s3.1.6 4.5 2" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <path d="M0.5 3C2.6 1 4.9 0 7.5 0s4.9 1 7 3" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      </svg>
+      <svg width="26" height="13" viewBox="0 0 26 13">
+        <rect x="0" y="1" width="22" height="11" rx="3" stroke="#F1F5F9" stroke-width="1.2" fill="none"/>
+        <rect x="22.5" y="4" width="2.5" height="5" rx="1.5" fill="#F1F5F9" opacity="0.45"/>
+        <rect x="1.5" y="2.5" width="15" height="8" rx="2" fill="#F59E0B"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="cnt">
+
+    <!-- Header row -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div>
+        <div class="lbl" style="margin-bottom:4px;">Semana del</div>
+        <div class="headline" style="font-size:21px;">16 – 22 Jun 2026</div>
+      </div>
+      <div style="position:relative;">
+        <div style="width:44px;height:44px;background:#0C1226;border:1px solid rgba(255,255,255,0.07);
+          border-radius:14px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#64748B"/>
+          </svg>
+        </div>
+        <div style="position:absolute;top:-3px;right:-3px;width:10px;height:10px;
+          background:#F59E0B;border-radius:50%;border:2px solid #07091A;"></div>
+      </div>
+    </div>
+
+    <!-- HERO CARD: Gasolina Premium -->
+    <div class="card" style="padding:20px;margin-bottom:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-40px;right:-30px;width:180px;height:180px;
+        background:radial-gradient(circle,rgba(245,158,11,0.16) 0%,transparent 68%);
+        border-radius:50%;pointer-events:none;"></div>
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;background:rgba(245,158,11,0.12);border-radius:12px;
+            display:flex;align-items:center;justify-content:center;">
+            <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+              <path d="M10 1C6.5 7 3.5 10.5 3.5 14a6.5 6.5 0 0013 0C16.5 10.5 13.5 7 10 1z" fill="#F59E0B"/>
+            </svg>
+          </div>
+          <div>
+            <div class="lbl" style="margin-bottom:3px;">Gasolina Premium</div>
+            <span class="chip c-up">▲ RD$3.40 esta semana</span>
+          </div>
+        </div>
+        <span class="chip c-amb">Oficial</span>
+      </div>
+
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px;">
+        <div class="headline" style="font-size:58px;">307</div>
+        <div class="headline" style="font-size:34px;color:#F59E0B;">.40</div>
+        <div style="font-size:15px;color:#475569;font-weight:500;padding-bottom:7px;">RD$</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="font-size:12px;color:#3D4F6B;">
+          ≈ <span style="color:#94A3B8;font-weight:600;">RD$81.22</span> /litro
+        </div>
+        <div style="width:1px;height:14px;background:rgba(255,255,255,0.07);"></div>
+        <div style="font-size:12px;color:#3D4F6B;">
+          USD <span style="color:#94A3B8;font-weight:600;">$5.28</span> /galón
+        </div>
+      </div>
+    </div>
+
+    <!-- Fuel grid 2×2 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+
+      <!-- Gasolina Regular -->
+      <div class="card" style="padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:30px;height:30px;background:rgba(129,140,248,0.12);border-radius:9px;
+            display:flex;align-items:center;justify-content:center;">
+            <svg width="15" height="16" viewBox="0 0 20 22"><path d="M10 1C6.5 7 3.5 10.5 3.5 14a6.5 6.5 0 0013 0C16.5 10.5 13.5 7 10 1z" fill="#818CF8"/></svg>
+          </div>
+          <div class="lbl" style="font-size:9.5px;line-height:1.3;">Gasolina<br>Regular</div>
+        </div>
+        <div class="headline" style="font-size:26px;margin-bottom:4px;">288<span style="font-size:15px;color:#818CF8;">.60</span></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:#3D4F6B;">RD$/gal</span>
+          <span class="chip c-up" style="font-size:9px;height:18px;padding:0 6px;">▲ 1.80</span>
+        </div>
+      </div>
+
+      <!-- Gasoil Regular -->
+      <div class="card" style="padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:30px;height:30px;background:rgba(52,211,153,0.10);border-radius:9px;
+            display:flex;align-items:center;justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path d="M19 9.5h-1V7c0-1.1-.9-2-2-2H8C6.9 5 6 5.9 6 7v2.5H5c-1.1 0-2 .9-2 2V18c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6.5c0-1.1-.9-2-2-2zM8 7h8v2.5H8V7zm-2 9H5v-1.5h1V16zm0-3H5v-1.5h1V13zm12 3h-1v-1.5h1V16zm0-3h-1v-1.5h1V13z" fill="#34D399"/>
+            </svg>
+          </div>
+          <div class="lbl" style="font-size:9.5px;line-height:1.3;">Gasoil<br>Regular</div>
+        </div>
+        <div class="headline" style="font-size:26px;margin-bottom:4px;">230<span style="font-size:15px;color:#34D399;">.10</span></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:#3D4F6B;">RD$/gal</span>
+          <span class="chip c-dn" style="font-size:9px;height:18px;padding:0 6px;">▼ 2.30</span>
+        </div>
+      </div>
+
+      <!-- Gasoil Óptimo -->
+      <div class="card" style="padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:30px;height:30px;background:rgba(251,191,36,0.10);border-radius:9px;
+            display:flex;align-items:center;justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path d="M19 9.5h-1V7c0-1.1-.9-2-2-2H8C6.9 5 6 5.9 6 7v2.5H5c-1.1 0-2 .9-2 2V18c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6.5c0-1.1-.9-2-2-2zM8 7h8v2.5H8V7zm-2 9H5v-1.5h1V16zm0-3H5v-1.5h1V13zm12 3h-1v-1.5h1V16zm0-3h-1v-1.5h1V13z" fill="#FBBF24"/>
+            </svg>
+          </div>
+          <div class="lbl" style="font-size:9.5px;line-height:1.3;">Gasoil<br>Óptimo</div>
+        </div>
+        <div class="headline" style="font-size:26px;margin-bottom:4px;">252<span style="font-size:15px;color:#FBBF24;">.80</span></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:#3D4F6B;">RD$/gal</span>
+          <span class="chip c-neu" style="font-size:9px;height:18px;padding:0 6px;">━ 0.00</span>
+        </div>
+      </div>
+
+      <!-- GLP -->
+      <div class="card" style="padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:30px;height:30px;background:rgba(56,189,248,0.10);border-radius:9px;
+            display:flex;align-items:center;justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="#38BDF8" stroke-width="2"/>
+              <path d="M12 8v4l2.5 2.5" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="lbl" style="font-size:9.5px;line-height:1.3;">Gas<br>GLP</div>
+        </div>
+        <div class="headline" style="font-size:26px;margin-bottom:4px;">154<span style="font-size:15px;color:#38BDF8;">.90</span></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:#3D4F6B;">RD$/gal</span>
+          <span class="chip c-dn" style="font-size:9px;height:18px;padding:0 6px;">▼ 1.10</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+      <svg width="12" height="12" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="#2D3A52" stroke-width="2"/>
+        <path d="M12 8v4M12 16h.01" stroke="#2D3A52" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div style="font-size:11px;color:#2D3A52;letter-spacing:0.04em;">Actualizado lun. · Fuente: MICM</div>
+    </div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tabs">
+    <div class="tab on">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="#F59E0B"/></svg>
+      <span class="tab-l">Precios</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3.5 18.5l6-6 4 4L22 7l-1.4-1.4-7.1 8-4-4L2 17z" fill="#334155"/></svg>
+      <span class="tab-l">Historial</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#334155"/></svg>
+      <span class="tab-l">Calcular</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M18.9 12.9c.04-.3.06-.6.06-.9s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41L9.25 5.35C8.66 5.59 8.12 5.92 7.63 6.29L5.24 5.33c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58C4.84 11.36 4.8 11.69 4.8 12s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61L18.9 12.9zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="#334155"/></svg>
+      <span class="tab-l">Ajustes</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 2 — HISTORIAL
+══════════════════════════════════════════ -->
+<div class="screen" data-canvas-width="390" data-canvas-height="844">
+  <div class="notch"></div>
+
+  <div style="position:absolute;top:-70px;left:-50px;width:260px;height:260px;
+    background:radial-gradient(circle,rgba(99,102,241,0.10) 0%,transparent 68%);
+    border-radius:50%;pointer-events:none;"></div>
+
+  <div class="sb">
+    <span class="sb-time">9:41</span>
+    <div class="sb-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#F1F5F9"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#F1F5F9"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#F1F5F9"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#F1F5F9"/></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11"><path d="M7.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="#F1F5F9"/><path d="M3 5.5C4.4 4.1 5.9 3.5 7.5 3.5s3.1.6 4.5 2" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M0.5 3C2.6 1 4.9 0 7.5 0s4.9 1 7 3" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0" y="1" width="22" height="11" rx="3" stroke="#F1F5F9" stroke-width="1.2" fill="none"/><rect x="22.5" y="4" width="2.5" height="5" rx="1.5" fill="#F1F5F9" opacity="0.45"/><rect x="1.5" y="2.5" width="15" height="8" rx="2" fill="#F59E0B"/></svg>
+    </div>
+  </div>
+
+  <div class="cnt">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div class="lbl" style="margin-bottom:4px;">Análisis de precio</div>
+        <div class="headline" style="font-size:22px;">Historial</div>
+      </div>
+      <div style="width:36px;height:36px;background:#0C1226;border:1px solid rgba(255,255,255,0.07);
+        border-radius:10px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm2 5h12v2H6zm2 5h8v2H8z" fill="#475569"/></svg>
+      </div>
+    </div>
+
+    <!-- Fuel selector chips -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:hidden;">
+      <div style="background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.28);
+        border-radius:100px;padding:6px 14px;flex-shrink:0;">
+        <span style="font-size:11.5px;font-weight:700;color:#F59E0B;">⛽ G. Premium</span>
+      </div>
+      <div class="card" style="border-radius:100px;padding:6px 14px;flex-shrink:0;">
+        <span style="font-size:11.5px;color:#3D4F6B;">G. Regular</span>
+      </div>
+      <div class="card" style="border-radius:100px;padding:6px 14px;flex-shrink:0;">
+        <span style="font-size:11.5px;color:#3D4F6B;">Gasoil</span>
+      </div>
+      <div class="card" style="border-radius:100px;padding:6px 14px;flex-shrink:0;">
+        <span style="font-size:11.5px;color:#3D4F6B;">GLP</span>
+      </div>
+    </div>
+
+    <!-- Time range -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;">
+      <div class="card" style="border-radius:8px;padding:5px 11px;"><span style="font-size:11px;color:#3D4F6B;font-weight:500;">1M</span></div>
+      <div class="card" style="border-radius:8px;padding:5px 11px;"><span style="font-size:11px;color:#3D4F6B;font-weight:500;">3M</span></div>
+      <div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.24);border-radius:8px;padding:5px 11px;">
+        <span style="font-size:11px;color:#F59E0B;font-weight:700;">6M</span>
+      </div>
+      <div class="card" style="border-radius:8px;padding:5px 11px;"><span style="font-size:11px;color:#3D4F6B;font-weight:500;">1A</span></div>
+      <div class="card" style="border-radius:8px;padding:5px 11px;"><span style="font-size:11px;color:#3D4F6B;font-weight:500;">Todo</span></div>
+    </div>
+
+    <!-- Chart card -->
+    <div class="card" style="padding:16px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+        <div>
+          <div class="lbl" style="margin-bottom:4px;">Gasolina Premium</div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <div class="headline" style="font-size:30px;">307<span style="font-size:18px;color:#F59E0B;">.40</span></div>
+            <div style="font-size:12px;color:#3D4F6B;padding-bottom:3px;">RD$</div>
+          </div>
+        </div>
+        <div style="text-align:right;padding-top:4px;">
+          <span class="chip c-up" style="margin-bottom:4px;display:block;">▲ +3.40</span>
+          <div style="font-size:10px;color:#3D4F6B;">vs semana ant.</div>
+        </div>
+      </div>
+
+      <!-- SVG Line Chart -->
+      <svg width="322" height="118" viewBox="0 0 322 118">
+        <defs>
+          <linearGradient id="cg1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="28" y1="15" x2="322" y2="15" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="28" y1="43" x2="322" y2="43" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="28" y1="71" x2="322" y2="71" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="28" y1="99" x2="322" y2="99" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <!-- Grid labels -->
+        <text x="0" y="19"  fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">320</text>
+        <text x="0" y="47"  fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">310</text>
+        <text x="0" y="75"  fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">300</text>
+        <text x="0" y="103" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">290</text>
+        <!-- Area -->
+        <path d="M32,96 L78,89 L124,72 L170,55 L216,68 L262,50 L308,43 L308,108 L32,108 Z" fill="url(#cg1)"/>
+        <!-- Line -->
+        <path d="M32,96 L78,89 L124,72 L170,55 L216,68 L262,50 L308,43"
+          fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Dots -->
+        <circle cx="32"  cy="96" r="3" fill="#F59E0B"/>
+        <circle cx="78"  cy="89" r="3" fill="#F59E0B"/>
+        <circle cx="124" cy="72" r="3" fill="#F59E0B"/>
+        <circle cx="170" cy="55" r="3" fill="#F59E0B"/>
+        <circle cx="216" cy="68" r="3" fill="#F59E0B"/>
+        <circle cx="262" cy="50" r="3" fill="#F59E0B"/>
+        <!-- Active dot -->
+        <circle cx="308" cy="43" r="5.5" fill="#F59E0B"/>
+        <circle cx="308" cy="43" r="10" fill="rgba(245,158,11,0.18)"/>
+        <!-- Tooltip vertical -->
+        <line x1="308" y1="15" x2="308" y2="43" stroke="rgba(245,158,11,0.28)" stroke-width="1" stroke-dasharray="3,3"/>
+        <!-- Month labels -->
+        <text x="20"  y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">Ene</text>
+        <text x="66"  y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">Feb</text>
+        <text x="112" y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">Mar</text>
+        <text x="158" y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">Abr</text>
+        <text x="204" y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">May</text>
+        <text x="250" y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">Jun</text>
+        <text x="296" y="114" fill="#2D3A52" font-size="9.5" font-family="interface,sans-serif">Jul</text>
+      </svg>
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div class="card" style="padding:12px;text-align:center;">
+        <div class="lbl" style="margin-bottom:5px;font-size:9.5px;">Mínimo</div>
+        <div class="headline" style="font-size:18px;color:#34D399;">291<span style="font-size:11px;">.20</span></div>
+        <div style="font-size:9.5px;color:#2D3A52;margin-top:2px;">Ene 26</div>
+      </div>
+      <div class="card" style="padding:12px;text-align:center;">
+        <div class="lbl" style="margin-bottom:5px;font-size:9.5px;">Promedio</div>
+        <div class="headline" style="font-size:18px;">299<span style="font-size:11px;">.80</span></div>
+        <div style="font-size:9.5px;color:#2D3A52;margin-top:2px;">6 meses</div>
+      </div>
+      <div class="card" style="padding:12px;text-align:center;">
+        <div class="lbl" style="margin-bottom:5px;font-size:9.5px;">Máximo</div>
+        <div class="headline" style="font-size:18px;color:#F87171;">312<span style="font-size:11px;">.50</span></div>
+        <div style="font-size:9.5px;color:#2D3A52;margin-top:2px;">Mar 26</div>
+      </div>
+    </div>
+
+    <!-- Recent changes -->
+    <div class="lbl" style="margin-bottom:8px;">Últimos movimientos</div>
+    <div class="card" style="overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
+        <div style="font-size:12px;color:#94A3B8;">16 – 22 Jun</div>
+        <span class="chip c-up">▲ +3.40</span>
+        <div class="headline" style="font-size:15px;">307.40</div>
+      </div>
+      <div class="div"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
+        <div style="font-size:12px;color:#94A3B8;">9 – 15 Jun</div>
+        <span class="chip c-dn">▼ −1.80</span>
+        <div class="headline" style="font-size:15px;">304.00</div>
+      </div>
+      <div class="div"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
+        <div style="font-size:12px;color:#94A3B8;">2 – 8 Jun</div>
+        <span class="chip c-up">▲ +2.10</span>
+        <div class="headline" style="font-size:15px;">305.80</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="#334155"/></svg>
+      <span class="tab-l">Precios</span>
+    </div>
+    <div class="tab on">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3.5 18.5l6-6 4 4L22 7l-1.4-1.4-7.1 8-4-4L2 17z" fill="#F59E0B"/></svg>
+      <span class="tab-l">Historial</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#334155"/></svg>
+      <span class="tab-l">Calcular</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M18.9 12.9c.04-.3.06-.6.06-.9s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41L9.25 5.35C8.66 5.59 8.12 5.92 7.63 6.29L5.24 5.33c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58C4.84 11.36 4.8 11.69 4.8 12s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61L18.9 12.9zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="#334155"/></svg>
+      <span class="tab-l">Ajustes</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 3 — CALCULADORA
+══════════════════════════════════════════ -->
+<div class="screen" data-canvas-width="390" data-canvas-height="844">
+  <div class="notch"></div>
+
+  <div style="position:absolute;bottom:-60px;right:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(52,211,153,0.08) 0%,transparent 68%);
+    border-radius:50%;pointer-events:none;"></div>
+
+  <div class="sb">
+    <span class="sb-time">9:41</span>
+    <div class="sb-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#F1F5F9"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#F1F5F9"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#F1F5F9"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#F1F5F9"/></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11"><path d="M7.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="#F1F5F9"/><path d="M3 5.5C4.4 4.1 5.9 3.5 7.5 3.5s3.1.6 4.5 2" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M0.5 3C2.6 1 4.9 0 7.5 0s4.9 1 7 3" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0" y="1" width="22" height="11" rx="3" stroke="#F1F5F9" stroke-width="1.2" fill="none"/><rect x="22.5" y="4" width="2.5" height="5" rx="1.5" fill="#F1F5F9" opacity="0.45"/><rect x="1.5" y="2.5" width="15" height="8" rx="2" fill="#F59E0B"/></svg>
+    </div>
+  </div>
+
+  <div class="cnt">
+    <div style="margin-bottom:20px;">
+      <div class="lbl" style="margin-bottom:4px;">Estima tu gasto</div>
+      <div class="headline" style="font-size:22px;">Calculadora</div>
+    </div>
+
+    <!-- Vehicle pill -->
+    <div class="card" style="padding:13px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;">
+      <div style="width:42px;height:42px;background:rgba(245,158,11,0.10);border-radius:12px;
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="none">
+          <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="#F59E0B"/>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13px;color:#F1F5F9;font-weight:600;margin-bottom:1px;">Toyota Corolla 2020</div>
+        <div style="font-size:11px;color:#3D4F6B;">Gasolina Premium · Tanque 50L</div>
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M8.6 16.6L13.2 12 8.6 7.4 10 6l6 6-6 6z" fill="#3D4F6B"/></svg>
+    </div>
+
+    <!-- Quick config row -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <div style="flex:1;background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.22);
+        border-radius:14px;padding:12px;text-align:center;">
+        <div class="lbl" style="margin-bottom:4px;font-size:9.5px;">Combustible</div>
+        <div style="font-size:13px;color:#F59E0B;font-weight:700;">G. Premium</div>
+        <div style="font-size:10.5px;color:#3D4F6B;margin-top:2px;">RD$307.40/gal</div>
+      </div>
+      <div class="card" style="flex:1;padding:12px;text-align:center;">
+        <div class="lbl" style="margin-bottom:4px;font-size:9.5px;">Rendimiento</div>
+        <div style="font-size:13px;color:#F1F5F9;font-weight:700;">42 km/gal</div>
+        <div style="font-size:10.5px;color:#3D4F6B;margin-top:2px;">Tu historial</div>
+      </div>
+    </div>
+
+    <!-- Litros slider -->
+    <div class="card" style="padding:16px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="lbl">Cantidad a cargar</div>
+        <div class="headline" style="font-size:22px;color:#F59E0B;">30 <span style="font-size:14px;color:#64748B;font-weight:400;font-family:'interface',sans-serif;">litros</span></div>
+      </div>
+      <div style="position:relative;height:6px;background:rgba(255,255,255,0.06);border-radius:100px;margin-bottom:8px;">
+        <div style="position:absolute;left:0;top:0;width:60%;height:100%;
+          background:linear-gradient(90deg,#D97706,#F59E0B,#FBBF24);border-radius:100px;"></div>
+        <div style="position:absolute;top:50%;left:60%;transform:translate(-50%,-50%);
+          width:20px;height:20px;background:#F59E0B;border-radius:50%;
+          box-shadow:0 0 0 3px rgba(245,158,11,0.22);border:2.5px solid #07091A;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:9.5px;color:#2D3A52;">0 L</span>
+        <span style="font-size:9.5px;color:#2D3A52;">50 L (tanque lleno)</span>
+      </div>
+    </div>
+
+    <!-- KM slider -->
+    <div class="card" style="padding:16px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="lbl">Distancia estimada</div>
+        <div class="headline" style="font-size:22px;color:#818CF8;">120 <span style="font-size:14px;color:#64748B;font-weight:400;font-family:'interface',sans-serif;">km</span></div>
+      </div>
+      <div style="position:relative;height:6px;background:rgba(255,255,255,0.06);border-radius:100px;margin-bottom:8px;">
+        <div style="position:absolute;left:0;top:0;width:40%;height:100%;
+          background:linear-gradient(90deg,#4F46E5,#818CF8);border-radius:100px;"></div>
+        <div style="position:absolute;top:50%;left:40%;transform:translate(-50%,-50%);
+          width:20px;height:20px;background:#818CF8;border-radius:50%;
+          box-shadow:0 0 0 3px rgba(129,140,248,0.22);border:2.5px solid #07091A;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:9.5px;color:#2D3A52;">0 km</span>
+        <span style="font-size:9.5px;color:#2D3A52;">300 km</span>
+      </div>
+    </div>
+
+    <!-- Result card -->
+    <div style="background:linear-gradient(135deg,#141E3C 0%,#0C1226 100%);
+      border:1px solid rgba(245,158,11,0.18);border-radius:22px;padding:20px;
+      position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;
+        background:radial-gradient(circle,rgba(245,158,11,0.14) 0%,transparent 68%);
+        pointer-events:none;"></div>
+
+      <div class="lbl" style="margin-bottom:14px;">Resultado estimado</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:18px;">
+        <div>
+          <div style="font-size:10.5px;color:#3D4F6B;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;">Costo total</div>
+          <div class="headline" style="font-size:36px;color:#F59E0B;letter-spacing:-0.03em;">2,430<span style="font-size:20px;color:#FBBF24;">.50</span></div>
+          <div style="font-size:11px;color:#3D4F6B;margin-top:2px;">RD$</div>
+        </div>
+        <div style="border-left:1px solid rgba(255,255,255,0.06);padding-left:16px;display:flex;flex-direction:column;justify-content:center;gap:10px;">
+          <div>
+            <div style="font-size:10px;color:#3D4F6B;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Alcance</div>
+            <div style="font-size:19px;font-weight:800;color:#F1F5F9;letter-spacing:-0.01em;">630 km</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#3D4F6B;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Por km</div>
+            <div style="font-size:19px;font-weight:800;color:#34D399;letter-spacing:-0.01em;">RD$19.30</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#F59E0B;border-radius:14px;padding:14px;text-align:center;">
+        <span style="font-size:14px;font-weight:800;color:#07091A;letter-spacing:0.02em;">Guardar cálculo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="#334155"/></svg>
+      <span class="tab-l">Precios</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3.5 18.5l6-6 4 4L22 7l-1.4-1.4-7.1 8-4-4L2 17z" fill="#334155"/></svg>
+      <span class="tab-l">Historial</span>
+    </div>
+    <div class="tab on">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#F59E0B"/></svg>
+      <span class="tab-l">Calcular</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M18.9 12.9c.04-.3.06-.6.06-.9s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41L9.25 5.35C8.66 5.59 8.12 5.92 7.63 6.29L5.24 5.33c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58C4.84 11.36 4.8 11.69 4.8 12s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61L18.9 12.9zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="#334155"/></svg>
+      <span class="tab-l">Ajustes</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PANTALLA 4 — MI VEHÍCULO
+══════════════════════════════════════════ -->
+<div class="screen" data-canvas-width="390" data-canvas-height="844">
+  <div class="notch"></div>
+
+  <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);
+    width:340px;height:200px;
+    background:radial-gradient(ellipse,rgba(99,102,241,0.09) 0%,transparent 70%);
+    pointer-events:none;"></div>
+
+  <div class="sb">
+    <span class="sb-time">9:41</span>
+    <div class="sb-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="6" width="3" height="6" rx="1" fill="#F1F5F9"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#F1F5F9"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#F1F5F9"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#F1F5F9"/></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11"><path d="M7.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="#F1F5F9"/><path d="M3 5.5C4.4 4.1 5.9 3.5 7.5 3.5s3.1.6 4.5 2" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M0.5 3C2.6 1 4.9 0 7.5 0s4.9 1 7 3" stroke="#F1F5F9" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+      <svg width="26" height="13" viewBox="0 0 26 13"><rect x="0" y="1" width="22" height="11" rx="3" stroke="#F1F5F9" stroke-width="1.2" fill="none"/><rect x="22.5" y="4" width="2.5" height="5" rx="1.5" fill="#F1F5F9" opacity="0.45"/><rect x="1.5" y="2.5" width="15" height="8" rx="2" fill="#F59E0B"/></svg>
+    </div>
+  </div>
+
+  <div class="cnt">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div class="lbl" style="margin-bottom:4px;">Gestión</div>
+        <div class="headline" style="font-size:22px;">Mi Vehículo</div>
+      </div>
+      <div style="width:36px;height:36px;background:#F59E0B;border-radius:10px;
+        display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="#07091A"/></svg>
+      </div>
+    </div>
+
+    <!-- Vehicle card -->
+    <div style="background:linear-gradient(135deg,#101E3E 0%,#0C1226 100%);
+      border:1px solid rgba(99,102,241,0.20);border-radius:22px;padding:20px;
+      margin-bottom:14px;position:relative;overflow:hidden;">
+      <!-- bg car shape -->
+      <div style="position:absolute;bottom:-10px;right:14px;opacity:0.05;">
+        <svg width="120" height="60" viewBox="0 0 24 12" fill="white">
+          <path d="M23.5 7h-1V4.5C22.5 3.1 21.4 2 20 2H4C2.6 2 1.5 3.1 1.5 4.5V7H.5C.2 7 0 7.2 0 7.5v2C0 9.8.2 10 .5 10h.5c0 1.1.9 2 2 2s2-.9 2-2h14c0 1.1.9 2 2 2s2-.9 2-2h.5c.3 0 .5-.2.5-.5v-2C24 7.2 23.8 7 23.5 7z"/>
+        </svg>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <div style="width:48px;height:48px;background:rgba(99,102,241,0.14);border-radius:14px;
+          display:flex;align-items:center;justify-content:center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="#818CF8"/>
+          </svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:2px;">Toyota Corolla</div>
+          <div style="font-size:12px;color:#475569;">2020 · G. Premium · 50L</div>
+        </div>
+        <span class="chip c-neu">Principal</span>
+      </div>
+
+      <!-- Tank level -->
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="font-size:12px;color:#475569;">Nivel estimado del tanque</div>
+          <div style="font-size:14px;font-weight:800;color:#F1F5F9;">68%</div>
+        </div>
+        <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;">
+          <div style="width:68%;height:100%;
+            background:linear-gradient(90deg,#4F46E5,#818CF8,#A5B4FC);border-radius:100px;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+          <span style="font-size:9.5px;color:#2D3A52;">Vacío</span>
+          <span style="font-size:9.5px;color:#818CF8;font-weight:600;">34 litros restantes</span>
+          <span style="font-size:9.5px;color:#2D3A52;">50L lleno</span>
+        </div>
+      </div>
+
+      <!-- Quick stats -->
+      <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:0;align-items:center;">
+        <div style="text-align:center;">
+          <div class="lbl" style="font-size:9px;margin-bottom:3px;">Km junio</div>
+          <div style="font-size:17px;font-weight:800;color:#F1F5F9;">2,140</div>
+        </div>
+        <div style="height:32px;background:rgba(255,255,255,0.05);"></div>
+        <div style="text-align:center;">
+          <div class="lbl" style="font-size:9px;margin-bottom:3px;">Gasto junio</div>
+          <div style="font-size:17px;font-weight:800;color:#F59E0B;">RD$18.4k</div>
+        </div>
+        <div style="height:32px;background:rgba(255,255,255,0.05);"></div>
+        <div style="text-align:center;">
+          <div class="lbl" style="font-size:9px;margin-bottom:3px;">Rendimiento</div>
+          <div style="font-size:17px;font-weight:800;color:#34D399;">42km/g</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last fill-ups -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+      <div class="lbl">Últimas cargas</div>
+      <span style="font-size:12px;color:#F59E0B;font-weight:600;">Ver todo →</span>
+    </div>
+
+    <div class="card" style="overflow:hidden;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;">
+        <div style="width:34px;height:34px;background:rgba(245,158,11,0.11);border-radius:10px;
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="17" viewBox="0 0 20 22"><path d="M10 1C6.5 7 3.5 10.5 3.5 14a6.5 6.5 0 0013 0C16.5 10.5 13.5 7 10 1z" fill="#F59E0B"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12.5px;color:#F1F5F9;font-weight:600;margin-bottom:1px;">40 L · G. Premium</div>
+          <div style="font-size:10.5px;color:#3D4F6B;">Hoy, 8:20 AM · Shell Las Americas</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:#F1F5F9;">RD$3,244</div>
+          <div style="font-size:9.5px;color:#3D4F6B;">RD$81.10/L</div>
+        </div>
+      </div>
+      <div class="div"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;">
+        <div style="width:34px;height:34px;background:rgba(245,158,11,0.07);border-radius:10px;
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="17" viewBox="0 0 20 22"><path d="M10 1C6.5 7 3.5 10.5 3.5 14a6.5 6.5 0 0013 0C16.5 10.5 13.5 7 10 1z" fill="#F59E0B" opacity="0.6"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12.5px;color:#F1F5F9;font-weight:600;margin-bottom:1px;">25 L · G. Premium</div>
+          <div style="font-size:10.5px;color:#3D4F6B;">Jue 19 Jun · Texaco Churchill</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:#F1F5F9;">RD$2,028</div>
+          <div style="font-size:9.5px;color:#3D4F6B;">RD$81.10/L</div>
+        </div>
+      </div>
+      <div class="div"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;">
+        <div style="width:34px;height:34px;background:rgba(245,158,11,0.04);border-radius:10px;
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="17" viewBox="0 0 20 22"><path d="M10 1C6.5 7 3.5 10.5 3.5 14a6.5 6.5 0 0013 0C16.5 10.5 13.5 7 10 1z" fill="#F59E0B" opacity="0.35"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12.5px;color:#F1F5F9;font-weight:600;margin-bottom:1px;">30 L · G. Premium</div>
+          <div style="font-size:10.5px;color:#3D4F6B;">Lun 16 Jun · Puma Duarte</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:#F1F5F9;">RD$2,433</div>
+          <div style="font-size:9.5px;color:#34D399;">RD$79.50/L ↓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert banner -->
+    <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.16);
+      border-radius:15px;padding:13px 16px;display:flex;align-items:center;gap:12px;">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#F59E0B"/>
+      </svg>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:700;color:#F1F5F9;margin-bottom:1px;">Alerta activa</div>
+        <div style="font-size:10.5px;color:#475569;">Avísame si G. Premium baja de RD$300</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M8.6 16.6L13.2 12 8.6 7.4 10 6l6 6-6 6z" fill="#3D4F6B"/></svg>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="#334155"/></svg>
+      <span class="tab-l">Precios</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3.5 18.5l6-6 4 4L22 7l-1.4-1.4-7.1 8-4-4L2 17z" fill="#334155"/></svg>
+      <span class="tab-l">Historial</span>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#334155"/></svg>
+      <span class="tab-l">Calcular</span>
+    </div>
+    <div class="tab on">
+      <svg width="22" height="22" viewBox="0 0 24 24">
+        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="#F59E0B"/>
+      </svg>
+      <span class="tab-l">Mi Auto</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

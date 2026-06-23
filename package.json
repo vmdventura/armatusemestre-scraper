@@ -1,0 +1,12 @@
+{
+  "name": "armatusemestre-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "scrape:combustibles": "node combustibles/scraper.mjs",
+    "test:uasd": "node test-uasd.mjs"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
