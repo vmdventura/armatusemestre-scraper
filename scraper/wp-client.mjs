@@ -3,6 +3,7 @@ export function createWpClient({ siteUrl, username, appPassword }) {
   const auth = `Basic ${Buffer.from(`${username}:${appPassword}`).toString("base64")}`;
 
   const categoryCache = new Map();
+  const tagCache = new Map();
 
   async function apiFetch(path, options = {}) {
     const url = `${base}${path}`;
@@ -43,9 +44,30 @@ export function createWpClient({ siteUrl, username, appPassword }) {
 
     const created = await apiFetch("/categories", {
       method: "POST",
-      body: JSON.stringify({ name, slug: name.toLowerCase() }),
+      body: JSON.stringify({ name, slug: name.toLowerCase().replace(/\s+/g, "-") }),
     });
     categoryCache.set(name, created.id);
+    return created.id;
+  }
+
+  async function getOrCreateTag(name) {
+    if (!name?.trim()) return null;
+    const key = name.trim().toLowerCase();
+    if (tagCache.has(key)) return tagCache.get(key);
+
+    const existing = await apiFetch(`/tags?search=${encodeURIComponent(name)}&per_page=5`);
+    const match = existing.find((t) => t.name.toLowerCase() === key);
+    if (match) {
+      tagCache.set(key, match.id);
+      return match.id;
+    }
+
+    const slug = key.replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+    const created = await apiFetch("/tags", {
+      method: "POST",
+      body: JSON.stringify({ name: name.trim(), slug }),
+    });
+    tagCache.set(key, created.id);
     return created.id;
   }
 
@@ -57,13 +79,18 @@ export function createWpClient({ siteUrl, username, appPassword }) {
   async function upsert(wpPost) {
     const categoryId = await getOrCreateCategory(wpPost.campus);
 
+    // Resolve tag names → IDs (WP REST API requires IDs, not strings)
+    const tagIds = (
+      await Promise.all((wpPost.tags ?? []).map((name) => getOrCreateTag(name)))
+    ).filter(Boolean);
+
     const payload = {
       title: wpPost.title,
       slug: wpPost.slug,
       status: wpPost.status,
       content: wpPost.content,
       categories: [categoryId],
-      tags: wpPost.tags,
+      tags: tagIds,
       meta: wpPost.meta,
     };
 
@@ -80,6 +107,23 @@ export function createWpClient({ siteUrl, username, appPassword }) {
         body: JSON.stringify(payload),
       });
       return { action: "created", slug: wpPost.slug };
+    }
+  }
+
+  async function upsertPage(slug, title, content) {
+    const existing = await apiFetch(`/pages?slug=${encodeURIComponent(slug)}&per_page=1&status=any`);
+    if (existing.length > 0) {
+      await apiFetch(`/pages/${existing[0].id}`, {
+        method: "PUT",
+        body: JSON.stringify({ title, content, status: "publish" }),
+      });
+      return { action: "updated", slug };
+    } else {
+      await apiFetch("/pages", {
+        method: "POST",
+        body: JSON.stringify({ title, slug, content, status: "publish" }),
+      });
+      return { action: "created", slug };
     }
   }
 
@@ -106,10 +150,9 @@ export function createWpClient({ siteUrl, username, appPassword }) {
     return deleted;
   }
 
-  // Identifica slugs generados por este scraper (patrón: "XXX0000-sec-NNN-CAMPUS")
   function isUasdSlug(slug) {
     return /^[a-z]{3}\d{4}-sec-\d+-[a-z]+$/.test(slug);
   }
 
-  return { upsert, deleteStalePosts, getOrCreateCategory };
+  return { upsert, upsertPage, deleteStalePosts, getOrCreateCategory };
 }

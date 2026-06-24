@@ -6,14 +6,20 @@ on:
   workflow_dispatch:
     inputs:
       campus:
-        description: "Campus específico para pruebas (CSA, CSN, CSSJ, CSS). Dejar vacío para todos."
+        description: "Campus específico (CSA, CSN, CSSJ, CSS). Vacío = todos."
         required: false
         default: ""
+      skip_wp:
+        description: "Solo exportar JSON sin subir a WordPress"
+        type: boolean
+        default: false
 
 jobs:
   scrape-and-sync:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: write # Para commitear docs/data/horarios.json
 
     steps:
       - uses: actions/checkout@v4
@@ -22,10 +28,24 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Scrape UASD y publicar en WordPress
+      - name: Scrape UASD y sincronizar con WordPress
         env:
           WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
           WP_USERNAME: ${{ secrets.WP_USERNAME }}
           WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          WP_FRONTEND_URL: ${{ secrets.WP_FRONTEND_URL }}
           WP_TEST_CAMPUS: ${{ github.event.inputs.campus }}
+          SKIP_WP: ${{ github.event.inputs.skip_wp == 'true' && '1' || '' }}
         run: node index.mjs
+
+      - name: Commitear datos del frontend (horarios.json)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/horarios.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios en horarios.json, nada que commitear."
+          else
+            git commit -m "chore: actualizar datos de horarios UASD [skip ci]"
+            git push
+          fi

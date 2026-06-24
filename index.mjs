@@ -1,27 +1,34 @@
 import { scrapeAll } from "./scraper/uasd.mjs";
 import { toWpPost } from "./scraper/transform.mjs";
 import { createWpClient } from "./scraper/wp-client.mjs";
+import { exportJson } from "./scraper/export-json.mjs";
+import { setupWpPages } from "./scraper/wp-pages.mjs";
 
 const {
   WP_SITE_URL,
   WP_USERNAME,
   WP_APP_PASSWORD,
   WP_TEST_CAMPUS,
+  WP_FRONTEND_URL,
+  SKIP_WP,
 } = process.env;
 
-if (!WP_SITE_URL || !WP_USERNAME || !WP_APP_PASSWORD) {
+if (!SKIP_WP && (!WP_SITE_URL || !WP_USERNAME || !WP_APP_PASSWORD)) {
   console.error("Faltan variables de entorno: WP_SITE_URL, WP_USERNAME, WP_APP_PASSWORD");
+  console.error("Para exportar solo el JSON sin WordPress: SKIP_WP=1 node index.mjs");
   process.exit(1);
 }
 
 const campuses = WP_TEST_CAMPUS ? [WP_TEST_CAMPUS] : undefined;
-
-console.log(`[index] Iniciando scrape${campuses ? ` (solo ${campuses.join(", ")})` : " (todos los campus)"}...`);
+console.log(
+  `[index] Iniciando scrape${campuses ? ` (solo ${campuses.join(", ")})` : " (todos los campus)"}...`
+);
 
 const secciones = await scrapeAll({
   campuses,
-  onProgress({ campus, clave, index, total }) {
-    if (index % 50 === 0) console.log(`[index] ${campus}: ${index}/${total} asignaturas procesadas`);
+  onProgress({ campus, index, total }) {
+    if (index % 50 === 0)
+      console.log(`[index] ${campus}: ${index}/${total} asignaturas procesadas`);
   },
 });
 
@@ -32,8 +39,15 @@ if (secciones.length === 0) {
   process.exit(1);
 }
 
-// Mostrar muestra de la respuesta real para debugging
 console.log("[index] Muestra de datos (primera sección):", JSON.stringify(secciones[0], null, 2));
+
+// Generar JSON para el frontend (siempre, independiente de WordPress)
+await exportJson(secciones);
+
+if (SKIP_WP) {
+  console.log("[index] SKIP_WP activo: saltando sincronización con WordPress.");
+  process.exit(0);
+}
 
 const wpClient = createWpClient({
   siteUrl: WP_SITE_URL,
@@ -41,6 +55,10 @@ const wpClient = createWpClient({
   appPassword: WP_APP_PASSWORD,
 });
 
+// Crear/actualizar estructura de páginas en WordPress
+await setupWpPages(wpClient, { frontendUrl: WP_FRONTEND_URL });
+
+// Subir secciones como posts
 const wpPosts = secciones.map(toWpPost).filter((p) => p.slug);
 const activeSlugs = wpPosts.map((p) => p.slug);
 
@@ -61,7 +79,9 @@ for (let i = 0; i < wpPosts.length; i++) {
   }
 
   if ((i + 1) % 100 === 0) {
-    console.log(`[index] Progreso: ${i + 1}/${wpPosts.length} (${created} creados, ${updated} actualizados, ${errors} errores)`);
+    console.log(
+      `[index] Progreso: ${i + 1}/${wpPosts.length} (${created} creados, ${updated} actualizados, ${errors} errores)`
+    );
   }
 }
 
@@ -71,4 +91,6 @@ console.log("[index] Eliminando posts obsoletos...");
 const deleted = await wpClient.deleteStalePosts(activeSlugs);
 console.log(`[index] ${deleted} posts obsoletos eliminados`);
 
-console.log(`[index] Finalizado. Resumen: ${created} creados, ${updated} actualizados, ${deleted} eliminados, ${errors} errores`);
+console.log(
+  `[index] Finalizado. Resumen: ${created} creados, ${updated} actualizados, ${deleted} eliminados, ${errors} errores`
+);
