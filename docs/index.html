@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arma·tusemestre — Horarios UASD</title>
+  <meta name="description" content="Consulta horarios, busca asignaturas y arma tu semestre en la UASD sin conflictos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-brand">
+      <a href="/" class="brand-lockup" aria-label="arma·tusemestre — inicio">
+        <h1><span class="brand-arma">arma</span>·tusemestre</h1>
+        <p class="header-sub">Horarios UASD · <span id="semestre-label">cargando...</span></p>
+      </a>
+    </div>
+    <div id="data-status" class="data-status">Cargando...</div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- Panel izquierdo: búsqueda -->
+    <section class="panel-search" aria-label="Buscar asignaturas">
+      <div class="search-controls">
+        <div class="search-input-wrap">
+          <input
+            type="search"
+            id="search-input"
+            placeholder="Código (CIV2440), nombre o profesor…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Buscar asignatura"
+          >
+          <span class="search-icon" aria-hidden="true">🔍</span>
+        </div>
+        <div class="filter-row">
+          <select id="campus-filter" aria-label="Filtrar por campus">
+            <option value="">Todos los campus</option>
+            <option value="CSA">Ciudad Universitaria</option>
+            <option value="CSN">Campus Norte</option>
+            <option value="CSSJ">San Juan de la Maguana</option>
+            <option value="CSS">Santiago</option>
+          </select>
+          <label class="check-label">
+            <input type="checkbox" id="available-only">
+            Solo con cupo
+          </label>
+        </div>
+      </div>
+      <div id="results-count" class="results-count" aria-live="polite"></div>
+      <div id="search-results" class="search-results" role="list">
+        <p class="search-hint">Escribe al menos 2 caracteres para buscar</p>
+      </div>
+    </section>
+
+    <!-- Panel derecho: horario -->
+    <section class="panel-schedule" aria-label="Mi horario">
+      <div class="schedule-top">
+        <h2>Mi Horario <span id="credits-badge" class="credits-badge"></span></h2>
+        <div class="schedule-actions">
+          <button id="btn-clear" class="btn btn-secondary">Limpiar</button>
+          <button id="btn-print" class="btn btn-primary">🖨 Imprimir</button>
+        </div>
+      </div>
+
+      <div id="schedule-grid" class="schedule-grid" aria-label="Grilla de horario semanal"></div>
+
+      <div id="selected-list" class="selected-list"></div>
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
+
+  <!-- Modal de conflicto -->
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h3 id="modal-title">⚠️ Conflicto de horario</h3>
+      <p id="modal-text"></p>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn btn-secondary">Cancelar</button>
+        <button id="modal-confirm" class="btn btn-danger">Agregar de todas formas</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
