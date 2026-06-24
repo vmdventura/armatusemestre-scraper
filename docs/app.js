@@ -95,8 +95,12 @@ async function loadData() {
 }
 
 // ---- Búsqueda ----
+function normalize(str) {
+  return String(str).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
 function getSearchResults() {
-  const q       = document.getElementById("search-input").value.trim().toLowerCase();
+  const q       = normalize(document.getElementById("search-input").value.trim());
   const campus  = document.getElementById("campus-filter").value;
   const avail   = document.getElementById("available-only").checked;
 
@@ -108,10 +112,10 @@ function getSearchResults() {
       if (avail && s.cupo > 0 && s.disponibles === 0) return false;
       if (q.length >= 2) {
         return (
-          s.clave.toLowerCase().includes(q) ||
-          s.nombre.toLowerCase().includes(q) ||
-          s.profesor.toLowerCase().includes(q) ||
-          s.seccion.toLowerCase().includes(q)
+          normalize(s.clave).includes(q) ||
+          normalize(s.nombre).includes(q) ||
+          normalize(s.profesor).includes(q) ||
+          normalize(s.seccion).includes(q)
         );
       }
       return true;
@@ -205,7 +209,7 @@ function toggleSection(section) {
 function addSection(section) {
   selectedMap.set(section.id, section);
   saveToStorage();
-  renderGrid();
+  buildGrid();
   renderSelectedList();
   renderResults();
   showToast(`${section.clave} Sec ${section.seccion} agregada ✓`, "success");
@@ -215,7 +219,7 @@ function removeSection(id) {
   const section = selectedMap.get(id);
   selectedMap.delete(id);
   saveToStorage();
-  renderGrid();
+  buildGrid();
   renderSelectedList();
   renderResults();
   if (section) showToast(`${section.clave} Sec ${section.seccion} quitada`, "info");
