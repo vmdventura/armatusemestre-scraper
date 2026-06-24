@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Usage</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="widget">
+
+  <!-- Titlebar -->
+  <div class="titlebar" id="drag-region">
+    <div class="title">
+      <div class="title-icon">⬡</div>
+      <span>Claude Usage</span>
+      <span class="title-sub">Monitor</span>
+    </div>
+    <div class="controls">
+      <button id="refresh-btn" title="Actualizar">↻</button>
+      <button id="minimize-btn" title="Minimizar">−</button>
+      <button id="close-btn" title="Cerrar">✕</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content" id="content">
+
+    <!-- HOY -->
+    <div class="section">
+      <div class="section-label">Hoy</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val cost-val" id="today-cost">$0.0000</div>
+          <div class="stat-lbl">Costo estimado</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="today-sessions">0</div>
+          <div class="stat-lbl">Sesiones</div>
+        </div>
+        <div class="stat-card full">
+          <div class="stat-val" id="today-total-tokens">0</div>
+          <div class="stat-lbl">Tokens totales</div>
+          <div class="token-row">
+            <div class="token-item">Entrada <span id="today-input">0</span></div>
+            <div class="token-item">Salida <span id="today-output">0</span></div>
+            <div class="token-item">Cache ↺ <span id="today-cache">0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTE MES -->
+    <div class="section">
+      <div class="section-label">Este mes</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val cost-val" id="month-cost">$0.0000</div>
+          <div class="stat-lbl">Costo estimado</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="month-sessions">0</div>
+          <div class="stat-lbl">Sesiones</div>
+        </div>
+        <div class="stat-card full">
+          <div class="stat-val" id="month-total-tokens">0</div>
+          <div class="stat-lbl">Tokens totales</div>
+          <div class="token-row">
+            <div class="token-item">Entrada <span id="month-input">0</span></div>
+            <div class="token-item">Salida <span id="month-output">0</span></div>
+            <div class="token-item">Cache ↺ <span id="month-cache">0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVIDAD (últimos 7 días) -->
+    <div class="section" id="chart-section">
+      <div class="section-label">Actividad — últimos 7 días</div>
+      <div class="chart">
+        <div class="chart-bars" id="chart-bars"></div>
+        <div class="chart-dates" id="chart-dates"></div>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO TOTAL -->
+    <div class="section">
+      <div class="section-label">Histórico total</div>
+      <div class="kv-block">
+        <div class="kv-row">
+          <span class="kv-key">Costo total</span>
+          <span class="kv-val green" id="total-cost">$0.0000</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">Sesiones</span>
+          <span class="kv-val" id="total-sessions">0</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">Tokens entrada</span>
+          <span class="kv-val" id="total-input">0</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">Tokens salida</span>
+          <span class="kv-val" id="total-output">0</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">Cache leído</span>
+          <span class="kv-val" id="total-cache-read">0</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">Cache creado</span>
+          <span class="kv-val" id="total-cache-write">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODELOS -->
+    <div class="section">
+      <div class="section-label">Por modelo</div>
+      <div id="models-list"></div>
+    </div>
+
+    <!-- SESIONES RECIENTES -->
+    <div class="section">
+      <div class="section-label">Sesiones recientes</div>
+      <div id="sessions-list"></div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="footer" id="footer">Cargando datos...</div>
+
+</div><!-- /widget -->
+<script src="app.js"></script>
+</body>
+</html>
