@@ -5,11 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "icon": "./src/assets/icon.png",
-    "splash": {
-      "backgroundColor": "#07091A",
-      "resizeMode": "contain"
-    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "do.tanquelleno.app"
@@ -22,9 +17,6 @@
     },
     "web": {
       "bundler": "metro"
-    },
-    "plugins": [
-      "expo-font"
-    ]
+    }
   }
 }
