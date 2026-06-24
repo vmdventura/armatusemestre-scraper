@@ -1,12 +1,9 @@
 {
   "name": "claude-usage-widget",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Widget flotante para Mac - monitoreo de consumo de Claude",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
-    "start": "electron ."
-  },
-  "dependencies": {
-    "electron": "^33.0.0"
+    "start": "node server.js"
   }
 }
