@@ -16,12 +16,8 @@ export async function setupWpPages(wpClient, { frontendUrl = "" } = {}) {
   ];
 
   for (const page of pages) {
-    try {
-      const result = await wpClient.upsertPage(page.slug, page.title, page.content);
-      console.log(`[wp-pages] "${page.title}": ${result.action}`);
-    } catch (err) {
-      console.warn(`[wp-pages] Error en página "${page.title}":`, err.message);
-    }
+    const result = await wpClient.upsertPage(page.slug, page.title, page.content);
+    console.log(`[wp-pages] Página "${page.title}": ${result.action}`);
   }
 }
 
@@ -31,57 +27,54 @@ function buildHorariosPage(iframeSrc) {
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Busca asignaturas por código, nombre o profesor. Arma tu horario del semestre y detecta conflictos automáticamente.</p>
+<p>Busca asignaturas por código, nombre o profesor. Arma tu horario del semestre sin conflictos y verifica la disponibilidad de cupos en tiempo real.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:html -->
-<div style="width:100%;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);">
+<div style="width:100%;min-height:720px;border-radius:10px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.10);background:#f8fafc;">
   <iframe
     src="${iframeSrc}"
     width="100%"
     height="720"
     frameborder="0"
-    style="display:block;border:none;"
-    title="Arma Tu Semestre — Buscador de Horarios UASD"
+    style="display:block;border:none;width:100%;min-height:720px;"
+    title="Arma Tu Semestre — Horarios UASD"
     loading="lazy">
   </iframe>
 </div>
 <!-- /wp:html -->
 
 <!-- wp:paragraph -->
-<p><small>Los datos se actualizan automáticamente cada día desde el sistema oficial de la UASD.</small></p>
+<p><small>Los datos se sincronizan automáticamente cada día desde el sistema oficial de la UASD. Para matrícula oficial usa los canales institucionales.</small></p>
 <!-- /wp:paragraph -->`;
 }
 
 function buildAboutPage() {
   return `<!-- wp:paragraph -->
-<p><strong>Arma Tu Semestre</strong> es una herramienta no oficial que facilita la consulta de horarios y la planificación del semestre en la UASD.</p>
+<p><strong>Arma Tu Semestre</strong> es una herramienta no oficial para facilitar la consulta de la Programación Docente de la UASD.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
-<h3>Funcionalidades</h3>
+<h3>¿Qué puedes hacer?</h3>
 <!-- /wp:heading -->
 
 <!-- wp:list -->
 <ul class="wp-block-list">
-  <li>Búsqueda de asignaturas por código, nombre o profesor</li>
-  <li>Filtro por campus (Ciudad Universitaria, Norte, San Juan, Santiago)</li>
-  <li>Constructor de horario semanal interactivo</li>
-  <li>Detección automática de conflictos de horario</li>
-  <li>Indicador de cupos disponibles en tiempo real</li>
-  <li>Comentarios con verificación de correo institucional (@uasd.edu.do)</li>
+  <li>🔍 Buscar asignaturas por código, nombre o profesor</li>
+  <li>📍 Filtrar por campus (Ciudad Universitaria, Norte, Santiago, San Juan)</li>
+  <li>🗓️ Ver tu horario semanal de forma visual</li>
+  <li>⚠️ Detectar conflictos de horario automáticamente</li>
+  <li>💺 Ver disponibilidad de cupos en tiempo real</li>
+  <li>💬 Comentar y discutir sobre asignaturas con tu correo UASD</li>
+  <li>🖨️ Imprimir tu horario armado</li>
 </ul>
 <!-- /wp:list -->
 
 <!-- wp:heading {"level":3} -->
-<h3>Fuente de datos</h3>
+<h3>Datos y actualización</h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Los datos se obtienen automáticamente del sistema de <strong>Programación por Asignatura</strong> de la UASD y se sincronizan diariamente vía GitHub Actions.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:paragraph -->
-<p><em>Esta herramienta es de carácter informativo. Para matrícula oficial, usa siempre los canales de la UASD.</em></p>
+<p>Los datos se obtienen automáticamente del sistema <strong>Programación por Asignatura</strong> de la UASD y se actualizan diariamente. Esta herramienta es de carácter informativo.</p>
 <!-- /wp:paragraph -->`;
 }
