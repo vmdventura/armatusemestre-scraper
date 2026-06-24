@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arma Tu Semestre — Horarios UASD</title>
+  <title>arma·tusemestre — Horarios UASD</title>
   <meta name="description" content="Consulta horarios, busca asignaturas y arma tu semestre en la UASD sin conflictos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="app-header">
     <div class="header-brand">
-      <span class="header-logo">🎓</span>
-      <div>
-        <h1>Arma Tu Semestre</h1>
+      <a href="/" class="brand-lockup" aria-label="arma·tusemestre — inicio">
+        <h1><span class="brand-arma">arma</span>·tusemestre</h1>
         <p class="header-sub">Horarios UASD · <span id="semestre-label">cargando...</span></p>
-      </div>
+      </a>
     </div>
     <div id="data-status" class="data-status">Cargando...</div>
   </header>
