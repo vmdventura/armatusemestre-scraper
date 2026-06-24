@@ -153,7 +153,7 @@ export function PreciosScreen() {
           </>
         )}
 
-        <Text style={styles.footer}>Actualizado lun. · Fuente: MICM</Text>
+        <Text style={styles.footer}>Actualizado vier. · Fuente: MICM</Text>
       </ScrollView>
     </SafeAreaView>
   );

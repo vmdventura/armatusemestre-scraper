@@ -2,8 +2,11 @@ name: Scrape Combustibles RD
 
 on:
   schedule:
-    # Every Monday at 2pm UTC (10am Santo Domingo time, hours after MICM publishes)
-    - cron: '0 14 * * 1'
+    # Viernes 8:30pm UTC = 4:30pm Santo Domingo (AST, UTC-4)
+    # MICM anuncia los precios los viernes ~4-5pm; los corremos a los 30 min del anuncio
+    - cron: '30 20 * * 5'
+    # Segundo intento a las 9:30pm UTC (5:30pm SDQ) por si el sitio tarda en actualizar
+    - cron: '30 21 * * 5'
   workflow_dispatch:
     inputs:
       dry_run:
