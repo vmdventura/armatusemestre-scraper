@@ -344,10 +344,12 @@ function fRel(iso) {
 function shortModel(m) {
   if (!m) return 'Desconocido';
   const s = m.toLowerCase();
-  if (s.includes('opus'))   return s.match(/\d/)?'Opus '+s.match(/[\d.]+/)?.[0]:'Opus';
-  if (s.includes('sonnet')) return s.match(/\d/)?'Sonnet '+s.match(/[\d.]+/)?.[0]:'Sonnet';
-  if (s.includes('haiku'))  return s.match(/\d/)?'Haiku '+s.match(/[\d.]+/)?.[0]:'Haiku';
-  return m.split('-').slice(-2).join('-');
+  // extrae versión tipo "4", "4.5", "4-6" → "4.6"
+  const ver = (s.match(/(\d+[-.]?\d*)/g) || []).join('.').replace(/-/g,'.');
+  if (s.includes('opus'))   return ver ? 'Opus '  + ver : 'Opus';
+  if (s.includes('sonnet')) return ver ? 'Sonnet '+ ver : 'Sonnet';
+  if (s.includes('haiku'))  return ver ? 'Haiku ' + ver : 'Haiku';
+  return m;
 }
 function modelColor(m) {
   if (!m) return '#888';
