@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>TanqueLleno — Prototipo</title>
+<style>
+:root{
+  --bg:#060818;--surface:#0C1228;--s2:#101830;--s3:#14203A;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
+  --amber:#F59E0B;--amber2:#FBBF24;--amber-glow:rgba(245,158,11,0.13);
+  --green:#34D399;--green-bg:rgba(52,211,153,0.11);
+  --red:#F87171;--red-bg:rgba(248,113,113,0.11);
+  --indigo:#818CF8;--indigo-bg:rgba(129,140,248,0.11);
+  --blue:#38BDF8;--blue-bg:rgba(56,189,248,0.09);
+  --txt:#F1F5F9;--txt2:#8899BB;--txt3:#3D4F6B;--txt4:#1F2D48;
+  --tab-h:78px;--status-h:44px;--phone-w:390px;--phone-h:844px;
+  --radius:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overscroll-behavior:none;}
+body{
+  background:radial-gradient(ellipse at 30% 20%,#0D1535 0%,#060818 60%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+}
+
+/* ── Phone shell ──────────────────────────────────────── */
+.phone{
+  width:var(--phone-w);height:var(--phone-h);
+  background:var(--bg);border-radius:var(--radius);
+  position:relative;overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 40px 80px rgba(0,0,0,0.8),
+    0 0 0 12px #0A0E1E,
+    0 0 0 13px rgba(255,255,255,0.04);
+  display:flex;flex-direction:column;
+}
+@media(max-width:420px){
+  .phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none;}
+  body{align-items:flex-start;}
+}
+
+/* ── Status bar ───────────────────────────────────────── */
+.status{
+  height:var(--status-h);display:flex;align-items:center;
+  justify-content:space-between;padding:0 28px;
+  font-size:13px;font-weight:600;color:var(--txt);
+  flex-shrink:0;position:relative;z-index:10;
+}
+.status-island{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:120px;height:36px;background:#000;border-radius:20px;
+}
+.status-left{position:relative;z-index:1;}
+.status-right{display:flex;gap:6px;align-items:center;position:relative;z-index:1;}
+.sig{display:flex;gap:2px;align-items:flex-end;}
+.sig span{width:3px;background:var(--txt);border-radius:1px;}
+.sig span:nth-child(1){height:5px;}
+.sig span:nth-child(2){height:8px;}
+.sig span:nth-child(3){height:11px;}
+.sig span:nth-child(4){height:14px;}
+.battery{
+  width:23px;height:12px;border:1.5px solid var(--txt);
+  border-radius:3px;position:relative;margin-left:2px;
+}
+.battery::before{
+  content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);
+  width:2px;height:6px;background:var(--txt);border-radius:0 1px 1px 0;
+}
+.battery::after{
+  content:'';position:absolute;left:2px;top:2px;right:2px;bottom:2px;
+  background:var(--green);border-radius:1px;
+}
+
+/* ── Screen stack ─────────────────────────────────────── */
+.screens{flex:1;overflow:hidden;position:relative;}
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease, transform .22s ease;
+  transform:translateX(18px);
+}
+.screen.active{
+  opacity:1;pointer-events:all;transform:translateX(0);
+}
+.scroll{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:16px 20px calc(var(--tab-h) + 16px);
+  scroll-behavior:smooth;
+}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ── Tab bar ──────────────────────────────────────────── */
+.tabbar{
+  height:var(--tab-h);flex-shrink:0;
+  display:flex;align-items:flex-start;
+  padding-top:10px;
+  background:rgba(10,14,32,0.85);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--border);
+  position:relative;z-index:20;
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;padding:0 4px;user-select:none;
+  transition:opacity .12s;
+}
+.tab:active{opacity:.6;}
+.tab-icon{width:26px;height:26px;position:relative;}
+.tab-dot{
+  position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--amber);
+  opacity:0;transition:opacity .15s;
+}
+.tab.active .tab-dot{opacity:1;}
+.tab-label{font-size:9.5px;font-weight:500;color:var(--txt3);letter-spacing:.1px;}
+.tab.active .tab-label{color:var(--amber);font-weight:700;}
+.home-indicator{
+  position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  width:130px;height:5px;background:rgba(255,255,255,0.2);border-radius:3px;
+}
+
+/* ── Typography helpers ───────────────────────────────── */
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:1.4px;color:var(--txt3);text-transform:uppercase;margin-bottom:5px;}
+.section-title{font-size:22px;font-weight:800;color:var(--txt);letter-spacing:-.5px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:1.3px;color:var(--txt3);text-transform:uppercase;margin:20px 0 10px;}
+
+/* ── Cards ────────────────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;
+}
+.card-p{padding:16px;}
+
+/* ── Badges / chips ───────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.3px;}
+.badge-green{background:var(--green-bg);color:var(--green);}
+.badge-amber{background:var(--amber-glow);color:var(--amber);}
+.badge-red{background:var(--red-bg);color:var(--red);}
+.badge-indigo{background:var(--indigo-bg);color:var(--indigo);}
+
+/* ── Dividers ─────────────────────────────────────────── */
+.div{height:1px;background:var(--border);}
+
+/* ════════════════════════════════════════════════════════
+   SCREEN 1 — CONSUMO (HOME)
+══════════════════════════════════════════════════════════ */
+.consumo-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:18px;
+}
+.consumo-greeting{font-size:13px;color:var(--txt3);font-weight:500;margin-bottom:3px;}
+.consumo-name{font-size:26px;font-weight:800;color:var(--txt);letter-spacing:-.6px;}
+.notif-btn{
+  width:38px;height:38px;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;flex-shrink:0;
+}
+.notif-dot{
+  position:absolute;top:7px;right:7px;width:8px;height:8px;
+  border-radius:50%;background:var(--amber);
+  border:2px solid var(--bg);
+}
+
+/* Hero spend card */
+.spend-card{
+  background:linear-gradient(135deg,#0F1A38 0%,#0C1228 100%);
+  border:1px solid rgba(245,158,11,0.18);
+  border-radius:24px;padding:22px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.spend-glow{
+  position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,158,11,0.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.spend-dots{
+  position:absolute;bottom:0;left:0;right:0;height:80px;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);
+  background-size:16px 16px;
+  pointer-events:none;
+}
+.spend-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.spend-amount-wrap{display:flex;align-items:baseline;gap:4px;margin-bottom:4px;}
+.spend-currency{font-size:16px;font-weight:600;color:var(--txt3);}
+.spend-amount{font-size:44px;font-weight:800;color:var(--amber);letter-spacing:-2px;line-height:1;}
+.spend-sub{font-size:11px;color:var(--txt2);margin-bottom:12px;}
+
+/* Mini bar chart inside card */
+.mini-bars{display:flex;gap:8px;align-items:flex-end;height:48px;padding:0 4px;}
+.mini-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.mini-bar{
+  width:100%;border-radius:4px 4px 2px 2px;
+  background:rgba(245,158,11,0.18);
+  transition:height .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+  min-height:4px;
+}
+.mini-bar.current{background:var(--amber);}
+.mini-bar-label{font-size:8.5px;color:var(--txt4);white-space:nowrap;}
+
+/* Quick stats */
+.stats-trio{display:flex;gap:8px;margin-bottom:12px;}
+.stat-mini{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:12px;
+}
+.stat-mini-val{font-size:18px;font-weight:800;color:var(--txt);letter-spacing:-.4px;margin-bottom:2px;}
+.stat-mini-key{font-size:9.5px;color:var(--txt3);font-weight:500;letter-spacing:.2px;}
+
+/* Fuel preference card */
+.fuel-pref{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:14px;margin-bottom:12px;
+}
+.fuel-pref-icon{
+  width:40px;height:40px;border-radius:12px;
+  background:var(--amber-glow);border:1px solid rgba(245,158,11,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.fuel-pref-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.fuel-pref-sub{font-size:11px;color:var(--txt2);}
+.fuel-pref-price{font-size:16px;font-weight:800;color:var(--amber);margin-left:auto;flex-shrink:0;}
+
+/* Next fill prediction */
+.prediction{
+  background:linear-gradient(135deg,rgba(52,211,153,0.06) 0%,transparent 100%);
+  border:1px solid rgba(52,211,153,0.15);
+  border-radius:18px;padding:14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.prediction-icon{font-size:22px;}
+.prediction-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.prediction-sub{font-size:11px;color:var(--txt2);}
+
+/* Fill-up history rows */
+.fillup-row{display:flex;align-items:center;gap:12px;padding:13px 16px;}
+.fillup-ico{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(245,158,11,0.1);display:flex;align-items:center;
+  justify-content:center;font-size:14px;flex-shrink:0;
+}
+.fillup-date{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:2px;}
+.fillup-detail{font-size:11px;color:var(--txt2);}
+.fillup-amount{font-size:14px;font-weight:700;color:var(--txt);margin-left:auto;flex-shrink:0;}
+.see-all{
+  display:flex;align-items:center;justify-content:center;
+  padding:12px;font-size:12px;font-weight:600;color:var(--amber);
+  cursor:pointer;border-top:1px solid var(--border);
+}
+
+/* FAB */
+.fab{
+  background:var(--amber);color:#000;
+  border:none;border-radius:16px;
+  width:100%;padding:15px;
+  font-size:14px;font-weight:800;letter-spacing:-.1px;
+  cursor:pointer;margin-top:16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 8px 24px rgba(245,158,11,0.25);
+  transition:transform .1s,box-shadow .1s;
+}
+.fab:active{transform:scale(.97);box-shadow:0 4px 12px rgba(245,158,11,0.2);}
+
+/* ════════════════════════════════════════════════════════
+   SCREEN 2 — PRECIOS
+══════════════════════════════════════════════════════════ */
+.precios-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:18px;
+}
+.bell-btn{
+  width:40px;height:40px;background:var(--surface);
+  border:1px solid var(--border);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;
+}
+.bell-dot{
+  position:absolute;top:8px;right:8px;width:8px;height:8px;
+  border-radius:50%;background:var(--amber);border:2px solid var(--bg);
+}
+
+/* Hero card */
+.hero{
+  background:linear-gradient(140deg,#0F1A38 0%,#0B1028 100%);
+  border:1px solid var(--border2);border-radius:24px;
+  padding:20px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.hero-glow{
+  position:absolute;top:-70px;right:-70px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,158,11,0.09) 0%,transparent 70%);
+}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.hero-tag{
+  background:var(--amber-glow);border-radius:100px;
+  padding:4px 10px;font-size:9px;font-weight:700;
+  letter-spacing:.8px;color:var(--amber);
+}
+.hero-price-row{display:flex;align-items:flex-end;gap:4px;margin-bottom:10px;}
+.hero-int{font-size:58px;font-weight:800;color:var(--txt);letter-spacing:-2.5px;line-height:1;}
+.hero-dec{font-size:32px;font-weight:700;color:var(--amber);letter-spacing:-1px;padding-bottom:3px;}
+.hero-curr{font-size:14px;font-weight:500;color:var(--txt3);padding-bottom:6px;}
+.hero-footer{display:flex;align-items:center;gap:14px;}
+.hero-divider{width:1px;height:14px;background:var(--border);}
+.hero-sub{font-size:12px;color:var(--txt3);}
+.hero-sub-val{color:var(--txt2);font-weight:600;}
+
+/* Price grid */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.price-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:14px;
+}
+.price-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.price-ico{
+  width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.price-name{
+  font-size:9.5px;font-weight:700;letter-spacing:.7px;
+  color:var(--txt3);text-transform:uppercase;line-height:1.4;
+}
+.price-big{font-size:27px;font-weight:800;color:var(--txt);letter-spacing:-.8px;margin-bottom:4px;}
+.price-dec{font-size:15px;font-weight:700;}
+.price-footer{display:flex;align-items:center;gap:6px;}
+.price-unit{font-size:10px;color:var(--txt3);}
+
+.footer-note{text-align:center;font-size:11px;color:var(--txt4);letter-spacing:.3px;margin-top:10px;}
+
+/* ════════════════════════════════════════════════════════
+   SCREEN 3 — HISTORIAL
+══════════════════════════════════════════════════════════ */
+.fuel-tabs-scroll{overflow-x:auto;margin-bottom:14px;}
+.fuel-tabs-scroll::-webkit-scrollbar{display:none;}
+.fuel-tabs{display:flex;gap:8px;width:max-content;padding-right:20px;}
+.fuel-tab{
+  padding:7px 16px;border-radius:100px;border:1px solid var(--border);
+  background:var(--surface);font-size:12px;font-weight:500;color:var(--txt3);
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.fuel-tab.active{
+  background:rgba(245,158,11,0.14);border-color:rgba(245,158,11,0.4);
+  color:var(--amber);font-weight:700;
+}
+
+.range-row{display:flex;gap:6px;margin-bottom:14px;}
+.range-btn{
+  flex:1;padding:5px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface);
+  font-size:11px;font-weight:500;color:var(--txt3);
+  cursor:pointer;text-align:center;transition:all .15s;
+}
+.range-btn.active{
+  background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);
+  color:var(--amber);font-weight:700;
+}
+
+.chart-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:16px;margin-bottom:12px;
+}
+.chart-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:14px;
+}
+.chart-fuel{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;}
+.chart-price-row{display:flex;align-items:flex-end;gap:3px;}
+.chart-int{font-size:30px;font-weight:800;color:var(--txt);letter-spacing:-1px;}
+.chart-dec{font-size:17px;font-weight:700;padding-bottom:2px;}
+.chart-curr{font-size:12px;color:var(--txt3);padding-bottom:4px;}
+.vs-text{font-size:10px;color:var(--txt3);margin-top:3px;}
+
+/* SVG chart area */
+.chart-svg-wrap{width:100%;overflow:hidden;}
+
+.stats-row{display:flex;gap:8px;margin-bottom:12px;}
+.stat-card{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:12px;text-align:center;
+}
+.stat-lbl{font-size:9.5px;font-weight:700;letter-spacing:.7px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px;}
+.stat-val{font-size:18px;font-weight:800;letter-spacing:-.4px;}
+
+.change-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+}
+.change-date{font-size:12px;color:var(--txt2);flex:1;}
+.change-price{font-size:14px;font-weight:700;color:var(--txt);}
+
+/* ════════════════════════════════════════════════════════
+   SCREEN 4 — CALCULADORA
+══════════════════════════════════════════════════════════ */
+.calc-fuel-grid{display:flex;gap:8px;margin-bottom:14px;}
+.calc-fuel-chip{
+  flex:1;padding:8px 4px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  text-align:center;cursor:pointer;transition:all .15s;
+}
+.calc-fuel-chip.active{background:var(--amber-glow);border-color:rgba(245,158,11,0.4);}
+.cfc-txt{font-size:10.5px;font-weight:500;color:var(--txt3);}
+.calc-fuel-chip.active .cfc-txt{color:var(--amber);font-weight:700;}
+
+.mode-row{display:flex;gap:8px;margin-bottom:14px;}
+.mode-btn{
+  flex:1;padding:9px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  font-size:12px;font-weight:500;color:var(--txt3);
+  cursor:pointer;text-align:center;transition:all .15s;
+}
+.mode-btn.active{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:var(--amber);font-weight:700;}
+
+.input-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:18px;margin-bottom:14px;
+}
+.slider-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.slider-lbl{font-size:12px;color:var(--txt2);font-weight:500;}
+.slider-val-wrap{display:flex;align-items:baseline;gap:2px;}
+.slider-val{font-size:24px;font-weight:800;letter-spacing:-.5px;}
+.slider-unit{font-size:12px;color:var(--txt3);}
+.track-wrap{margin-bottom:12px;}
+.track{height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;}
+.track-fill{height:100%;border-radius:3px;transition:width .1s;}
+.step-row{display:flex;align-items:center;justify-content:space-between;}
+.step-btn{
+  width:44px;height:44px;border-radius:13px;
+  border:1px solid var(--border);background:rgba(255,255,255,0.04);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:var(--amber);cursor:pointer;user-select:none;
+  transition:all .1s;
+}
+.step-btn:active{transform:scale(.9);background:var(--amber-glow);}
+.step-range{font-size:10px;color:var(--txt4);}
+
+.result-card{
+  background:var(--surface);border-radius:20px;
+  border:1px solid rgba(245,158,11,0.2);
+  padding:22px;margin-bottom:14px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.result-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 40%,rgba(245,158,11,0.06) 0%,transparent 65%);
+}
+.result-lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--txt3);margin-bottom:10px;}
+.result-val{font-size:42px;font-weight:800;color:var(--amber);letter-spacing:-1.5px;margin-bottom:4px;transition:all .25s;}
+.result-sub{font-size:13px;color:var(--txt2);}
+
+.presets-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.preset{
+  padding:8px 16px;border-radius:100px;
+  border:1px solid var(--border);background:var(--surface);
+  font-size:12px;font-weight:500;color:var(--txt2);
+  cursor:pointer;transition:all .12s;
+}
+.preset:active{background:var(--amber-glow);border-color:rgba(245,158,11,.3);color:var(--amber);}
+
+/* price ref */
+.price-ref{
+  display:flex;background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:12px 16px;margin-bottom:14px;
+  align-items:center;justify-content:space-around;
+}
+.pref-item{text-align:center;}
+.pref-lbl{font-size:10px;color:var(--txt3);font-weight:500;margin-bottom:3px;}
+.pref-val{font-size:17px;font-weight:800;letter-spacing:-.4px;}
+.pref-div{width:1px;height:28px;background:var(--border);}
+
+/* ════════════════════════════════════════════════════════
+   SCREEN 5 — MI AUTO
+══════════════════════════════════════════════════════════ */
+.miauto-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;
+}
+.add-btn{
+  width:36px;height:36px;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:var(--amber);cursor:pointer;line-height:1;
+}
+.vehicle-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:22px;padding:18px;margin-bottom:12px;
+}
+.vehicle-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.vehicle-name{font-size:17px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.vehicle-info{font-size:12px;color:var(--txt2);}
+.level-badge{border-radius:100px;padding:4px 10px;}
+.level-badge-txt{font-size:9px;font-weight:800;letter-spacing:.7px;}
+.gauge-wrap{display:flex;justify-content:center;margin-bottom:4px;}
+.tank-stats{display:flex;justify-content:space-around;padding-top:4px;}
+.tank-stat{text-align:center;}
+.tank-stat-lbl{font-size:10px;color:var(--txt3);font-weight:500;margin-bottom:3px;}
+.tank-stat-val{font-size:15px;font-weight:700;color:var(--txt);}
+
+.cost-row{display:flex;gap:10px;margin-bottom:20px;}
+.cost-card{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:14px;text-align:center;
+}
+.cost-lbl{font-size:10px;font-weight:600;color:var(--txt3);letter-spacing:.4px;margin-bottom:6px;}
+.cost-val{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-bottom:2px;}
+.cost-sub{font-size:10px;color:var(--txt4);}
+
+.log-btn{
+  width:100%;background:rgba(245,158,11,0.1);
+  border:1px solid rgba(245,158,11,0.3);border-radius:14px;
+  padding:14px;font-size:14px;font-weight:700;color:var(--amber);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .12s;
+}
+.log-btn:active{background:rgba(245,158,11,0.2);}
+
+/* ── Desktop label ────────────────────────────────────── */
+.desktop-hint{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:.4px;
+  pointer-events:none;
+}
+@media(max-width:420px){.desktop-hint{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ PHONE ══════════════════════ -->
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="status">
+    <span class="status-left">9:41</span>
+    <div class="status-island"></div>
+    <div class="status-right">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <span style="font-size:11px;margin-left:2px">WiFi</span>
+      <div class="battery"></div>
+    </div>
+  </div>
+
+  <!-- ───────── Screen stack ───────── -->
+  <div class="screens">
+
+    <!-- ═══ CONSUMO (Home) ═══ -->
+    <div class="screen active" id="s-consumo">
+      <div class="scroll">
+
+        <!-- Header -->
+        <div class="consumo-header">
+          <div>
+            <div class="consumo-greeting">Buenas noches · Jue 25 jun</div>
+            <div class="consumo-name">Víctor</div>
+          </div>
+          <div class="notif-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="rgba(255,255,255,0.5)"/>
+            </svg>
+            <div class="notif-dot"></div>
+          </div>
+        </div>
+
+        <!-- Spend hero card -->
+        <div class="spend-card">
+          <div class="spend-glow"></div>
+          <div class="spend-dots"></div>
+          <div class="spend-top">
+            <div>
+              <div class="eyebrow">Gasto este mes · Junio</div>
+              <div class="spend-amount-wrap">
+                <span class="spend-currency">RD$</span>
+                <span class="spend-amount" id="spendAmt">8,596</span>
+              </div>
+              <div class="spend-sub" style="display:flex;gap:8px;align-items:center">
+                <span class="badge badge-green">▼ 8.0% vs mayo</span>
+                <span style="font-size:10px;color:var(--txt3)">RD$ 9,340 anterior</span>
+              </div>
+            </div>
+          </div>
+          <!-- Mini bar chart -->
+          <div style="margin-top:10px">
+            <div class="mini-bars" id="miniChart"></div>
+            <div style="display:flex;gap:8px;padding:0 4px;margin-top:4px">
+              <div style="flex:1;text-align:center;font-size:8.5px;color:var(--txt4)">May 5</div>
+              <div style="flex:1;text-align:center;font-size:8.5px;color:var(--txt4)">May 19</div>
+              <div style="flex:1;text-align:center;font-size:8.5px;color:var(--txt4)">Jun 6</div>
+              <div style="flex:1;text-align:center;font-size:8.5px;color:var(--txt4)">Jun 20</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="stats-trio">
+          <div class="stat-mini">
+            <div class="stat-mini-val">41 L</div>
+            <div class="stat-mini-key">Avg./carga</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-val">2×</div>
+            <div class="stat-mini-key">Cargas/mes</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-val" style="color:var(--green)">~9 días</div>
+            <div class="stat-mini-key">Próxima</div>
+          </div>
+        </div>
+
+        <!-- Prediction -->
+        <div class="prediction">
+          <div class="prediction-icon">🗓</div>
+          <div>
+            <div class="prediction-title">Próxima carga estimada</div>
+            <div class="prediction-sub">Dom 4 jul · Basado en tu patrón de 14 días</div>
+          </div>
+        </div>
+
+        <!-- Fuel preference -->
+        <div class="fuel-pref" onclick="switchScreen('s-precios')">
+          <div class="fuel-pref-icon">⛽</div>
+          <div>
+            <div class="fuel-pref-title">Gasolina Premium</div>
+            <div class="fuel-pref-sub">Tu combustible · 100% de cargas</div>
+          </div>
+          <div style="text-align:right">
+            <div class="fuel-pref-price">RD$81.22</div>
+            <div style="font-size:10px;color:var(--txt3)">/litro hoy</div>
+          </div>
+        </div>
+
+        <!-- Recent fill-ups -->
+        <div class="section-label">Últimas cargas</div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="fillup-row">
+            <div class="fillup-ico">⛽</div>
+            <div>
+              <div class="fillup-date">Viernes 20 jun 2026</div>
+              <div class="fillup-detail">42 L · RD$81.22/L · Premium</div>
+            </div>
+            <div class="fillup-amount">RD$1,380</div>
+          </div>
+          <div class="div" style="margin:0 16px"></div>
+          <div class="fillup-row">
+            <div class="fillup-ico">⛽</div>
+            <div>
+              <div class="fillup-date">Viernes 6 jun 2026</div>
+              <div class="fillup-detail">38 L · RD$80.00/L · Premium</div>
+            </div>
+            <div class="fillup-amount">RD$1,216</div>
+          </div>
+          <div class="see-all" onclick="switchScreen('s-historial')">Ver historial completo →</div>
+        </div>
+
+        <!-- FAB -->
+        <button class="fab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M12 4v16M4 12h16" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          Registrar carga
+        </button>
+
+      </div>
+    </div><!-- /consumo -->
+
+    <!-- ═══ PRECIOS ═══ -->
+    <div class="screen" id="s-precios">
+      <div class="scroll">
+        <div class="precios-header">
+          <div>
+            <div class="eyebrow">Semana del</div>
+            <div class="section-title">16 – 22 Jun</div>
+          </div>
+          <div class="bell-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="rgba(255,255,255,0.5)"/>
+            </svg>
+            <div class="bell-dot"></div>
+          </div>
+        </div>
+
+        <!-- Hero — Premium -->
+        <div class="hero">
+          <div class="hero-glow"></div>
+          <div class="hero-top">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:40px;height:40px;border-radius:12px;background:var(--amber-glow);border:1px solid rgba(245,158,11,0.2);display:flex;align-items:center;justify-content:center;font-size:18px">⛽</div>
+              <div>
+                <div style="font-size:10px;font-weight:600;letter-spacing:1px;color:var(--txt3);margin-bottom:4px">GASOLINA PREMIUM</div>
+                <span class="badge badge-green" style="font-size:9px">▼ RD$3.40 vs sem. ant.</span>
+              </div>
+            </div>
+            <div class="hero-tag">OFICIAL</div>
+          </div>
+          <div class="hero-price-row">
+            <span class="hero-int">307</span>
+            <span class="hero-dec">.40</span>
+            <span class="hero-curr">RD$</span>
+          </div>
+          <div class="hero-footer">
+            <span class="hero-sub">≈ <span class="hero-sub-val">RD$81.22</span> /litro</span>
+            <div class="hero-divider"></div>
+            <span class="hero-sub">USD <span class="hero-sub-val">$5.12</span> /galón</span>
+          </div>
+        </div>
+
+        <!-- 2×2 Grid -->
+        <div class="price-grid">
+          <!-- Regular -->
+          <div class="price-card">
+            <div class="price-card-top">
+              <div class="price-ico" style="background:rgba(129,140,248,0.12)">⛽</div>
+              <div class="price-name" style="color:var(--indigo)">Gasolina<br>Regular</div>
+            </div>
+            <div class="price-big">288<span class="price-dec" style="color:var(--indigo)">.60</span></div>
+            <div class="price-footer">
+              <span class="price-unit">RD$/gal</span>
+              <span class="badge badge-green" style="font-size:9px">▼ 1.80</span>
+            </div>
+          </div>
+          <!-- Gasoil -->
+          <div class="price-card">
+            <div class="price-card-top">
+              <div class="price-ico" style="background:rgba(52,211,153,0.12)">⛽</div>
+              <div class="price-name" style="color:var(--green)">Gasoil<br>Regular</div>
+            </div>
+            <div class="price-big">230<span class="price-dec" style="color:var(--green)">.10</span></div>
+            <div class="price-footer">
+              <span class="price-unit">RD$/gal</span>
+              <span class="badge badge-amber" style="font-size:9px">▲ 2.30</span>
+            </div>
+          </div>
+          <!-- Gasoil Óptimo -->
+          <div class="price-card">
+            <div class="price-card-top">
+              <div class="price-ico" style="background:rgba(251,191,36,0.12)">⛽</div>
+              <div class="price-name" style="color:#FBBF24">Gasoil<br>Óptimo</div>
+            </div>
+            <div class="price-big">252<span class="price-dec" style="color:#FBBF24">.80</span></div>
+            <div class="price-footer">
+              <span class="price-unit">RD$/gal</span>
+              <span class="badge badge-indigo" style="font-size:9px">━ Sin cambio</span>
+            </div>
+          </div>
+          <!-- GLP -->
+          <div class="price-card">
+            <div class="price-card-top">
+              <div class="price-ico" style="background:rgba(56,189,248,0.10)">⛽</div>
+              <div class="price-name" style="color:var(--blue)">GLP</div>
+            </div>
+            <div class="price-big">154<span class="price-dec" style="color:var(--blue)">.90</span></div>
+            <div class="price-footer">
+              <span class="price-unit">RD$/gal</span>
+              <span class="badge badge-green" style="font-size:9px">▼ 1.70</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">Actualizado vier. 20 jun · Fuente: MICM</div>
+      </div>
+    </div><!-- /precios -->
+
+    <!-- ═══ HISTORIAL ═══ -->
+    <div class="screen" id="s-historial">
+      <div class="scroll">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+          <div>
+            <div class="eyebrow">Análisis de precio</div>
+            <div class="section-title">Historial</div>
+          </div>
+          <div style="width:36px;height:36px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--txt2)">≡</div>
+        </div>
+
+        <!-- Fuel tabs -->
+        <div class="fuel-tabs-scroll">
+          <div class="fuel-tabs">
+            <div class="fuel-tab active" onclick="setFuelTab(this,'amber')">⛽ G. Premium</div>
+            <div class="fuel-tab" onclick="setFuelTab(this,'indigo')">G. Regular</div>
+            <div class="fuel-tab" onclick="setFuelTab(this,'green')">Gasoil</div>
+            <div class="fuel-tab" onclick="setFuelTab(this,'blue')">GLP</div>
+          </div>
+        </div>
+
+        <!-- Range -->
+        <div class="range-row">
+          <div class="range-btn" onclick="setRange(this)">1M</div>
+          <div class="range-btn" onclick="setRange(this)">3M</div>
+          <div class="range-btn active" onclick="setRange(this)">6M</div>
+          <div class="range-btn" onclick="setRange(this)">1A</div>
+          <div class="range-btn" onclick="setRange(this)">Todo</div>
+        </div>
+
+        <!-- Chart card -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-fuel">G. Premium</div>
+              <div class="chart-price-row">
+                <span class="chart-int">307</span>
+                <span class="chart-dec" style="color:var(--amber)">.40</span>
+                <span class="chart-curr">RD$</span>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <span class="badge badge-green">▼ 3.40</span>
+              <div class="vs-text">vs semana ant.</div>
+            </div>
+          </div>
+          <div class="chart-svg-wrap">
+            <svg width="100%" height="110" viewBox="0 0 310 110" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- grid lines -->
+              <line x1="32" y1="10" x2="306" y2="10" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="32" y1="50" x2="306" y2="50" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <line x1="32" y1="90" x2="306" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+              <!-- labels -->
+              <text x="0" y="14" fill="#1F2D48" font-size="9">312</text>
+              <text x="0" y="54" fill="#1F2D48" font-size="9">302</text>
+              <text x="0" y="94" fill="#1F2D48" font-size="9">292</text>
+              <!-- area fill -->
+              <path d="M32,72 L64,65 L96,68 L128,58 L160,70 L192,55 L224,62 L256,48 L288,44 L306,10 L306,90 L32,90 Z"
+                fill="url(#chartGrad)"/>
+              <!-- line -->
+              <path d="M32,72 L64,65 L96,68 L128,58 L160,70 L192,55 L224,62 L256,48 L288,44 L306,10"
+                fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- active dot -->
+              <circle cx="306" cy="10" r="10" fill="rgba(245,158,11,0.2)"/>
+              <circle cx="306" cy="10" r="5" fill="#F59E0B"/>
+              <!-- month labels -->
+              <text x="32"  y="108" fill="#1F2D48" font-size="9" text-anchor="middle">Ene</text>
+              <text x="96"  y="108" fill="#1F2D48" font-size="9" text-anchor="middle">Feb</text>
+              <text x="160" y="108" fill="#1F2D48" font-size="9" text-anchor="middle">Mar</text>
+              <text x="224" y="108" fill="#1F2D48" font-size="9" text-anchor="middle">Abr</text>
+              <text x="288" y="108" fill="#1F2D48" font-size="9" text-anchor="middle">May</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-lbl">Mínimo</div>
+            <div class="stat-val" style="color:var(--green)">291.20</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Promedio</div>
+            <div class="stat-val">304.75</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Máximo</div>
+            <div class="stat-val" style="color:var(--red)">312.50</div>
+          </div>
+        </div>
+
+        <!-- Recent changes -->
+        <div class="section-label">Últimos movimientos</div>
+        <div class="card" style="overflow:hidden">
+          <div class="change-row">
+            <span class="change-date">Sem. 16 jun 2026</span>
+            <span class="badge badge-green" style="font-size:9px">▼ 3.40</span>
+            <span class="change-price">307.40</span>
+          </div>
+          <div class="div"></div>
+          <div class="change-row">
+            <span class="change-date">Sem. 9 jun 2026</span>
+            <span class="badge badge-indigo" style="font-size:9px">━ Sin cambio</span>
+            <span class="change-price">310.80</span>
+          </div>
+          <div class="div"></div>
+          <div class="change-row">
+            <span class="change-date">Sem. 2 jun 2026</span>
+            <span class="badge badge-green" style="font-size:9px">▼ 1.80</span>
+            <span class="change-price">310.80</span>
+          </div>
+          <div class="div"></div>
+          <div class="change-row">
+            <span class="change-date">Sem. 26 may 2026</span>
+            <span class="badge badge-amber" style="font-size:9px">▲ 2.80</span>
+            <span class="change-price">312.60</span>
+          </div>
+          <div class="div"></div>
+          <div class="change-row">
+            <span class="change-date">Sem. 19 may 2026</span>
+            <span class="badge badge-green" style="font-size:9px">▼ 2.40</span>
+            <span class="change-price">309.80</span>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /historial -->
+
+    <!-- ═══ CALCULADORA ═══ -->
+    <div class="screen" id="s-calculadora">
+      <div class="scroll">
+        <div style="margin-bottom:18px">
+          <div class="eyebrow">Herramienta</div>
+          <div class="section-title">Calculadora</div>
+        </div>
+
+        <!-- Fuel chips -->
+        <div class="calc-fuel-grid" id="calcFuelGrid">
+          <div class="calc-fuel-chip active" data-key="premium" data-price="307.40" onclick="selectCalcFuel(this)">
+            <div class="cfc-txt">Premium</div>
+          </div>
+          <div class="calc-fuel-chip" data-key="regular" data-price="288.60" onclick="selectCalcFuel(this)">
+            <div class="cfc-txt">Regular</div>
+          </div>
+          <div class="calc-fuel-chip" data-key="gasoil" data-price="230.10" onclick="selectCalcFuel(this)">
+            <div class="cfc-txt">Gasoil</div>
+          </div>
+          <div class="calc-fuel-chip" data-key="glp" data-price="154.90" onclick="selectCalcFuel(this)">
+            <div class="cfc-txt">GLP</div>
+          </div>
+        </div>
+
+        <!-- Price ref -->
+        <div class="price-ref">
+          <div class="pref-item">
+            <div class="pref-lbl">por galón</div>
+            <div class="pref-val" id="calcPriceGal" style="color:var(--amber)">RD$307.40</div>
+          </div>
+          <div class="pref-div"></div>
+          <div class="pref-item">
+            <div class="pref-lbl">por litro</div>
+            <div class="pref-val" id="calcPriceLit" style="color:var(--amber)">RD$81.22</div>
+          </div>
+        </div>
+
+        <!-- Mode -->
+        <div class="mode-row">
+          <div class="mode-btn active" id="modeL" onclick="setMode('liters')">⛽ Por litros</div>
+          <div class="mode-btn" id="modeB" onclick="setMode('budget')">💵 Presupuesto</div>
+        </div>
+
+        <!-- Input card -->
+        <div class="input-card">
+          <div class="slider-top">
+            <span class="slider-lbl" id="inputLabel">Cantidad de combustible</span>
+            <div class="slider-val-wrap">
+              <span class="slider-val" id="inputVal" style="color:var(--amber)">40</span>
+              <span class="slider-unit" id="inputUnit">L</span>
+            </div>
+          </div>
+          <div class="track-wrap">
+            <div class="track"><div class="track-fill" id="trackFill" style="width:30%;background:var(--amber)"></div></div>
+          </div>
+          <div class="step-row">
+            <div class="step-btn" onclick="step(-1)">−</div>
+            <span class="step-range" id="stepRange">5 – 120 L</span>
+            <div class="step-btn" onclick="step(1)">+</div>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-card">
+          <div class="result-bg"></div>
+          <div class="result-lbl" id="resultLabel">TOTAL A PAGAR</div>
+          <div class="result-val" id="resultVal">RD$3,244.87</div>
+          <div class="result-sub" id="resultSub">10.56 galones</div>
+        </div>
+
+        <!-- Presets -->
+        <div class="section-label">Preselecciones rápidas</div>
+        <div class="presets-grid">
+          <div class="preset" onclick="applyPreset('liters',25)">Medio tanque</div>
+          <div class="preset" onclick="applyPreset('liters',50)">Tanque lleno</div>
+          <div class="preset" onclick="applyPreset('budget',500)">RD$ 500</div>
+          <div class="preset" onclick="applyPreset('budget',2000)">RD$ 2,000</div>
+        </div>
+
+      </div>
+    </div><!-- /calculadora -->
+
+    <!-- ═══ MI AUTO ═══ -->
+    <div class="screen" id="s-miauto">
+      <div class="scroll">
+        <div class="miauto-header">
+          <div>
+            <div class="eyebrow">Garage</div>
+            <div class="section-title">Mi Vehículo</div>
+          </div>
+          <div class="add-btn">+</div>
+        </div>
+
+        <!-- Vehicle card -->
+        <div class="vehicle-card">
+          <div class="vehicle-top">
+            <div>
+              <div class="vehicle-name">Mi Auto</div>
+              <div class="vehicle-info">2021 Toyota Corolla</div>
+            </div>
+            <div class="level-badge" style="background:rgba(245,158,11,0.14)">
+              <div class="level-badge-txt" style="color:var(--amber)">MEDIO</div>
+            </div>
+          </div>
+
+          <!-- SVG Gauge -->
+          <div class="gauge-wrap">
+            <svg width="180" height="150" viewBox="0 0 180 150">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#F59E0B"/>
+                  <stop offset="100%" stop-color="#FBBF24"/>
+                </linearGradient>
+              </defs>
+              <!-- Track -->
+              <path d="M 36.6 126.6 A 70 70 0 1 1 143.4 126.6"
+                fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" stroke-linecap="round"/>
+              <!-- Fill (30%) -->
+              <path d="M 36.6 126.6 A 70 70 0 0 1 85.8 20.8"
+                fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round"/>
+              <!-- Center -->
+              <text x="90" y="82" text-anchor="middle" fill="#F1F5F9" font-size="28" font-weight="800">30%</text>
+              <text x="90" y="98" text-anchor="middle" fill="#3D4F6B" font-size="10">del tanque</text>
+              <!-- E/F labels -->
+              <text x="26" y="138" text-anchor="middle" fill="#2D3A52" font-size="9">E</text>
+              <text x="154" y="138" text-anchor="middle" fill="#2D3A52" font-size="9">F</text>
+            </svg>
+          </div>
+
+          <!-- Tank stats -->
+          <div class="tank-stats">
+            <div class="tank-stat">
+              <div class="tank-stat-lbl">Litros restantes</div>
+              <div class="tank-stat-val">15 L</div>
+            </div>
+            <div class="tank-stat">
+              <div class="tank-stat-lbl">Capacidad</div>
+              <div class="tank-stat-val">50 L</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost cards -->
+        <div class="cost-row">
+          <div class="cost-card">
+            <div class="cost-lbl">Llenar tanque</div>
+            <div class="cost-val" style="color:var(--amber)">RD$4,063</div>
+            <div class="cost-sub">50 L completo</div>
+          </div>
+          <div class="cost-card">
+            <div class="cost-lbl">Hasta el lleno</div>
+            <div class="cost-val" style="color:var(--green)">RD$2,844</div>
+            <div class="cost-sub">35 L faltantes</div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="section-label">Historial de cargas</div>
+        <div class="card" style="overflow:hidden;margin-bottom:12px">
+          <div class="fillup-row">
+            <div class="fillup-ico">⛽</div>
+            <div>
+              <div class="fillup-date">20 jun 2026</div>
+              <div class="fillup-detail">42 L · RD$81.22/L</div>
+            </div>
+            <div class="fillup-amount">RD$1,380</div>
+          </div>
+          <div class="div" style="margin:0 16px"></div>
+          <div class="fillup-row">
+            <div class="fillup-ico">⛽</div>
+            <div>
+              <div class="fillup-date">6 jun 2026</div>
+              <div class="fillup-detail">38 L · RD$80.00/L</div>
+            </div>
+            <div class="fillup-amount">RD$1,216</div>
+          </div>
+          <div class="div" style="margin:0 16px"></div>
+          <div class="fillup-row">
+            <div class="fillup-ico">⛽</div>
+            <div>
+              <div class="fillup-date">23 may 2026</div>
+              <div class="fillup-detail">45 L · RD$80.66/L</div>
+            </div>
+            <div class="fillup-amount">RD$1,380</div>
+          </div>
+          <div class="see-all">Ver todo el historial →</div>
+        </div>
+
+        <button class="log-btn">+ Registrar carga</button>
+      </div>
+    </div><!-- /miauto -->
+
+  </div><!-- /screens -->
+
+  <!-- ───────── Tab bar ───────── -->
+  <div class="tabbar">
+
+    <!-- Consumo -->
+    <div class="tab active" id="tab-consumo" onclick="switchScreen('s-consumo')">
+      <div class="tab-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="tab-dot"></div>
+      </div>
+      <div class="tab-label">Consumo</div>
+    </div>
+
+    <!-- Precios -->
+    <div class="tab" id="tab-precios" onclick="switchScreen('s-precios')">
+      <div class="tab-icon">
+        <svg width="22" height="24" viewBox="0 0 20 22" fill="none">
+          <path d="M10 1C6.5 7 3.5 10.5 3.5 14a6.5 6.5 0 0013 0C16.5 10.5 13.5 7 10 1z" fill="currentColor" opacity=".7"/>
+        </svg>
+        <div class="tab-dot"></div>
+      </div>
+      <div class="tab-label">Precios</div>
+    </div>
+
+    <!-- Historial -->
+    <div class="tab" id="tab-historial" onclick="switchScreen('s-historial')">
+      <div class="tab-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M3 3v18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M7 14l4-4 4 4 4-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="tab-dot"></div>
+      </div>
+      <div class="tab-label">Historial</div>
+    </div>
+
+    <!-- Calculadora -->
+    <div class="tab" id="tab-calculadora" onclick="switchScreen('s-calculadora')">
+      <div class="tab-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M8 7h8M8 12h3m5 0h-3m-2 4h3m-3 0H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="tab-dot"></div>
+      </div>
+      <div class="tab-label">Calculadora</div>
+    </div>
+
+    <!-- Mi Auto -->
+    <div class="tab" id="tab-miauto" onclick="switchScreen('s-miauto')">
+      <div class="tab-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 17H3v-5l2.5-6.5h11L19 12v5h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="1.8"/>
+          <circle cx="17" cy="17" r="2" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <div class="tab-dot"></div>
+      </div>
+      <div class="tab-label">Mi Auto</div>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+
+</div><!-- /phone -->
+
+<div class="desktop-hint">TanqueLleno · Prototipo interactivo · Navega entre pantallas con las tabs</div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script>
+/* ─── Icon colors per tab ─── */
+const TAB_COLORS = {
+  's-consumo':     'var(--amber)',
+  's-precios':     'var(--amber)',
+  's-historial':   'var(--amber)',
+  's-calculadora': 'var(--amber)',
+  's-miauto':      'var(--amber)',
+};
+
+const INACTIVE = 'var(--txt4)';
+
+function updateTabColors(activeScreen) {
+  document.querySelectorAll('.tab').forEach(t => {
+    const color = t.id === 'tab-' + activeScreen.replace('s-','') ? 'var(--amber)' : INACTIVE;
+    t.querySelectorAll('svg').forEach(s => s.style.color = color);
+  });
+}
+
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabId = 'tab-' + id.replace('s-','');
+  const tab = document.getElementById(tabId);
+  if (tab) tab.classList.add('active');
+}
+
+/* ─── Mini bar chart (Consumo) ─── */
+(function buildMiniChart() {
+  const data = [
+    {val:2580, label:'May 5', current:false},
+    {val:1216, label:'May 19',current:false},
+    {val:2760, label:'Jun 6', current:false},
+    {val:1380, label:'Jun 20',current:true},
+  ];
+  const max = Math.max(...data.map(d=>d.val));
+  const cont = document.getElementById('miniChart');
+  data.forEach(d => {
+    const pct = (d.val / max) * 44;
+    cont.innerHTML += `
+      <div class="mini-bar-wrap">
+        <div class="mini-bar${d.current?' current':''}"
+          style="height:${pct}px"
+          title="RD$${d.val.toLocaleString('es-DO')}"></div>
+      </div>`;
+  });
+})();
+
+/* ─── Historial tabs ─── */
+function setFuelTab(el, color) {
+  document.querySelectorAll('.fuel-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+function setRange(el) {
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ─── Calculadora ─── */
+const GAL = 3.785411784;
+let calcState = {mode:'liters', liters:40, budget:1000, priceGal:307.40};
+
+function selectCalcFuel(el) {
+  document.querySelectorAll('.calc-fuel-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  calcState.priceGal = parseFloat(el.dataset.price);
+  const litPrice = calcState.priceGal / GAL;
+  document.getElementById('calcPriceGal').textContent = `RD$${calcState.priceGal.toFixed(2)}`;
+  document.getElementById('calcPriceLit').textContent = `RD$${litPrice.toFixed(2)}`;
+  recalcCalc();
+}
+
+function setMode(m) {
+  calcState.mode = m;
+  document.getElementById('modeL').classList.toggle('active', m==='liters');
+  document.getElementById('modeB').classList.toggle('active', m==='budget');
+  updateCalcUI();
+  recalcCalc();
+}
+
+function updateCalcUI() {
+  if (calcState.mode === 'liters') {
+    document.getElementById('inputLabel').textContent = 'Cantidad de combustible';
+    document.getElementById('inputUnit').textContent = 'L';
+    document.getElementById('stepRange').textContent = '5 – 120 L';
+    document.getElementById('resultLabel').textContent = 'TOTAL A PAGAR';
+    const pct = ((calcState.liters - 5) / (120 - 5)) * 100;
+    document.getElementById('trackFill').style.width = pct + '%';
+    document.getElementById('inputVal').textContent = calcState.liters;
+  } else {
+    document.getElementById('inputLabel').textContent = 'Presupuesto disponible';
+    document.getElementById('inputUnit').textContent = 'RD$';
+    document.getElementById('stepRange').textContent = '100 – 10,000 RD$';
+    document.getElementById('resultLabel').textContent = 'LITROS QUE RECIBES';
+    const pct = ((calcState.budget - 100) / (10000 - 100)) * 100;
+    document.getElementById('trackFill').style.width = pct + '%';
+    document.getElementById('inputVal').textContent = calcState.budget.toLocaleString('es-DO');
+  }
+}
+
+function recalcCalc() {
+  const litPrice = calcState.priceGal / GAL;
+  if (calcState.mode === 'liters') {
+    const gal = calcState.liters / GAL;
+    const total = gal * calcState.priceGal;
+    document.getElementById('resultVal').textContent = `RD$${total.toFixed(2)}`;
+    document.getElementById('resultSub').textContent = `${gal.toFixed(2)} galones`;
+  } else {
+    const gal = calcState.budget / calcState.priceGal;
+    const lits = gal * GAL;
+    document.getElementById('resultVal').textContent = `${lits.toFixed(1)} L`;
+    document.getElementById('resultSub').textContent = `${gal.toFixed(2)} galones`;
+  }
+}
+
+function step(dir) {
+  if (calcState.mode === 'liters') {
+    calcState.liters = Math.max(5, Math.min(120, calcState.liters + dir * 5));
+  } else {
+    calcState.budget = Math.max(100, Math.min(10000, calcState.budget + dir * 100));
+  }
+  updateCalcUI();
+  recalcCalc();
+}
+
+function applyPreset(mode, val) {
+  setMode(mode);
+  if (mode === 'liters') calcState.liters = val;
+  else calcState.budget = val;
+  updateCalcUI();
+  recalcCalc();
+}
+
+/* init */
+updateCalcUI();
+recalcCalc();
+</script>
+
+</body>
+</html>
