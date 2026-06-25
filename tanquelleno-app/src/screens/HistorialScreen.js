@@ -267,7 +267,7 @@ export function HistorialScreen() {
 const styles = StyleSheet.create({
   safe:    { flex: 1, backgroundColor: colors.bg },
   scroll:  { flex: 1 },
-  content: { padding: 20, paddingBottom: 20 },
+  content: { padding: 20, paddingBottom: 100 },
 
   header: {
     flexDirection: 'row',

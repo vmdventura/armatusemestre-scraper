@@ -213,7 +213,7 @@ export function MiAutoScreen() {
 const styles = StyleSheet.create({
   safe:    { flex: 1, backgroundColor: colors.bg },
   scroll:  { flex: 1 },
-  content: { padding: 20, paddingBottom: 32 },
+  content: { padding: 20, paddingBottom: 100 },
 
   header: {
     flexDirection: 'row',

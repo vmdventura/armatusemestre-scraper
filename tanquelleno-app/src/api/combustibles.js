@@ -19,22 +19,22 @@ const SEED_PRICES = {
 
 // Seed history for chart (last 6 months, weekly)
 const SEED_HISTORY = [
-  { week: { from: '2026-06-16' }, prices: { gasolina_premium: { price_gal: 307.40 }, gasolina_regular: { price_gal: 288.60 }, gasoil_regular: { price_gal: 230.10 } } },
-  { week: { from: '2026-06-09' }, prices: { gasolina_premium: { price_gal: 304.00 }, gasolina_regular: { price_gal: 286.80 }, gasoil_regular: { price_gal: 232.40 } } },
-  { week: { from: '2026-06-02' }, prices: { gasolina_premium: { price_gal: 305.80 }, gasolina_regular: { price_gal: 287.50 }, gasoil_regular: { price_gal: 233.10 } } },
-  { week: { from: '2026-05-26' }, prices: { gasolina_premium: { price_gal: 303.70 }, gasolina_regular: { price_gal: 285.20 }, gasoil_regular: { price_gal: 234.60 } } },
-  { week: { from: '2026-05-19' }, prices: { gasolina_premium: { price_gal: 306.50 }, gasolina_regular: { price_gal: 287.00 }, gasoil_regular: { price_gal: 235.80 } } },
-  { week: { from: '2026-05-12' }, prices: { gasolina_premium: { price_gal: 308.90 }, gasolina_regular: { price_gal: 289.40 }, gasoil_regular: { price_gal: 237.20 } } },
-  { week: { from: '2026-05-05' }, prices: { gasolina_premium: { price_gal: 310.20 }, gasolina_regular: { price_gal: 290.80 }, gasoil_regular: { price_gal: 238.50 } } },
-  { week: { from: '2026-04-28' }, prices: { gasolina_premium: { price_gal: 309.40 }, gasolina_regular: { price_gal: 290.10 }, gasoil_regular: { price_gal: 237.90 } } },
-  { week: { from: '2026-04-21' }, prices: { gasolina_premium: { price_gal: 312.50 }, gasolina_regular: { price_gal: 292.60 }, gasoil_regular: { price_gal: 240.20 } } },
-  { week: { from: '2026-04-14' }, prices: { gasolina_premium: { price_gal: 311.80 }, gasolina_regular: { price_gal: 292.00 }, gasoil_regular: { price_gal: 239.80 } } },
-  { week: { from: '2026-04-07' }, prices: { gasolina_premium: { price_gal: 308.60 }, gasolina_regular: { price_gal: 289.20 }, gasoil_regular: { price_gal: 237.40 } } },
-  { week: { from: '2026-03-31' }, prices: { gasolina_premium: { price_gal: 305.30 }, gasolina_regular: { price_gal: 286.40 }, gasoil_regular: { price_gal: 235.10 } } },
-  { week: { from: '2026-03-24' }, prices: { gasolina_premium: { price_gal: 301.90 }, gasolina_regular: { price_gal: 283.70 }, gasoil_regular: { price_gal: 232.80 } } },
-  { week: { from: '2026-03-17' }, prices: { gasolina_premium: { price_gal: 298.40 }, gasolina_regular: { price_gal: 280.50 }, gasoil_regular: { price_gal: 230.40 } } },
-  { week: { from: '2026-02-23' }, prices: { gasolina_premium: { price_gal: 295.80 }, gasolina_regular: { price_gal: 277.90 }, gasoil_regular: { price_gal: 228.10 } } },
-  { week: { from: '2026-01-26' }, prices: { gasolina_premium: { price_gal: 291.20 }, gasolina_regular: { price_gal: 273.40 }, gasoil_regular: { price_gal: 224.90 } } },
+  { week: { from: '2026-06-16' }, prices: { gasolina_premium: { price_gal: 307.40 }, gasolina_regular: { price_gal: 288.60 }, gasoil_regular: { price_gal: 230.10 }, gasoil_optimo: { price_gal: 252.80 }, glp: { price_gal: 154.90 } } },
+  { week: { from: '2026-06-09' }, prices: { gasolina_premium: { price_gal: 304.00 }, gasolina_regular: { price_gal: 286.80 }, gasoil_regular: { price_gal: 232.40 }, gasoil_optimo: { price_gal: 250.10 }, glp: { price_gal: 153.20 } } },
+  { week: { from: '2026-06-02' }, prices: { gasolina_premium: { price_gal: 305.80 }, gasolina_regular: { price_gal: 287.50 }, gasoil_regular: { price_gal: 233.10 }, gasoil_optimo: { price_gal: 251.40 }, glp: { price_gal: 153.80 } } },
+  { week: { from: '2026-05-26' }, prices: { gasolina_premium: { price_gal: 303.70 }, gasolina_regular: { price_gal: 285.20 }, gasoil_regular: { price_gal: 234.60 }, gasoil_optimo: { price_gal: 249.30 }, glp: { price_gal: 152.50 } } },
+  { week: { from: '2026-05-19' }, prices: { gasolina_premium: { price_gal: 306.50 }, gasolina_regular: { price_gal: 287.00 }, gasoil_regular: { price_gal: 235.80 }, gasoil_optimo: { price_gal: 251.90 }, glp: { price_gal: 153.60 } } },
+  { week: { from: '2026-05-12' }, prices: { gasolina_premium: { price_gal: 308.90 }, gasolina_regular: { price_gal: 289.40 }, gasoil_regular: { price_gal: 237.20 }, gasoil_optimo: { price_gal: 254.10 }, glp: { price_gal: 155.40 } } },
+  { week: { from: '2026-05-05' }, prices: { gasolina_premium: { price_gal: 310.20 }, gasolina_regular: { price_gal: 290.80 }, gasoil_regular: { price_gal: 238.50 }, gasoil_optimo: { price_gal: 255.60 }, glp: { price_gal: 156.20 } } },
+  { week: { from: '2026-04-28' }, prices: { gasolina_premium: { price_gal: 309.40 }, gasolina_regular: { price_gal: 290.10 }, gasoil_regular: { price_gal: 237.90 }, gasoil_optimo: { price_gal: 254.80 }, glp: { price_gal: 155.70 } } },
+  { week: { from: '2026-04-21' }, prices: { gasolina_premium: { price_gal: 312.50 }, gasolina_regular: { price_gal: 292.60 }, gasoil_regular: { price_gal: 240.20 }, gasoil_optimo: { price_gal: 257.90 }, glp: { price_gal: 157.30 } } },
+  { week: { from: '2026-04-14' }, prices: { gasolina_premium: { price_gal: 311.80 }, gasolina_regular: { price_gal: 292.00 }, gasoil_regular: { price_gal: 239.80 }, gasoil_optimo: { price_gal: 257.20 }, glp: { price_gal: 157.00 } } },
+  { week: { from: '2026-04-07' }, prices: { gasolina_premium: { price_gal: 308.60 }, gasolina_regular: { price_gal: 289.20 }, gasoil_regular: { price_gal: 237.40 }, gasoil_optimo: { price_gal: 254.50 }, glp: { price_gal: 155.10 } } },
+  { week: { from: '2026-03-31' }, prices: { gasolina_premium: { price_gal: 305.30 }, gasolina_regular: { price_gal: 286.40 }, gasoil_regular: { price_gal: 235.10 }, gasoil_optimo: { price_gal: 251.60 }, glp: { price_gal: 153.40 } } },
+  { week: { from: '2026-03-24' }, prices: { gasolina_premium: { price_gal: 301.90 }, gasolina_regular: { price_gal: 283.70 }, gasoil_regular: { price_gal: 232.80 }, gasoil_optimo: { price_gal: 248.90 }, glp: { price_gal: 151.80 } } },
+  { week: { from: '2026-03-17' }, prices: { gasolina_premium: { price_gal: 298.40 }, gasolina_regular: { price_gal: 280.50 }, gasoil_regular: { price_gal: 230.40 }, gasoil_optimo: { price_gal: 246.10 }, glp: { price_gal: 150.20 } } },
+  { week: { from: '2026-02-23' }, prices: { gasolina_premium: { price_gal: 295.80 }, gasolina_regular: { price_gal: 277.90 }, gasoil_regular: { price_gal: 228.10 }, gasoil_optimo: { price_gal: 243.70 }, glp: { price_gal: 148.90 } } },
+  { week: { from: '2026-01-26' }, prices: { gasolina_premium: { price_gal: 291.20 }, gasolina_regular: { price_gal: 273.40 }, gasoil_regular: { price_gal: 224.90 }, gasoil_optimo: { price_gal: 240.10 }, glp: { price_gal: 146.50 } } },
 ];
 
 async function fetchJson(url) {

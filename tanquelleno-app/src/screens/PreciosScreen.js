@@ -162,7 +162,7 @@ export function PreciosScreen() {
 const styles = StyleSheet.create({
   safe:    { flex: 1, backgroundColor: colors.bg },
   scroll:  { flex: 1 },
-  content: { padding: 20, paddingBottom: 20 },
+  content: { padding: 20, paddingBottom: 100 },
 
   header: {
     flexDirection: 'row',
@@ -216,12 +216,12 @@ const styles = StyleSheet.create({
   },
   heroGlow: {
     position: 'absolute',
-    top: -40,
-    right: -30,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(245,158,11,0.12)',
+    top: -60,
+    right: -60,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(245,158,11,0.07)',
   },
   heroTop: {
     flexDirection: 'row',

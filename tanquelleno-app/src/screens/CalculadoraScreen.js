@@ -204,7 +204,7 @@ export function CalculadoraScreen() {
 const styles = StyleSheet.create({
   safe:    { flex: 1, backgroundColor: colors.bg },
   scroll:  { flex: 1 },
-  content: { padding: 20, paddingBottom: 32 },
+  content: { padding: 20, paddingBottom: 100 },
 
   header: { marginBottom: 18 },
   headerLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 1.2, color: colors.textMuted, marginBottom: 4 },
