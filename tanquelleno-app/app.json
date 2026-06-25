@@ -1,7 +1,6 @@
 {
   "expo": {
     "name": "TanqueLleno",
-    "newArchEnabled": false,
     "slug": "tanquelleno",
     "version": "1.0.0",
     "orientation": "portrait",
