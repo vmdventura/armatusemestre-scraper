@@ -4,9 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Rect } from 'react-native-svg';
 
 import { colors } from './src/constants/colors';
+import { ConsumoScreen }     from './src/screens/ConsumoScreen';
 import { PreciosScreen }     from './src/screens/PreciosScreen';
 import { HistorialScreen }   from './src/screens/HistorialScreen';
 import { CalculadoraScreen } from './src/screens/CalculadoraScreen';
@@ -53,8 +54,20 @@ function CarIcon({ color, size }) {
   );
 }
 
+function HomeIcon({ color, size }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+        stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <Path d="M9 22V12h6v10"
+        stroke={color} strokeWidth={1.8} strokeLinecap="round" fill="none" />
+    </Svg>
+  );
+}
+
 function TabIcon({ name, color, size }) {
   const icons = {
+    consumo:     <HomeIcon   color={color} size={size} />,
     precios:     <DropletIcon color={color} size={size} />,
     historial:   <ChartIcon  color={color} size={size} />,
     calculadora: <CalcIcon   color={color} size={size} />,
@@ -110,6 +123,7 @@ export default function App() {
           tabBar={props => <TabBar {...props} />}
           screenOptions={{ headerShown: false }}
         >
+          <Tab.Screen name="consumo"     component={ConsumoScreen}     options={{ tabBarLabel: 'Consumo'      }} />
           <Tab.Screen name="precios"     component={PreciosScreen}     options={{ tabBarLabel: 'Precios'      }} />
           <Tab.Screen name="historial"   component={HistorialScreen}   options={{ tabBarLabel: 'Historial'    }} />
           <Tab.Screen name="calculadora" component={CalculadoraScreen} options={{ tabBarLabel: 'Calculadora'  }} />

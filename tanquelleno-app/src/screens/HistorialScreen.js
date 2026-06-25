@@ -9,10 +9,10 @@ import { PriceChip } from '../components/PriceChip';
 import { useFuelData } from '../hooks/useFuelData';
 
 const FUEL_TABS = [
-  { key: 'gasolina_premium', label: '⛽ G. Premium', accentColor: colors.amber },
-  { key: 'gasolina_regular', label: 'G. Regular',    accentColor: colors.indigo },
-  { key: 'gasoil_regular',   label: 'Gasoil',        accentColor: colors.green  },
-  { key: 'glp',              label: 'GLP',            accentColor: colors.blue   },
+  { key: 'gasolina_premium', label: '⛽ G. Premium', accentColor: colors.fPremium },
+  { key: 'gasolina_regular', label: 'G. Regular',    accentColor: colors.fRegular },
+  { key: 'gasoil_regular',   label: 'Gasoil',        accentColor: colors.fGasoil  },
+  { key: 'glp',              label: 'GLP',            accentColor: colors.fGlp     },
 ];
 
 const TIME_RANGES = [
@@ -219,9 +219,9 @@ export function HistorialScreen() {
             {/* Stats */}
             <View style={styles.statsRow}>
               {[
-                { label: 'Mínimo', value: statMin, color: colors.green },
+                { label: 'Mínimo', value: statMin, color: colors.down },
                 { label: 'Promedio', value: statAvg, color: colors.textPrimary },
-                { label: 'Máximo', value: statMax, color: colors.red },
+                { label: 'Máximo', value: statMax, color: colors.up },
               ].map(({ label, value, color }) => (
                 <View key={label} style={styles.statCard}>
                   <Text style={styles.statLabel}>{label}</Text>

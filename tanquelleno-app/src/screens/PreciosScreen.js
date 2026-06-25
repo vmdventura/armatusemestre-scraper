@@ -12,10 +12,10 @@ import { formatWeek } from '../api/combustibles';
 const GALLON_TO_LITER = 3.785411784;
 
 const GRID_FUELS = [
-  { key: 'gasolina_regular', accentColor: colors.indigo,  accentBg: colors.indigoBg },
-  { key: 'gasoil_regular',   accentColor: colors.green,   accentBg: colors.greenBg  },
-  { key: 'gasoil_optimo',    accentColor: colors.yellow,  accentBg: colors.yellowBg },
-  { key: 'glp',              accentColor: colors.blue,    accentBg: colors.blueBg   },
+  { key: 'gasolina_regular', accentColor: colors.fRegular, accentBg: colors.fRegularBg },
+  { key: 'gasoil_regular',   accentColor: colors.fGasoil,  accentBg: colors.fGasoilBg  },
+  { key: 'gasoil_optimo',    accentColor: colors.fOptimo,  accentBg: colors.fOptimoBg  },
+  { key: 'glp',              accentColor: colors.fGlp,     accentBg: colors.fGlpBg     },
 ];
 
 function DropletIcon({ color, size = 18 }) {

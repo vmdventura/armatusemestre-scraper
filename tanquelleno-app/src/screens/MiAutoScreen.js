@@ -122,10 +122,10 @@ export function MiAutoScreen() {
     : '—';
 
   const levelColor = vehicle.level < 0.20
-    ? colors.red
+    ? colors.up
     : vehicle.level < 0.40
     ? colors.amber
-    : colors.green;
+    : colors.down;
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -184,7 +184,7 @@ export function MiAutoScreen() {
             </View>
             <View style={styles.costCard}>
               <Text style={styles.costLabel}>Hasta el lleno</Text>
-              <Text style={[styles.costValue, { color: colors.green }]}>RD$ {Number(costToFill).toLocaleString()}</Text>
+              <Text style={[styles.costValue, { color: colors.down }]}>RD$ {Number(costToFill).toLocaleString()}</Text>
               <Text style={styles.costSub}>{litToFill} L</Text>
             </View>
           </View>

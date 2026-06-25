@@ -9,8 +9,8 @@ export function PriceChip({ change, style }) {
   const eq  = change === 0;
   const abs = Math.abs(change).toFixed(2);
 
-  const bg    = eq ? colors.indigoBg : up ? colors.redBg    : colors.greenBg;
-  const color = eq ? colors.indigo   : up ? colors.red      : colors.green;
+  const bg    = eq ? colors.neutralBg : up ? colors.upBg   : colors.downBg;
+  const color = eq ? colors.neutral   : up ? colors.up     : colors.down;
   const arrow = eq ? '━'             : up ? '▲'             : '▼';
   const label = eq ? 'Sin cambio'    : `${arrow} ${abs}`;
 

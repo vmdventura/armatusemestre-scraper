@@ -14,17 +14,27 @@ export const colors = {
   amberDark:  '#D97706',
   amberGlow:  'rgba(245,158,11,0.14)',
 
-  // Semantic
-  green:    '#34D399',
-  greenBg:  'rgba(52,211,153,0.12)',
-  red:      '#F87171',
-  redBg:    'rgba(248,113,113,0.13)',
-  indigo:   '#818CF8',
-  indigoBg: 'rgba(129,140,248,0.12)',
-  blue:     '#38BDF8',
-  blueBg:   'rgba(56,189,248,0.10)',
-  yellow:   '#FBBF24',
-  yellowBg: 'rgba(251,191,36,0.10)',
+  // Semantic — colorblind-safe (azul=baja, naranja=sube, gris=neutro)
+  down:      '#4A9EFF',
+  downBg:    'rgba(74,158,255,0.12)',
+  up:        '#FB923C',
+  upBg:      'rgba(251,146,60,0.12)',
+  neutral:   '#94A3B8',
+  neutralBg: 'rgba(148,163,184,0.10)',
+
+  // Fuel-type palette — distinguishable with deuteranopia/protanopia
+  fPremium:   '#F59E0B',  fPremiumBg:  'rgba(245,158,11,0.12)',
+  fRegular:   '#60A5FA',  fRegularBg:  'rgba(96,165,250,0.12)',
+  fGasoil:    '#2DD4BF',  fGasoilBg:   'rgba(45,212,191,0.12)',
+  fOptimo:    '#FCD34D',  fOptimoBg:   'rgba(252,211,77,0.12)',
+  fGlp:       '#C084FC',  fGlpBg:      'rgba(192,132,252,0.12)',
+
+  // Legacy aliases (kept for backward compat)
+  green:    '#4A9EFF',  greenBg:  'rgba(74,158,255,0.12)',
+  red:      '#FB923C',  redBg:    'rgba(251,146,60,0.12)',
+  indigo:   '#94A3B8',  indigoBg: 'rgba(148,163,184,0.10)',
+  blue:     '#60A5FA',  blueBg:   'rgba(96,165,250,0.12)',
+  yellow:   '#FCD34D',  yellowBg: 'rgba(252,211,77,0.12)',
 
   // Text
   textPrimary:   '#F1F5F9',
