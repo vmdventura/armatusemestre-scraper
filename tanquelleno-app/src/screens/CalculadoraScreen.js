@@ -7,10 +7,10 @@ import { colors } from '../constants/colors';
 import { useFuelData } from '../hooks/useFuelData';
 
 const FUELS = [
-  { key: 'gasolina_premium', label: 'Premium',       accentColor: colors.amber  },
-  { key: 'gasolina_regular', label: 'Regular',        accentColor: colors.indigo },
-  { key: 'gasoil_regular',   label: 'Gasoil',         accentColor: colors.green  },
-  { key: 'glp',              label: 'GLP',             accentColor: colors.blue   },
+  { key: 'gasolina_premium', label: 'Premium', accentColor: colors.fPremium },
+  { key: 'gasolina_regular', label: 'Regular', accentColor: colors.fRegular },
+  { key: 'gasoil_regular',   label: 'Gasoil',  accentColor: colors.fGasoil  },
+  { key: 'glp',              label: 'GLP',      accentColor: colors.fGlp     },
 ];
 
 const GALLON_TO_LITER = 3.785411784;

@@ -11,7 +11,8 @@ import { useFuelData } from '../hooks/useFuelData';
 const FUEL_TABS = [
   { key: 'gasolina_premium', label: '⛽ G. Premium', accentColor: colors.fPremium },
   { key: 'gasolina_regular', label: 'G. Regular',    accentColor: colors.fRegular },
-  { key: 'gasoil_regular',   label: 'Gasoil',        accentColor: colors.fGasoil  },
+  { key: 'gasoil_regular',   label: 'Gasoil Reg.',   accentColor: colors.fGasoil  },
+  { key: 'gasoil_optimo',    label: 'Gasoil Ópt.',   accentColor: colors.fOptimo  },
   { key: 'glp',              label: 'GLP',            accentColor: colors.fGlp     },
 ];
 
