@@ -8,6 +8,7 @@ import { colors } from '../constants/colors';
 import { useFuelData } from '../hooks/useFuelData';
 import { useFillups } from '../context/FillupsContext';
 import { RegisterCargoModal } from '../components/RegisterCargoModal';
+import { EditVehicleModal } from '../components/EditVehicleModal';
 
 const MONTHS     = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const DAYS       = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -74,8 +75,9 @@ function TankGauge({ level, accentColor }) {
 
 export function MiAutoScreen() {
   const { prices }                  = useFuelData();
-  const { fillups, vehicle }        = useFillups();
-  const [showModal, setShowModal]   = useState(false);
+  const { fillups, vehicle }          = useFillups();
+  const [showModal, setShowModal]     = useState(false);
+  const [showEditVehicle, setShowEditVehicle] = useState(false);
 
   const price      = prices?.[vehicle.fuelType]?.price_gal ?? 0;
   const litLeft    = Math.round(vehicle.tankSize * vehicle.level);
@@ -113,14 +115,19 @@ export function MiAutoScreen() {
         {/* Vehicle card */}
         <View style={styles.vehicleCard}>
           <View style={styles.vehicleTop}>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.vehicleName}>{vehicle.name}</Text>
               <Text style={styles.vehicleInfo}>{vehicle.year} {vehicle.make} {vehicle.model}</Text>
             </View>
-            <View style={[styles.levelBadge, { backgroundColor: `${levelColor}22` }]}>
-              <Text style={[styles.levelBadgeText, { color: levelColor }]}>
-                {vehicle.level < 0.20 ? 'BAJO' : vehicle.level < 0.50 ? 'MEDIO' : 'OK'}
-              </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <View style={[styles.levelBadge, { backgroundColor: `${levelColor}22` }]}>
+                <Text style={[styles.levelBadgeText, { color: levelColor }]}>
+                  {vehicle.level < 0.20 ? 'BAJO' : vehicle.level < 0.50 ? 'MEDIO' : 'OK'}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => setShowEditVehicle(true)} style={styles.editBtn}>
+                <Text style={styles.editBtnText}>Editar</Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -199,6 +206,7 @@ export function MiAutoScreen() {
       </ScrollView>
 
       <RegisterCargoModal visible={showModal} onClose={() => setShowModal(false)} />
+      <EditVehicleModal visible={showEditVehicle} onClose={() => setShowEditVehicle(false)} />
     </SafeAreaView>
   );
 }
@@ -230,6 +238,11 @@ const styles = StyleSheet.create({
   vehicleInfo:   { fontSize: 12, color: colors.textSecondary },
   levelBadge:    { borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
   levelBadgeText:{ fontSize: 9, fontWeight: '800', letterSpacing: 0.8 },
+  editBtn: {
+    borderRadius: 8, borderWidth: 1, borderColor: colors.border,
+    backgroundColor: colors.surface, paddingHorizontal: 10, paddingVertical: 5,
+  },
+  editBtnText: { fontSize: 11, color: colors.textSecondary, fontWeight: '600' },
 
   gaugeContainer: { alignItems: 'center', marginBottom: 4 },
 
