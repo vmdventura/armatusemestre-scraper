@@ -9,10 +9,20 @@
   --bg:#060818;--surface:#0C1228;--s2:#101830;--s3:#14203A;
   --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
   --amber:#F59E0B;--amber2:#FBBF24;--amber-glow:rgba(245,158,11,0.13);
-  --green:#34D399;--green-bg:rgba(52,211,153,0.11);
-  --red:#F87171;--red-bg:rgba(248,113,113,0.11);
+
+  /* Colorblind-safe semantics — azul=baja, naranja=sube, gris=neutro */
+  --down:#4A9EFF;    --down-bg:rgba(74,158,255,0.12);   /* precio bajó  */
+  --up:#FB923C;      --up-bg:rgba(251,146,60,0.12);     /* precio subió */
+  --neutral:#94A3B8; --neutral-bg:rgba(148,163,184,0.10);/* sin cambio  */
+
+  /* Combustibles — distinguibles con deuteranopia y protanopia */
+  --f-premium:#F59E0B;   --f-premium-bg:rgba(245,158,11,0.12);
+  --f-regular:#60A5FA;   --f-regular-bg:rgba(96,165,250,0.12);
+  --f-gasoil:#2DD4BF;    --f-gasoil-bg:rgba(45,212,191,0.12);
+  --f-optimo:#FCD34D;    --f-optimo-bg:rgba(252,211,77,0.12);
+  --f-glp:#C084FC;       --f-glp-bg:rgba(192,132,252,0.12);
+
   --indigo:#818CF8;--indigo-bg:rgba(129,140,248,0.11);
-  --blue:#38BDF8;--blue-bg:rgba(56,189,248,0.09);
   --txt:#F1F5F9;--txt2:#8899BB;--txt3:#3D4F6B;--txt4:#1F2D48;
   --tab-h:78px;--status-h:44px;--phone-w:390px;--phone-h:844px;
   --radius:52px;
@@ -71,7 +81,7 @@ body{
 }
 .battery::after{
   content:'';position:absolute;left:2px;top:2px;right:2px;bottom:2px;
-  background:var(--green);border-radius:1px;
+  background:var(--neutral);border-radius:1px;
 }
 
 /* ── Screen stack ─────────────────────────────────────── */
@@ -137,10 +147,10 @@ body{
 
 /* ── Badges / chips ───────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.3px;}
-.badge-green{background:var(--green-bg);color:var(--green);}
+.badge-green,.badge-down{background:var(--down-bg);color:var(--down);}
 .badge-amber{background:var(--amber-glow);color:var(--amber);}
-.badge-red{background:var(--red-bg);color:var(--red);}
-.badge-indigo{background:var(--indigo-bg);color:var(--indigo);}
+.badge-up,.badge-red{background:var(--up-bg);color:var(--up);}
+.badge-indigo,.badge-neutral{background:var(--neutral-bg);color:var(--neutral);}
 
 /* ── Dividers ─────────────────────────────────────────── */
 .div{height:1px;background:var(--border);}
@@ -231,8 +241,8 @@ body{
 
 /* Next fill prediction */
 .prediction{
-  background:linear-gradient(135deg,rgba(52,211,153,0.06) 0%,transparent 100%);
-  border:1px solid rgba(52,211,153,0.15);
+  background:linear-gradient(135deg,rgba(74,158,255,0.06) 0%,transparent 100%);
+  border:1px solid rgba(74,158,255,0.15);
   border-radius:18px;padding:14px;margin-bottom:12px;
   display:flex;align-items:center;gap:12px;
 }
@@ -606,7 +616,7 @@ body{
             <div class="stat-mini-key">Cargas/mes</div>
           </div>
           <div class="stat-mini">
-            <div class="stat-mini-val" style="color:var(--green)">~9 días</div>
+            <div class="stat-mini-val" style="color:var(--down)">~9 días</div>
             <div class="stat-mini-key">Próxima</div>
           </div>
         </div>
@@ -713,49 +723,49 @@ body{
           <!-- Regular -->
           <div class="price-card">
             <div class="price-card-top">
-              <div class="price-ico" style="background:rgba(129,140,248,0.12)">⛽</div>
-              <div class="price-name" style="color:var(--indigo)">Gasolina<br>Regular</div>
+              <div class="price-ico" style="background:var(--f-regular-bg)">⛽</div>
+              <div class="price-name" style="color:var(--f-regular)">Gasolina<br>Regular</div>
             </div>
-            <div class="price-big">288<span class="price-dec" style="color:var(--indigo)">.60</span></div>
+            <div class="price-big">288<span class="price-dec" style="color:var(--f-regular)">.60</span></div>
             <div class="price-footer">
               <span class="price-unit">RD$/gal</span>
-              <span class="badge badge-green" style="font-size:9px">▼ 1.80</span>
+              <span class="badge badge-down" style="font-size:9px">▼ 1.80</span>
             </div>
           </div>
           <!-- Gasoil -->
           <div class="price-card">
             <div class="price-card-top">
-              <div class="price-ico" style="background:rgba(52,211,153,0.12)">⛽</div>
-              <div class="price-name" style="color:var(--green)">Gasoil<br>Regular</div>
+              <div class="price-ico" style="background:var(--f-gasoil-bg)">⛽</div>
+              <div class="price-name" style="color:var(--f-gasoil)">Gasoil<br>Regular</div>
             </div>
-            <div class="price-big">230<span class="price-dec" style="color:var(--green)">.10</span></div>
+            <div class="price-big">230<span class="price-dec" style="color:var(--f-gasoil)">.10</span></div>
             <div class="price-footer">
               <span class="price-unit">RD$/gal</span>
-              <span class="badge badge-amber" style="font-size:9px">▲ 2.30</span>
+              <span class="badge badge-up" style="font-size:9px">▲ 2.30</span>
             </div>
           </div>
           <!-- Gasoil Óptimo -->
           <div class="price-card">
             <div class="price-card-top">
-              <div class="price-ico" style="background:rgba(251,191,36,0.12)">⛽</div>
-              <div class="price-name" style="color:#FBBF24">Gasoil<br>Óptimo</div>
+              <div class="price-ico" style="background:var(--f-optimo-bg)">⛽</div>
+              <div class="price-name" style="color:var(--f-optimo)">Gasoil<br>Óptimo</div>
             </div>
-            <div class="price-big">252<span class="price-dec" style="color:#FBBF24">.80</span></div>
+            <div class="price-big">252<span class="price-dec" style="color:var(--f-optimo)">.80</span></div>
             <div class="price-footer">
               <span class="price-unit">RD$/gal</span>
-              <span class="badge badge-indigo" style="font-size:9px">━ Sin cambio</span>
+              <span class="badge badge-neutral" style="font-size:9px">━ Sin cambio</span>
             </div>
           </div>
           <!-- GLP -->
           <div class="price-card">
             <div class="price-card-top">
-              <div class="price-ico" style="background:rgba(56,189,248,0.10)">⛽</div>
-              <div class="price-name" style="color:var(--blue)">GLP</div>
+              <div class="price-ico" style="background:var(--f-glp-bg)">⛽</div>
+              <div class="price-name" style="color:var(--f-glp)">GLP</div>
             </div>
-            <div class="price-big">154<span class="price-dec" style="color:var(--blue)">.90</span></div>
+            <div class="price-big">154<span class="price-dec" style="color:var(--f-glp)">.90</span></div>
             <div class="price-footer">
               <span class="price-unit">RD$/gal</span>
-              <span class="badge badge-green" style="font-size:9px">▼ 1.70</span>
+              <span class="badge badge-down" style="font-size:9px">▼ 1.70</span>
             </div>
           </div>
         </div>
@@ -849,7 +859,7 @@ body{
         <div class="stats-row">
           <div class="stat-card">
             <div class="stat-lbl">Mínimo</div>
-            <div class="stat-val" style="color:var(--green)">291.20</div>
+            <div class="stat-val" style="color:var(--down)">291.20</div>
           </div>
           <div class="stat-card">
             <div class="stat-lbl">Promedio</div>
@@ -857,7 +867,7 @@ body{
           </div>
           <div class="stat-card">
             <div class="stat-lbl">Máximo</div>
-            <div class="stat-val" style="color:var(--red)">312.50</div>
+            <div class="stat-val" style="color:var(--up)">312.50</div>
           </div>
         </div>
 
@@ -884,7 +894,7 @@ body{
           <div class="div"></div>
           <div class="change-row">
             <span class="change-date">Sem. 26 may 2026</span>
-            <span class="badge badge-amber" style="font-size:9px">▲ 2.80</span>
+            <span class="badge badge-up" style="font-size:9px">▲ 2.80</span>
             <span class="change-price">312.60</span>
           </div>
           <div class="div"></div>
@@ -1049,7 +1059,7 @@ body{
           </div>
           <div class="cost-card">
             <div class="cost-lbl">Hasta el lleno</div>
-            <div class="cost-val" style="color:var(--green)">RD$2,844</div>
+            <div class="cost-val" style="color:var(--down)">RD$2,844</div>
             <div class="cost-sub">35 L faltantes</div>
           </div>
         </div>
