@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calculadora de Precios — Diseño Gráfico</title>
+<style>
+  :root {
+    --bg:       #07091A;
+    --surface:  #0C1226;
+    --surface2: #111A35;
+    --border:   rgba(255,255,255,0.07);
+    --amber:    #F59E0B;
+    --amber-glow: rgba(245,158,11,0.12);
+    --green:    #34D399;
+    --indigo:   #818CF8;
+    --blue:     #38BDF8;
+    --red:      #F87171;
+    --text:     #F1F5F9;
+    --text2:    #94A3B8;
+    --text3:    #3D4F6B;
+    --text4:    #2D3A52;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px 80px;
+  }
+
+  .wrap { width: 100%; max-width: 720px; }
+
+  /* Header */
+  .header { margin-bottom: 36px; }
+  .header-eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 1.6px;
+    color: var(--text3); text-transform: uppercase; margin-bottom: 8px;
+  }
+  .header-title {
+    font-size: 30px; font-weight: 800; letter-spacing: -0.8px;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .header-sub { font-size: 14px; color: var(--text2); }
+
+  /* Section label */
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+    color: var(--text3); text-transform: uppercase; margin-bottom: 12px;
+  }
+
+  /* Project type grid */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .12s;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card:hover { transform: translateY(-1px); }
+  .project-card.active {
+    border-color: var(--amber);
+    background: var(--amber-glow);
+  }
+  .project-card .check {
+    position: absolute; top: 10px; right: 10px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--amber); display: none;
+    align-items: center; justify-content: center;
+    font-size: 10px; color: #000;
+  }
+  .project-card.active .check { display: flex; }
+
+  .project-icon { font-size: 26px; margin-bottom: 10px; }
+  .project-name {
+    font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px;
+  }
+  .project-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .project-from {
+    font-size: 10px; color: var(--text3); margin-top: 8px;
+    font-weight: 500;
+  }
+  .project-card.active .project-from { color: var(--amber); }
+
+  /* Chip rows */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+
+  .chip {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13px; font-weight: 500; color: var(--text2);
+    cursor: pointer;
+    transition: all .15s;
+    user-select: none;
+  }
+  .chip:hover { border-color: rgba(255,255,255,0.16); color: var(--text); }
+  .chip.active {
+    background: rgba(245,158,11,0.14);
+    border-color: rgba(245,158,11,0.5);
+    color: var(--amber);
+    font-weight: 700;
+  }
+  .chip.active-green {
+    background: rgba(52,211,153,0.12);
+    border-color: rgba(52,211,153,0.4);
+    color: var(--green);
+    font-weight: 700;
+  }
+  .chip.active-red {
+    background: rgba(248,113,113,0.12);
+    border-color: rgba(248,113,113,0.4);
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  /* Addons */
+  .addons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 480px) { .addons-grid { grid-template-columns: 1fr; } }
+
+  .addon-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    user-select: none;
+  }
+  .addon-row:hover { border-color: rgba(255,255,255,0.12); }
+  .addon-row.active {
+    border-color: rgba(129,140,248,0.45);
+    background: rgba(129,140,248,0.08);
+  }
+  .addon-info { display: flex; flex-direction: column; gap: 2px; }
+  .addon-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .addon-price { font-size: 10px; color: var(--text2); }
+  .toggle {
+    width: 36px; height: 20px; border-radius: 10px;
+    background: var(--border);
+    position: relative; transition: background .2s; flex-shrink: 0;
+  }
+  .addon-row.active .toggle { background: var(--indigo); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #fff;
+    top: 3px; left: 3px;
+    transition: transform .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .addon-row.active .toggle::after { transform: translateX(16px); }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--border); margin-bottom: 28px; }
+
+  /* Result card */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-glow {
+    position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .result-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 20px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .result-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+    color: var(--text3); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .result-price {
+    font-size: 52px; font-weight: 800; letter-spacing: -2px;
+    color: var(--amber); line-height: 1;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .result-currency { font-size: 18px; font-weight: 500; color: var(--text2); vertical-align: top; line-height: 2.4; }
+  .result-period { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+  .badge {
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.6px;
+  }
+  .badge-green { background: rgba(52,211,153,0.14); color: var(--green); }
+  .badge-amber { background: rgba(245,158,11,0.14); color: var(--amber); }
+  .badge-red   { background: rgba(248,113,113,0.14); color: var(--red); }
+
+  .breakdown {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .breakdown-row {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .breakdown-key { font-size: 12px; color: var(--text2); }
+  .breakdown-val { font-size: 12px; font-weight: 600; color: var(--text); }
+  .breakdown-total .breakdown-key { font-weight: 700; color: var(--text); font-size: 13px; }
+  .breakdown-total .breakdown-val { color: var(--amber); font-size: 15px; font-weight: 800; }
+
+  /* CTA */
+  .cta-btn {
+    display: block; width: 100%;
+    background: var(--amber); color: #000;
+    border: none; border-radius: 14px;
+    padding: 16px; font-size: 15px; font-weight: 800;
+    cursor: pointer; letter-spacing: -0.2px;
+    transition: transform .12s, box-shadow .12s;
+    box-shadow: 0 0 0 0 rgba(245,158,11,0.4);
+  }
+  .cta-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(245,158,11,0.25);
+  }
+  .cta-btn:active { transform: translateY(0); }
+
+  .footer-note {
+    text-align: center; font-size: 11px;
+    color: var(--text3); margin-top: 14px; letter-spacing: 0.2px;
+  }
+
+  /* Animations */
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+  .pop { animation: pop .25s ease; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-eyebrow">Estudio de Diseño</div>
+    <div class="header-title">Calcula tu presupuesto</div>
+    <div class="header-sub">Obtén un estimado de precio al instante según tu proyecto.</div>
+  </div>
+
+  <!-- Step 1: Project type -->
+  <div class="section-label">1 · Tipo de proyecto</div>
+  <div class="project-grid" id="projectGrid">
+    <div class="project-card active" data-key="logo" onclick="selectProject(this)">
+      <span class="check">✓</span>
+      <div class="project-icon">✦</div>
+      <div class="project-name">Logo & Marca</div>
+      <div class="project-desc">Identidad visual, logotipo y variantes</div>
+      <div class="project-from">Desde RD$ 8,000</div>
+    </div>
+    <div class="project-card" data-key="poster" onclick="selectProject(this)">
+      <span class="check">✓</span>
+      <div class="project-icon">◧</div>
+      <div class="project-name">Póster / Flyer</div>
+      <div class="project-desc">Piezas impresas o digitales de alta calidad</div>
+      <div class="project-from">Desde RD$ 3,500</div>
+    </div>
+    <div class="project-card" data-key="social" onclick="selectProject(this)">
+      <span class="check">✓</span>
+      <div class="project-icon">◈</div>
+      <div class="project-name">Social Media</div>
+      <div class="project-desc">Pack de piezas para redes sociales</div>
+      <div class="project-from">Desde RD$ 6,000</div>
+    </div>
+    <div class="project-card" data-key="branding" onclick="selectProject(this)">
+      <span class="check">✓</span>
+      <div class="project-icon">◉</div>
+      <div class="project-name">Branding Completo</div>
+      <div class="project-desc">Manual de marca + aplicaciones</div>
+      <div class="project-from">Desde RD$ 25,000</div>
+    </div>
+    <div class="project-card" data-key="web" onclick="selectProject(this)">
+      <span class="check">✓</span>
+      <div class="project-icon">⬡</div>
+      <div class="project-name">Diseño Web</div>
+      <div class="project-desc">UI/UX y diseño de sitio web</div>
+      <div class="project-from">Desde RD$ 35,000</div>
+    </div>
+    <div class="project-card" data-key="presentation" onclick="selectProject(this)">
+      <span class="check">✓</span>
+      <div class="project-icon">▣</div>
+      <div class="project-name">Presentación</div>
+      <div class="project-desc">Deck ejecutivo / pitch deck</div>
+      <div class="project-from">Desde RD$ 12,000</div>
+    </div>
+  </div>
+
+  <!-- Step 2: Complexity -->
+  <div class="section-label">2 · Nivel de complejidad</div>
+  <div class="chips" id="complexityChips">
+    <div class="chip active" data-key="basic" onclick="selectChip('complexity', this, 'active')">
+      Básico
+    </div>
+    <div class="chip" data-key="standard" onclick="selectChip('complexity', this, 'active')">
+      Estándar
+    </div>
+    <div class="chip" data-key="premium" onclick="selectChip('complexity', this, 'active')">
+      Premium
+    </div>
+  </div>
+
+  <!-- Step 3: Urgency -->
+  <div class="section-label">3 · Urgencia</div>
+  <div class="chips" id="urgencyChips">
+    <div class="chip active-green active" data-key="normal" onclick="selectChip('urgency', this, 'active-green')">
+      ⏱ Normal — 7 días
+    </div>
+    <div class="chip" data-key="express" onclick="selectChip('urgency', this, 'active-green')">
+      ⚡ Express — 3 días
+    </div>
+    <div class="chip" data-key="ultra" onclick="selectChip('urgency', this, 'active-green')">
+      🔥 Ultra — 24 hrs
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Step 4: Add-ons -->
+  <div class="section-label">4 · Servicios adicionales (opcional)</div>
+  <div class="addons-grid">
+    <div class="addon-row" data-price="2500" onclick="toggleAddon(this)">
+      <div class="addon-info">
+        <span class="addon-name">Revisiones ilimitadas</span>
+        <span class="addon-price">+ RD$ 2,500</span>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="addon-row" data-price="3000" onclick="toggleAddon(this)">
+      <div class="addon-info">
+        <span class="addon-name">Archivos fuente editables</span>
+        <span class="addon-price">+ RD$ 3,000</span>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="addon-row" data-price="1500" onclick="toggleAddon(this)">
+      <div class="addon-info">
+        <span class="addon-name">Derechos exclusivos</span>
+        <span class="addon-price">+ RD$ 1,500</span>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="addon-row" data-price="4000" onclick="toggleAddon(this)">
+      <div class="addon-info">
+        <span class="addon-name">Estrategia de marca</span>
+        <span class="addon-price">+ RD$ 4,000</span>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="addon-row" data-price="2000" onclick="toggleAddon(this)">
+      <div class="addon-info">
+        <span class="addon-name">Mockups & presentación</span>
+        <span class="addon-price">+ RD$ 2,000</span>
+      </div>
+      <div class="toggle"></div>
+    </div>
+    <div class="addon-row" data-price="1800" onclick="toggleAddon(this)">
+      <div class="addon-info">
+        <span class="addon-name">Kit de redes sociales</span>
+        <span class="addon-price">+ RD$ 1,800</span>
+      </div>
+      <div class="toggle"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Result -->
+  <div class="result-card">
+    <div class="result-glow"></div>
+    <div class="result-top">
+      <div>
+        <div class="result-label">Precio estimado</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <span class="result-currency">RD$</span>
+          <span class="result-price" id="resultPrice">8,000</span>
+        </div>
+        <div class="result-period" id="resultDeadline">Entrega en 7 días hábiles</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <span class="badge badge-green" id="urgencyBadge">Normal</span>
+        <span class="badge badge-amber" id="complexityBadge">Básico</span>
+      </div>
+    </div>
+    <div class="breakdown">
+      <div class="breakdown-row">
+        <span class="breakdown-key">Precio base</span>
+        <span class="breakdown-val" id="bdBase">RD$ 8,000</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-key">Complejidad</span>
+        <span class="breakdown-val" id="bdComplexity">× 1.0</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-key">Urgencia</span>
+        <span class="breakdown-val" id="bdUrgency">× 1.0 (incluido)</span>
+      </div>
+      <div class="breakdown-row" id="bdAddonsRow" style="display:none">
+        <span class="breakdown-key">Servicios adicionales</span>
+        <span class="breakdown-val" id="bdAddons">RD$ 0</span>
+      </div>
+      <div class="divider" style="margin-bottom:10px"></div>
+      <div class="breakdown-row breakdown-total">
+        <span class="breakdown-key">Total estimado</span>
+        <span class="breakdown-val" id="bdTotal">RD$ 8,000</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="cta-btn" onclick="requestQuote()">Solicitar cotización formal →</button>
+  <div class="footer-note">Los precios son estimados y pueden variar según los detalles del proyecto.</div>
+
+</div>
+
+<script>
+  const BASE_PRICES = {
+    logo:         8000,
+    poster:       3500,
+    social:       6000,
+    branding:    25000,
+    web:         35000,
+    presentation:12000,
+  };
+
+  const COMPLEXITY = {
+    basic:    { mult: 1.0, label: 'Básico',   badge: 'badge-amber' },
+    standard: { mult: 1.6, label: 'Estándar', badge: 'badge-amber' },
+    premium:  { mult: 2.5, label: 'Premium',  badge: 'badge-amber' },
+  };
+
+  const URGENCY = {
+    normal:  { mult: 1.00, label: 'Normal',   deadline: '7 días hábiles', badge: 'badge-green' },
+    express: { mult: 1.40, label: 'Express',  deadline: '3 días hábiles', badge: 'badge-amber' },
+    ultra:   { mult: 1.80, label: 'Ultra Express', deadline: '24 horas',  badge: 'badge-red'   },
+  };
+
+  let state = {
+    project:    'logo',
+    complexity: 'basic',
+    urgency:    'normal',
+    addons:     0,
+  };
+
+  function selectProject(el) {
+    document.querySelectorAll('.project-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    state.project = el.dataset.key;
+    recalc();
+  }
+
+  function selectChip(group, el, activeClass) {
+    const parent = el.parentElement;
+    parent.querySelectorAll('.chip').forEach(c => {
+      c.classList.remove('active', 'active-green', 'active-red');
+    });
+    el.classList.add(activeClass, 'active');
+    state[group] = el.dataset.key;
+    recalc();
+  }
+
+  function toggleAddon(el) {
+    el.classList.toggle('active');
+    const prices = [...document.querySelectorAll('.addon-row.active')]
+      .map(r => parseInt(r.dataset.price));
+    state.addons = prices.reduce((a, b) => a + b, 0);
+    recalc();
+  }
+
+  function fmt(n) {
+    return n.toLocaleString('es-DO');
+  }
+
+  function recalc() {
+    const base   = BASE_PRICES[state.project];
+    const cMeta  = COMPLEXITY[state.complexity];
+    const uMeta  = URGENCY[state.urgency];
+
+    const subtotal = Math.round(base * cMeta.mult * uMeta.mult);
+    const total    = subtotal + state.addons;
+
+    // Price animation
+    const el = document.getElementById('resultPrice');
+    animateNumber(el, total);
+
+    // Deadline
+    document.getElementById('resultDeadline').textContent = `Entrega en ${uMeta.deadline}`;
+
+    // Badges
+    const urgBadge  = document.getElementById('urgencyBadge');
+    const cmpBadge  = document.getElementById('complexityBadge');
+    urgBadge.className  = `badge ${uMeta.badge}`;
+    urgBadge.textContent = uMeta.label;
+    cmpBadge.className  = `badge ${cMeta.badge}`;
+    cmpBadge.textContent = cMeta.label;
+
+    // Breakdown
+    document.getElementById('bdBase').textContent       = `RD$ ${fmt(base)}`;
+    document.getElementById('bdComplexity').textContent = `× ${cMeta.mult.toFixed(1)}`;
+
+    const urgLabel = uMeta.mult === 1
+      ? '× 1.0 (sin cargo)'
+      : `× ${uMeta.mult.toFixed(2)} (+${Math.round((uMeta.mult-1)*100)}%)`;
+    document.getElementById('bdUrgency').textContent = urgLabel;
+
+    const addonsRow = document.getElementById('bdAddonsRow');
+    if (state.addons > 0) {
+      addonsRow.style.display = 'flex';
+      document.getElementById('bdAddons').textContent = `+ RD$ ${fmt(state.addons)}`;
+    } else {
+      addonsRow.style.display = 'none';
+    }
+
+    document.getElementById('bdTotal').textContent = `RD$ ${fmt(total)}`;
+  }
+
+  let animFrame;
+  function animateNumber(el, target) {
+    cancelAnimationFrame(animFrame);
+    const current = parseInt(el.textContent.replace(/,/g, '') || '0');
+    const diff = target - current;
+    const duration = 350;
+    const start = performance.now();
+
+    el.classList.remove('pop');
+    void el.offsetWidth;
+    el.classList.add('pop');
+
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const val = Math.round(current + diff * ease);
+      el.textContent = fmt(val);
+      if (p < 1) animFrame = requestAnimationFrame(step);
+    }
+    animFrame = requestAnimationFrame(step);
+  }
+
+  function requestQuote() {
+    const total   = parseInt(document.getElementById('bdTotal').textContent.replace(/[^0-9]/g, ''));
+    const project = document.querySelector('.project-card.active .project-name').textContent;
+    const msg = `Hola, estoy interesado en cotizar un proyecto de ${project}. El estimado me indica RD$ ${fmt(total)}.`;
+    const wa  = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(wa, '_blank');
+  }
+
+  recalc();
+</script>
+</body>
+</html>
