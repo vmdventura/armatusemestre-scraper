@@ -1,0 +1,54 @@
+{
+  "updated_at": "2026-06-23T00:00:00.000Z",
+  "source": "Ministerio de Industria, Comercio y Mipymes (MICM)",
+  "source_url": "https://micm.gob.do/combustibles",
+  "country": "DO",
+  "week": {
+    "from": "2026-06-16",
+    "to": "2026-06-22"
+  },
+  "prices": {
+    "gasolina_premium": {
+      "name": "Gasolina Premium",
+      "price_gal": 307.40,
+      "price_liter": 81.22,
+      "unit": "RD$/galón"
+    },
+    "gasolina_regular": {
+      "name": "Gasolina Regular",
+      "price_gal": 288.60,
+      "price_liter": 76.25,
+      "unit": "RD$/galón"
+    },
+    "gasoil_regular": {
+      "name": "Gasoil Regular",
+      "price_gal": 230.10,
+      "price_liter": 60.79,
+      "unit": "RD$/galón"
+    },
+    "gasoil_optimo": {
+      "name": "Gasoil Óptimo",
+      "price_gal": 252.80,
+      "price_liter": 66.79,
+      "unit": "RD$/galón"
+    },
+    "glp": {
+      "name": "GLP",
+      "price_gal": 154.90,
+      "price_liter": 40.92,
+      "unit": "RD$/galón"
+    },
+    "keroseno": {
+      "name": "Keroseno",
+      "price_gal": 199.40,
+      "price_liter": 52.69,
+      "unit": "RD$/galón"
+    },
+    "avtur": {
+      "name": "Avtur",
+      "price_gal": 213.60,
+      "price_liter": 56.44,
+      "unit": "RD$/galón"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "TanqueLleno",
+    "slug": "tanquelleno",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "do.tanquelleno.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#07091A"
+      },
+      "package": "do.tanquelleno.app"
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
