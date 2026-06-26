@@ -1,0 +1,36 @@
+name: Scrape UASD Schedule
+
+on:
+  schedule:
+    # Run every day at 06:00 UTC (02:00 Santo Domingo time)
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      campus:
+        description: Campus code (e.g. CSA, STG)
+        required: false
+        default: CSA
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Scrape schedule
+        env:
+          CAMPUS: ${{ github.event.inputs.campus || 'CSA' }}
+        run: node scrape-uasd.mjs
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/uasd-schedule-*.json
+          git diff --cached --quiet || git commit -m "chore: actualizar horarios UASD [skip ci]"
+          git push
