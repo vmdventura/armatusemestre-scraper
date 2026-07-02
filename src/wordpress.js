@@ -27,16 +27,47 @@ async function wpFetch(path, options = {}) {
   return body;
 }
 
-export async function uploadImage(buffer, filename, mimeType = 'image/jpeg') {
+export async function uploadImage(buffer, filename, mimeType = 'image/jpeg', altText = '') {
   const form = new FormData();
   form.append('file', new Blob([buffer], { type: mimeType }), filename);
+  if (altText) {
+    form.append('alt_text', altText);
+    form.append('title', altText);
+  }
 
   const data = await wpFetch('/media', {
     method: 'POST',
     body: form,
   });
 
-  return data.id;
+  return { id: data.id, url: data.source_url };
+}
+
+// Busca cada etiqueta por nombre; si no existe la crea. Devuelve los term IDs.
+// El rol Editor tiene manage_categories, así que puede crear etiquetas.
+export async function ensureTags(names = []) {
+  const ids = [];
+  for (const name of names.slice(0, 6)) {
+    const clean = String(name).trim();
+    if (!clean) continue;
+    try {
+      const found = await wpFetch(`/tags?search=${encodeURIComponent(clean)}&per_page=20`);
+      const match = found.find(t => t.name.toLowerCase() === clean.toLowerCase());
+      if (match) {
+        ids.push(match.id);
+        continue;
+      }
+      const created = await wpFetch('/tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: clean }),
+      });
+      ids.push(created.id);
+    } catch {
+      // Etiqueta conflictiva (slug duplicado, etc.) — el post sale sin ella.
+    }
+  }
+  return ids;
 }
 
 export async function getCurrentUser() {
@@ -69,7 +100,7 @@ function capTitle(title) {
   return `${title.slice(0, TITLE_MAX - 1).replace(/\s+\S*$/, '')}…`;
 }
 
-export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId, deporteId, categoryId }) {
+export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId, deporteId, categoryId, tagIds }) {
   const safeTitle = capTitle(title);
   const payload = {
     title: safeTitle,
@@ -79,6 +110,7 @@ export async function createPost({ title, html, excerpt, slug, focus_keyword, me
     featured_media: mediaId,
     ...(deporteId ? { deporte: [deporteId] } : {}),
     ...(categoryId ? { categories: [categoryId] } : {}),
+    ...(tagIds?.length ? { tags: tagIds } : {}),
     meta: {
       rank_math_focus_keyword: focus_keyword,
       rank_math_description: meta_description,

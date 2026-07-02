@@ -2,7 +2,29 @@ import 'dotenv/config';
 import { Telegraf } from 'telegraf';
 import { scrapeArticle } from './scraper.js';
 import { rewriteArticle } from './claude.js';
-import { uploadImage, createPost, getTaxonomyMap, getCategoryIdBySlug } from './wordpress.js';
+import { uploadImage, createPost, getTaxonomyMap, getCategoryIdBySlug, ensureTags } from './wordpress.js';
+
+function escapeAttr(s = '') {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+// Inserta la foto (con alt = keyword) tras el primer párrafo, y añade al
+// final el enlace a la fuente (externo) y al archivo del deporte (interno).
+// Rank Math puntúa: imagen con keyword en alt, enlace externo y enlace interno.
+function buildContent({ html, imageAlt, mediaUrl, sourceUrl, deporteNombre, deporteSlug }) {
+  let out = html;
+  const figure = `<figure class="wp-block-image size-large"><img src="${escapeAttr(mediaUrl)}" alt="${escapeAttr(imageAlt)}"/></figure>`;
+  const firstP = out.indexOf('</p>');
+  out = firstP >= 0
+    ? `${out.slice(0, firstP + 4)}\n${figure}\n${out.slice(firstP + 4)}`
+    : `${figure}\n${out}`;
+
+  const host = new URL(sourceUrl).hostname.replace(/^www\./, '');
+  const siteUrl = (process.env.WORDPRESS_URL || '').replace(/\/$/, '');
+  out += `\n<p><em>Fuente: <a href="${escapeAttr(sourceUrl)}" target="_blank" rel="noopener">${escapeAttr(host)}</a>. ` +
+    `Más noticias de ${escapeAttr(deporteNombre)} en <a href="${siteUrl}/deporte/${escapeAttr(deporteSlug)}/">DeportesDO</a>.</em></p>`;
+  return out;
+}
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
@@ -55,16 +77,38 @@ async function processArticle(ctx, url, photoFileId) {
     const mimeType = imgRes.headers.get('content-type') || 'image/jpeg';
     const ext = mimeType.includes('png') ? 'png' : 'jpg';
 
-    // 4. Upload image to WordPress
-    const mediaId = await uploadImage(imgBuffer, `noticia-${Date.now()}.${ext}`, mimeType);
+    // 4. Upload image to WordPress (con alt = keyword para Rank Math)
+    const imageAlt = article.image_alt || article.focus_keyword;
+    const media = await uploadImage(imgBuffer, `noticia-${Date.now()}.${ext}`, mimeType, imageAlt);
 
-    // 5. Create and publish post
-    const { url: postUrl, published } = await createPost({ ...article, mediaId, deporteId, categoryId });
+    // 5. Etiquetas: buscar o crear cada una
+    const tagIds = await ensureTags(article.tags || []).catch(() => []);
+
+    // 6. Contenido final: foto dentro del artículo + enlaces fuente/interno
+    const deporteNombre = taxonomyMap[article.deporte_slug]?.name || article.deporte_slug;
+    const finalHtml = buildContent({
+      html: article.html,
+      imageAlt,
+      mediaUrl: media.url,
+      sourceUrl: url,
+      deporteNombre,
+      deporteSlug: article.deporte_slug,
+    });
+
+    // 7. Create and publish post
+    const { url: postUrl, published } = await createPost({
+      ...article,
+      html: finalHtml,
+      mediaId: media.id,
+      deporteId,
+      categoryId,
+      tagIds,
+    });
 
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
     if (published) {
-      const deporteNombre = taxonomyMap[article.deporte_slug]?.name || article.deporte_slug;
-      await ctx.reply(`Noticia publicada exitosamente (${deporteNombre}):\n${postUrl}`);
+      const tagsInfo = article.tags?.length ? ` · ${article.tags.length} etiquetas` : '';
+      await ctx.reply(`Noticia publicada exitosamente (${deporteNombre}${tagsInfo}):\n${postUrl}`);
     } else {
       await ctx.reply(
         `La noticia se guardó como borrador (WordPress rechazó la publicación directa):\n${postUrl}\n\n` +
