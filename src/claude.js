@@ -13,24 +13,33 @@ Reglas:
 - Excerpt: una oración de 20-25 palabras
 - Slug: minúsculas, sin acentos, guiones`;
 
-const ARTICLE_TOOL = {
-  name: 'publicar_noticia',
-  description: 'Publica la noticia reescrita con SEO en WordPress',
-  input_schema: {
-    type: 'object',
-    properties: {
-      title: { type: 'string', description: 'Título SEO, máximo 60 caracteres' },
-      html: { type: 'string', description: 'Contenido HTML completo con etiquetas p y h2' },
-      focus_keyword: { type: 'string', description: 'Keyword principal para Rank Math' },
-      meta_description: { type: 'string', description: 'Meta descripción de 150-158 caracteres' },
-      excerpt: { type: 'string', description: 'Resumen en una oración de 20-25 palabras' },
-      slug: { type: 'string', description: 'URL amigable en minúsculas sin acentos' },
+// deporteSlugs: slugs válidos de la taxonomía 'deporte' del sitio (taxonomy-map).
+// Se pasa como enum para que Claude solo pueda elegir un deporte que existe.
+function buildArticleTool(deporteSlugs) {
+  return {
+    name: 'publicar_noticia',
+    description: 'Publica la noticia reescrita con SEO en WordPress',
+    input_schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Título SEO, máximo 60 caracteres' },
+        html: { type: 'string', description: 'Contenido HTML completo con etiquetas p y h2' },
+        focus_keyword: { type: 'string', description: 'Keyword principal para Rank Math' },
+        meta_description: { type: 'string', description: 'Meta descripción de 150-158 caracteres' },
+        excerpt: { type: 'string', description: 'Resumen en una oración de 20-25 palabras' },
+        slug: { type: 'string', description: 'URL amigable en minúsculas sin acentos' },
+        deporte_slug: {
+          type: 'string',
+          description: 'Deporte/federación del artículo. Elige el slug que mejor corresponda.',
+          ...(deporteSlugs?.length ? { enum: deporteSlugs } : {}),
+        },
+      },
+      required: ['title', 'html', 'focus_keyword', 'meta_description', 'excerpt', 'slug', 'deporte_slug'],
     },
-    required: ['title', 'html', 'focus_keyword', 'meta_description', 'excerpt', 'slug'],
-  },
-};
+  };
+}
 
-export async function rewriteArticle({ title, text, sourceUrl }) {
+export async function rewriteArticle({ title, text, sourceUrl, deporteSlugs }) {
   const userMessage = `Reescribe esta noticia deportiva para DeportesDo.com:
 
 TÍTULO ORIGINAL: ${title}
@@ -43,7 +52,7 @@ ${text}`;
     model: 'claude-sonnet-5',
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
-    tools: [ARTICLE_TOOL],
+    tools: [buildArticleTool(deporteSlugs)],
     tool_choice: { type: 'tool', name: 'publicar_noticia' },
     messages: [{ role: 'user', content: userMessage }],
   });

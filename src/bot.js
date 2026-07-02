@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Telegraf } from 'telegraf';
 import { scrapeArticle } from './scraper.js';
 import { rewriteArticle } from './claude.js';
-import { uploadImage, createPost } from './wordpress.js';
+import { uploadImage, createPost, getTaxonomyMap } from './wordpress.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
@@ -35,8 +35,12 @@ async function processArticle(ctx, url, photoFileId) {
     // 1. Scrape article content
     const { title, text, imageUrl } = await scrapeArticle(url);
 
-    // 2. Rewrite with Claude Sonnet
-    const article = await rewriteArticle({ title, text, sourceUrl: url });
+    // 2. Rewrite with Claude Sonnet — con la lista real de deportes del sitio
+    // (deportesdo-core exige la taxonomía 'deporte' para publicar; sin ella → 422)
+    const taxonomyMap = await getTaxonomyMap().catch(() => ({}));
+    const deporteSlugs = Object.keys(taxonomyMap);
+    const article = await rewriteArticle({ title, text, sourceUrl: url, deporteSlugs });
+    const deporteId = taxonomyMap[article.deporte_slug]?.id;
 
     // 3. Download photo from Telegram
     const fileLink = await ctx.telegram.getFileLink(photoFileId);
@@ -50,15 +54,16 @@ async function processArticle(ctx, url, photoFileId) {
     const mediaId = await uploadImage(imgBuffer, `noticia-${Date.now()}.${ext}`, mimeType);
 
     // 5. Create and publish post
-    const { url: postUrl, published } = await createPost({ ...article, mediaId });
+    const { url: postUrl, published } = await createPost({ ...article, mediaId, deporteId });
 
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
     if (published) {
-      await ctx.reply(`Noticia publicada exitosamente:\n${postUrl}`);
+      const deporteNombre = taxonomyMap[article.deporte_slug]?.name || article.deporte_slug;
+      await ctx.reply(`Noticia publicada exitosamente (${deporteNombre}):\n${postUrl}`);
     } else {
       await ctx.reply(
-        `La noticia se guardó como borrador porque el usuario de WordPress no tiene permiso de publicar:\n${postUrl}\n\n` +
-        `Publícala manualmente desde wp-admin, o corrige el rol del usuario a Autor y prueba de nuevo.`
+        `La noticia se guardó como borrador (WordPress rechazó la publicación directa):\n${postUrl}\n\n` +
+        `Revísala y publícala desde wp-admin. Si esto pasa siempre, verifica el rol del usuario y que el post tenga deporte e imagen destacada.`
       );
     }
   } catch (err) {

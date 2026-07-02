@@ -43,17 +43,35 @@ export async function getCurrentUser() {
   return wpFetch('/users/me?context=edit');
 }
 
-export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId }) {
+// Mapa slug → { id, name, tier } de la taxonomía 'deporte' (las 59+ federaciones).
+// Endpoint público del plugin deportesdo-core; sin él el post se rechaza con 422 al publicar.
+export async function getTaxonomyMap() {
+  const res = await fetch(`${process.env.WORDPRESS_URL}/wp-json/deportesdo/v1/taxonomy-map`);
+  if (!res.ok) throw new Error(`No se pudo obtener el taxonomy-map (HTTP ${res.status})`);
+  const data = await res.json();
+  return data.deporte || {};
+}
+
+const TITLE_MAX = 70; // deportesdo-core rechaza con 422 títulos de más de 70 caracteres
+
+function capTitle(title) {
+  if (title.length <= TITLE_MAX) return title;
+  return `${title.slice(0, TITLE_MAX - 1).replace(/\s+\S*$/, '')}…`;
+}
+
+export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId, deporteId }) {
+  const safeTitle = capTitle(title);
   const payload = {
-    title,
+    title: safeTitle,
     content: html,
     excerpt,
     slug,
     featured_media: mediaId,
+    ...(deporteId ? { deporte: [deporteId] } : {}),
     meta: {
       rank_math_focus_keyword: focus_keyword,
       rank_math_description: meta_description,
-      rank_math_title: `${title} | DeportesDo`,
+      rank_math_title: `${safeTitle} | DeportesDo`,
     },
   };
 
