@@ -2,25 +2,35 @@ import * as cheerio from 'cheerio';
 
 const TIMEOUT_MS = 10_000;
 
-export async function scrapeArticle(url) {
+const UA_BROWSER = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
+const UA_BOT = 'DeportesDOBot/1.0 (+https://deportesdo.com)';
+
+async function fetchHtml(url, userAgent) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-  let html;
   try {
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'User-Agent': userAgent,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
       },
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status} al acceder a ${url}`);
-    html = await res.text();
+    return { status: res.status, html: await res.text() };
   } finally {
     clearTimeout(timer);
   }
+}
+
+export async function scrapeArticle(url) {
+  // Algunos sitios (ESPN) detectan el UA de navegador falso y responden
+  // 202 con cuerpo vacío, pero sirven el HTML completo a un bot honesto.
+  let { status, html } = await fetchHtml(url, UA_BROWSER);
+  if (status !== 200 || html.length < 2000) {
+    ({ status, html } = await fetchHtml(url, UA_BOT));
+  }
+  if (status !== 200) throw new Error(`HTTP ${status} al acceder a ${url}`);
 
   const $ = cheerio.load(html);
 
