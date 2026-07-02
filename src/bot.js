@@ -50,10 +50,17 @@ async function processArticle(ctx, url, photoFileId) {
     const mediaId = await uploadImage(imgBuffer, `noticia-${Date.now()}.${ext}`, mimeType);
 
     // 5. Create and publish post
-    const { url: postUrl } = await createPost({ ...article, mediaId });
+    const { url: postUrl, published } = await createPost({ ...article, mediaId });
 
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
-    await ctx.reply(`Noticia publicada exitosamente:\n${postUrl}`);
+    if (published) {
+      await ctx.reply(`Noticia publicada exitosamente:\n${postUrl}`);
+    } else {
+      await ctx.reply(
+        `La noticia se guardó como borrador porque el usuario de WordPress no tiene permiso de publicar:\n${postUrl}\n\n` +
+        `Publícala manualmente desde wp-admin, o corrige el rol del usuario a Autor y prueba de nuevo.`
+      );
+    }
   } catch (err) {
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
     await ctx.reply(`Error al procesar la noticia:\n${err.message}`);
