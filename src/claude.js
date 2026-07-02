@@ -43,14 +43,13 @@ ${text}`;
   if (!textBlock?.text) throw new Error('Claude no devolvió respuesta de texto. Intenta de nuevo.');
   const raw = textBlock.text.trim();
 
-  // Strip markdown code fences if present
-  const jsonStr = raw.startsWith('```')
-    ? raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
-    : raw;
+  // Extract JSON object from anywhere in the response (handles fences, preamble, etc.)
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('Claude no devolvió un JSON válido. Intenta de nuevo.');
 
   let article;
   try {
-    article = JSON.parse(jsonStr);
+    article = JSON.parse(jsonMatch[0]);
   } catch {
     throw new Error('Claude no devolvió un JSON válido. Intenta de nuevo.');
   }
