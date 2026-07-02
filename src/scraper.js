@@ -27,7 +27,7 @@ export async function scrapeArticle(url) {
   $('script, style, nav, header, footer, aside, .ad, .advertisement, [class*="sidebar"], [id*="sidebar"], [class*="menu"], [class*="related"], [class*="comment"]').remove();
 
   const title =
-    $('meta[property="og:title"]').attr('content') ||
+    ($('meta[property="og:title"]').attr('content') || '').trim() ||
     $('h1').first().text().trim() ||
     $('title').text().trim();
 
