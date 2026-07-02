@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Telegraf } from 'telegraf';
 import { scrapeArticle } from './scraper.js';
 import { rewriteArticle } from './claude.js';
-import { uploadImage, createPost, getTaxonomyMap } from './wordpress.js';
+import { uploadImage, createPost, getTaxonomyMap, getCategoryIdBySlug } from './wordpress.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
@@ -42,6 +42,11 @@ async function processArticle(ctx, url, photoFileId) {
     const article = await rewriteArticle({ title, text, sourceUrl: url, deporteSlugs });
     const deporteId = taxonomyMap[article.deporte_slug]?.id;
 
+    // Categoría nativa de WP con el mismo slug del deporte; si no existe, Multideporte
+    const categoryId =
+      (await getCategoryIdBySlug(article.deporte_slug).catch(() => null)) ||
+      (await getCategoryIdBySlug('multideporte').catch(() => null));
+
     // 3. Download photo from Telegram
     const fileLink = await ctx.telegram.getFileLink(photoFileId);
     const imgRes = await fetch(fileLink.href);
@@ -54,7 +59,7 @@ async function processArticle(ctx, url, photoFileId) {
     const mediaId = await uploadImage(imgBuffer, `noticia-${Date.now()}.${ext}`, mimeType);
 
     // 5. Create and publish post
-    const { url: postUrl, published } = await createPost({ ...article, mediaId, deporteId });
+    const { url: postUrl, published } = await createPost({ ...article, mediaId, deporteId, categoryId });
 
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
     if (published) {

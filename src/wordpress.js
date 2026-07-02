@@ -52,6 +52,16 @@ export async function getTaxonomyMap() {
   return data.deporte || {};
 }
 
+// Categoría nativa de WP cuyo slug coincide con el deporte (beisbol, boxeo, futbol…).
+// Endpoint público. Devuelve null si no existe categoría con ese slug.
+export async function getCategoryIdBySlug(slug) {
+  if (!slug) return null;
+  const res = await fetch(`${process.env.WORDPRESS_URL}/wp-json/wp/v2/categories?slug=${encodeURIComponent(slug)}`);
+  if (!res.ok) return null;
+  const cats = await res.json();
+  return cats[0]?.id ?? null;
+}
+
 const TITLE_MAX = 70; // deportesdo-core rechaza con 422 títulos de más de 70 caracteres
 
 function capTitle(title) {
@@ -59,7 +69,7 @@ function capTitle(title) {
   return `${title.slice(0, TITLE_MAX - 1).replace(/\s+\S*$/, '')}…`;
 }
 
-export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId, deporteId }) {
+export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId, deporteId, categoryId }) {
   const safeTitle = capTitle(title);
   const payload = {
     title: safeTitle,
@@ -68,6 +78,7 @@ export async function createPost({ title, html, excerpt, slug, focus_keyword, me
     slug,
     featured_media: mediaId,
     ...(deporteId ? { deporte: [deporteId] } : {}),
+    ...(categoryId ? { categories: [categoryId] } : {}),
     meta: {
       rank_math_focus_keyword: focus_keyword,
       rank_math_description: meta_description,
