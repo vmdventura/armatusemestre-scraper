@@ -39,7 +39,9 @@ ${text}`;
     messages: [{ role: 'user', content: userMessage }],
   });
 
-  const raw = response.content[0].text.trim();
+  const textBlock = response.content.find(b => b.type === 'text');
+  if (!textBlock?.text) throw new Error('Claude no devolvió respuesta de texto. Intenta de nuevo.');
+  const raw = textBlock.text.trim();
 
   // Strip markdown code fences if present
   const jsonStr = raw.startsWith('```')
