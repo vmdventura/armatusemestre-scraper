@@ -39,24 +39,49 @@ export async function uploadImage(buffer, filename, mimeType = 'image/jpeg') {
   return data.id;
 }
 
-export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId }) {
-  const data = await wpFetch('/posts', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      title,
-      content: html,
-      excerpt,
-      slug,
-      status: 'publish',
-      featured_media: mediaId,
-      meta: {
-        rank_math_focus_keyword: focus_keyword,
-        rank_math_description: meta_description,
-        rank_math_title: `${title} | DeportesDo`,
-      },
-    }),
-  });
+export async function getCurrentUser() {
+  return wpFetch('/users/me?context=edit');
+}
 
-  return { id: data.id, url: data.link };
+export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId }) {
+  const payload = {
+    title,
+    content: html,
+    excerpt,
+    slug,
+    featured_media: mediaId,
+    meta: {
+      rank_math_focus_keyword: focus_keyword,
+      rank_math_description: meta_description,
+      rank_math_title: `${title} | DeportesDo`,
+    },
+  };
+
+  const post = status =>
+    wpFetch('/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, status }),
+    });
+
+  try {
+    const data = await post('publish');
+    return { id: data.id, url: data.link, published: true };
+  } catch (err) {
+    if (!/WordPress API error 40[13]/.test(err.message)) throw err;
+
+    // El usuario no tiene permiso de publicar; intenta guardar como borrador
+    // para no perder la noticia ya redactada.
+    try {
+      const data = await post('draft');
+      return { id: data.id, url: data.link, published: false };
+    } catch {
+      const who = await getCurrentUser().catch(() => null);
+      const role = who?.roles?.join(', ') || 'desconocido';
+      throw new Error(
+        `El usuario de WordPress no tiene permiso para crear entradas (rol actual: ${role}). ` +
+        `Verifica en wp-admin > Usuarios que el rol sea Autor o superior.`
+      );
+    }
+  }
 }
