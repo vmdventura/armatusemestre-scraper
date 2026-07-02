@@ -2,9 +2,17 @@ name: Telegram News Bot
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['src/**', 'package.json']
   schedule:
     # Reinicia cada 5 horas para no superar el límite de 6h de GitHub Actions
     - cron: '0 */5 * * *'
+
+# Cancela el run anterior automáticamente cuando hay un nuevo push o reinicio
+concurrency:
+  group: telegram-bot
+  cancel-in-progress: true
 
 jobs:
   run-bot:
