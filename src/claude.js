@@ -2,32 +2,37 @@ import Anthropic from '@anthropic-ai/sdk';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `Eres un redactor deportivo senior de DeportesDo.com, el portal de noticias deportivas de República Dominicana. Reescribe artículos deportivos en español dominicano con estilo periodístico profesional, optimizados para SEO con Rank Math. El objetivo es que cada artículo puntúe 80+ en Rank Math.
+// Reglas SEO compartidas por todos los sitios; la identidad editorial
+// viene de la config del sitio (sites.js).
+function buildSystemPrompt(editorial) {
+  return `${editorial} Optimiza cada artículo para SEO (Rank Math/Yoast); el objetivo es puntuar 80+ en el análisis SEO.
 
-Regla de oro (la más importante): elige PRIMERO la keyword y construye el título alrededor de ella. Rank Math busca la frase EXACTA — "España choca ante Austria" NO contiene la keyword "España vs Austria". La keyword debe ser de 2 a 4 palabras para que quepa literal en el título.
+Regla de oro (la más importante): elige PRIMERO la keyword y construye el título alrededor de ella. El análisis SEO busca la frase EXACTA — "España choca ante Austria" NO contiene la keyword "España vs Austria". La keyword debe ser de 2 a 4 palabras para que quepa literal en el título.
 
 Reglas del título:
 - Máximo 60 caracteres, DEBE contener la keyword principal EXACTA (la misma secuencia de palabras, idealmente al inicio del título)
-- Incluye un número cuando sea natural (años, cifras, cantidad de jugadores)
+- Incluye un número cuando sea natural (años, cifras, cantidades)
 - Incluye una palabra de impacto cuando sea natural (histórico, clave, brilla, sorprende, imperdible, confirmado)
 
 Reglas del contenido (HTML con <p> y <h2>):
-- Entre 650 y 800 palabras. NUNCA menos de 650. Expande con contexto: historial del atleta/equipo, cifras, qué significa para el deporte dominicano, próximos pasos.
+- Entre 650 y 800 palabras. NUNCA menos de 650. Expande con contexto: antecedentes, cifras, qué significa para el público dominicano, próximos pasos.
 - Estructura: 2 párrafos intro → <h2> → 2-3 párrafos → <h2> → 2-3 párrafos → <h2>Conclusión</h2> → cierre
 - La keyword EXACTA debe aparecer: en el primer párrafo, en al menos un <h2>, y 4-6 veces en total en el contenido (siempre la misma secuencia de palabras). No la fuerces hasta sonar robótico.
 - Párrafos cortos (2-4 oraciones)
 
 Reglas de metadatos:
-- Keyword principal: 2 a 4 palabras, específica de la noticia (no genérica como "béisbol"). Ejemplos buenos: "Futures Game 2026", "España vs Austria", "Juan Soto Mets"
+- Keyword principal: 2 a 4 palabras, específica de la noticia (no genérica). Ejemplos buenos: "Futures Game 2026", "España vs Austria", "Juan Soto Mets"
 - Meta descripción: entre 150 y 158 caracteres, incluye la keyword
 - Excerpt: una oración de 20-25 palabras
 - Slug: minúsculas, sin acentos, con guiones, y DEBE contener la keyword normalizada (ej: keyword "Futures Game 2026" → slug que incluya "futures-game-2026")
 - image_alt: describe la foto en una frase corta que incluya la keyword
-- Etiquetas: 3 a 6, específicas (nombres de atletas, equipos, torneos, la liga). Capitalización natural.`;
+- Etiquetas: 3 a 6, específicas (nombres propios, equipos, artistas, eventos). Capitalización natural.`;
+}
 
-// deporteSlugs: slugs válidos de la taxonomía 'deporte' del sitio (taxonomy-map).
-// Se pasa como enum para que Claude solo pueda elegir un deporte que existe.
-function buildArticleTool(deporteSlugs) {
+// seccionSlugs: slugs válidos de las secciones del sitio (taxonomía deporte
+// en DeportesDO, categorías nativas en los demás). Se pasa como enum para
+// que Claude solo pueda elegir una sección que existe.
+function buildArticleTool(seccionSlugs) {
   return {
     name: 'publicar_noticia',
     description: 'Publica la noticia reescrita con SEO en WordPress',
@@ -36,7 +41,7 @@ function buildArticleTool(deporteSlugs) {
       properties: {
         title: { type: 'string', description: 'Título SEO, máximo 60 caracteres; DEBE contener la keyword EXACTA (misma secuencia de palabras), idealmente al inicio' },
         html: { type: 'string', description: 'Contenido HTML de 650-800 palabras con etiquetas p y h2; keyword exacta en el primer párrafo, en un h2 y 4-6 veces en total' },
-        focus_keyword: { type: 'string', description: 'Keyword principal para Rank Math, 2-4 palabras específicas de la noticia' },
+        focus_keyword: { type: 'string', description: 'Keyword principal para SEO, 2-4 palabras específicas de la noticia' },
         meta_description: { type: 'string', description: 'Meta descripción de 150-158 caracteres con la keyword' },
         excerpt: { type: 'string', description: 'Resumen en una oración de 20-25 palabras' },
         slug: { type: 'string', description: 'URL amigable en minúsculas sin acentos; DEBE contener la keyword normalizada' },
@@ -44,20 +49,20 @@ function buildArticleTool(deporteSlugs) {
         tags: {
           type: 'array',
           items: { type: 'string' },
-          description: '3 a 6 etiquetas específicas: atletas, equipos, torneos, liga',
+          description: '3 a 6 etiquetas específicas: nombres propios, equipos, artistas, eventos',
         },
-        deporte_slug: {
+        seccion_slug: {
           type: 'string',
-          description: 'Deporte/federación del artículo. Elige el slug que mejor corresponda.',
-          ...(deporteSlugs?.length ? { enum: deporteSlugs } : {}),
+          description: 'Sección/categoría del sitio para el artículo. Elige el slug que mejor corresponda.',
+          ...(seccionSlugs?.length ? { enum: seccionSlugs } : {}),
         },
       },
-      required: ['title', 'html', 'focus_keyword', 'meta_description', 'excerpt', 'slug', 'image_alt', 'tags', 'deporte_slug'],
+      required: ['title', 'html', 'focus_keyword', 'meta_description', 'excerpt', 'slug', 'image_alt', 'tags', 'seccion_slug'],
     },
   };
 }
 
-// Comparación al estilo Rank Math: minúsculas y sin acentos
+// Comparación al estilo Rank Math/Yoast: minúsculas y sin acentos
 function normalize(s = '') {
   return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -67,8 +72,8 @@ function countOccurrences(haystack, needle) {
   return normalize(haystack).split(normalize(needle)).length - 1;
 }
 
-// Replica los checks de Rank Math que más pesan. Si algo falla, se le
-// devuelve a Claude como tool_result para que corrija y regenere.
+// Replica los checks SEO que más pesan. Si algo falla, se le devuelve a
+// Claude como tool_result para que corrija y regenere.
 export function validateArticle(a) {
   const issues = [];
   const kw = a.focus_keyword || '';
@@ -103,8 +108,8 @@ export function validateArticle(a) {
 
 const MAX_ATTEMPTS = 3;
 
-export async function rewriteArticle({ title, text, sourceUrl, deporteSlugs }) {
-  const userMessage = `Reescribe esta noticia deportiva para DeportesDo.com:
+export async function rewriteArticle({ title, text, sourceUrl, seccionSlugs, editorial }) {
+  const userMessage = `Reescribe esta noticia:
 
 TÍTULO ORIGINAL: ${title}
 URL FUENTE: ${sourceUrl}
@@ -119,8 +124,8 @@ ${text}`;
     const response = await client.messages.create({
       model: 'claude-sonnet-5',
       max_tokens: 8192,
-      system: SYSTEM_PROMPT,
-      tools: [buildArticleTool(deporteSlugs)],
+      system: buildSystemPrompt(editorial),
+      tools: [buildArticleTool(seccionSlugs)],
       tool_choice: { type: 'tool', name: 'publicar_noticia' },
       messages,
     });
