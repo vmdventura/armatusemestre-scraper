@@ -107,7 +107,7 @@ async function processArticle(ctx, url, photoFileId) {
 
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
     if (published) {
-      const tagsInfo = article.tags?.length ? ` · ${article.tags.length} etiquetas` : '';
+      const tagsInfo = tagIds.length ? ` · ${tagIds.length} etiquetas` : '';
       await ctx.reply(`Noticia publicada exitosamente (${deporteNombre}${tagsInfo}):\n${postUrl}`);
     } else {
       await ctx.reply(

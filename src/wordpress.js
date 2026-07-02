@@ -46,10 +46,15 @@ export async function uploadImage(buffer, filename, mimeType = 'image/jpeg', alt
 // Busca cada etiqueta por nombre; si no existe la crea. Devuelve los term IDs.
 // El rol Editor tiene manage_categories, así que puede crear etiquetas.
 export async function ensureTags(names = []) {
+  // Claude a veces devuelve las etiquetas como string ("España, Mundial")
+  // en vez de array; iterar un string da caracteres sueltos como tags.
+  const list = (Array.isArray(names) ? names : String(names).split(','))
+    .map(n => String(n).trim())
+    .filter(n => n.length > 1)
+    .slice(0, 6);
+
   const ids = [];
-  for (const name of names.slice(0, 6)) {
-    const clean = String(name).trim();
-    if (!clean) continue;
+  for (const clean of list) {
     try {
       const found = await wpFetch(`/tags?search=${encodeURIComponent(clean)}&per_page=20`);
       const match = found.find(t => t.name.toLowerCase() === clean.toLowerCase());
