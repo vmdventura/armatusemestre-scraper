@@ -28,13 +28,12 @@ async function wpFetch(path, options = {}) {
 }
 
 export async function uploadImage(buffer, filename, mimeType = 'image/jpeg') {
+  const form = new FormData();
+  form.append('file', new Blob([buffer], { type: mimeType }), filename);
+
   const data = await wpFetch('/media', {
     method: 'POST',
-    headers: {
-      'Content-Type': mimeType,
-      'Content-Disposition': `attachment; filename="${filename}"`,
-    },
-    body: buffer,
+    body: form,
   });
 
   return data.id;
