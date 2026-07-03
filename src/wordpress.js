@@ -105,8 +105,22 @@ function capTitle(title) {
   return `${title.slice(0, TITLE_MAX - 1).replace(/\s+\S*$/, '')}…`;
 }
 
+// Espaciado entre publicaciones: si el bot procesa varias noticias seguidas,
+// no queremos que todas salgan con el mismo timestamp (se ve mal en el home
+// y no aporta a la señal de "contenido fresco" para SEO). nextSlot se
+// resetea con cada reinicio del proceso — solo espacia dentro de la sesión.
+const PUBLISH_SPACING_MINUTES = 20;
+const MIN_DELAY_MS = 60_000; // por debajo de esto, publicar de una vez
+let nextSlot = 0;
+
 export async function createPost({ title, html, excerpt, slug, focus_keyword, meta_description, mediaId, deporteId, categoryId, tagIds }) {
   const safeTitle = capTitle(title);
+
+  const now = Date.now();
+  const slot = Math.max(now, nextSlot);
+  const shouldSchedule = slot - now > MIN_DELAY_MS;
+  nextSlot = slot + PUBLISH_SPACING_MINUTES * 60_000;
+
   const payload = {
     title: safeTitle,
     content: html,
@@ -116,6 +130,7 @@ export async function createPost({ title, html, excerpt, slug, focus_keyword, me
     ...(deporteId ? { deporte: [deporteId] } : {}),
     ...(categoryId ? { categories: [categoryId] } : {}),
     ...(tagIds?.length ? { tags: tagIds } : {}),
+    ...(shouldSchedule ? { date_gmt: new Date(slot).toISOString() } : {}),
     meta: {
       rank_math_focus_keyword: focus_keyword,
       rank_math_description: meta_description,
@@ -131,8 +146,13 @@ export async function createPost({ title, html, excerpt, slug, focus_keyword, me
     });
 
   try {
-    const data = await post('publish');
-    return { id: data.id, url: data.link, published: true };
+    const data = await post(shouldSchedule ? 'future' : 'publish');
+    return {
+      id: data.id,
+      url: data.link,
+      status: shouldSchedule ? 'future' : 'publish',
+      scheduledFor: shouldSchedule ? new Date(slot) : null,
+    };
   } catch (err) {
     if (!/WordPress API error 40[13]/.test(err.message)) throw err;
 
@@ -140,7 +160,7 @@ export async function createPost({ title, html, excerpt, slug, focus_keyword, me
     // para no perder la noticia ya redactada.
     try {
       const data = await post('draft');
-      return { id: data.id, url: data.link, published: false };
+      return { id: data.id, url: data.link, status: 'draft', scheduledFor: null };
     } catch {
       const who = await getCurrentUser().catch(() => null);
       const role = who?.roles?.join(', ') || 'desconocido';

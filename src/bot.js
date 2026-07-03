@@ -3,6 +3,7 @@ import { Telegraf } from 'telegraf';
 import { scrapeArticle } from './scraper.js';
 import { rewriteArticle } from './claude.js';
 import { uploadImage, createPost, getTaxonomyMap, getCategoryIdBySlug, ensureTags } from './wordpress.js';
+import { getTrendingBrief } from './trends.js';
 
 function escapeAttr(s = '') {
   return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -95,8 +96,8 @@ async function processArticle(ctx, url, photoFileId) {
       deporteSlug: article.deporte_slug,
     });
 
-    // 7. Create and publish post
-    const { url: postUrl, published } = await createPost({
+    // 7. Create and publish post — espaciado automático si hay cola (ver createPost)
+    const { url: postUrl, status: postStatus, scheduledFor } = await createPost({
       ...article,
       html: finalHtml,
       mediaId: media.id,
@@ -106,9 +107,14 @@ async function processArticle(ctx, url, photoFileId) {
     });
 
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
-    if (published) {
-      const tagsInfo = tagIds.length ? ` · ${tagIds.length} etiquetas` : '';
+    const tagsInfo = tagIds.length ? ` · ${tagIds.length} etiquetas` : '';
+    if (postStatus === 'publish') {
       await ctx.reply(`Noticia publicada exitosamente (${deporteNombre}${tagsInfo}):\n${postUrl}`);
+    } else if (postStatus === 'future') {
+      const hora = scheduledFor.toLocaleTimeString('es-DO', { timeZone: 'America/Santo_Domingo', hour: '2-digit', minute: '2-digit' });
+      await ctx.reply(
+        `Noticia programada para las ${hora} (${deporteNombre}${tagsInfo}) — para no amontonar publicaciones seguidas:\n${postUrl}`
+      );
     } else {
       await ctx.reply(
         `La noticia se guardó como borrador (WordPress rechazó la publicación directa):\n${postUrl}\n\n` +
@@ -116,6 +122,7 @@ async function processArticle(ctx, url, photoFileId) {
       );
     }
   } catch (err) {
+    console.error(`Error procesando ${url}:`, err.message);
     await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
     await ctx.reply(`Error al procesar la noticia:\n${err.message}`);
   } finally {
@@ -137,6 +144,7 @@ bot.command('start', ctx => {
     '1. Envia /noticia [URL] o simplemente pega una URL\n' +
     '2. Luego envia la foto para la noticia\n' +
     '   (o envia la foto con la URL en el caption)\n\n' +
+    '/tendencias — qué está sonando ahora en RD (Twitter/X + Google)\n' +
     '/cancelar — cancela la operacion actual'
   );
 });
@@ -146,6 +154,38 @@ bot.command('cancelar', ctx => {
   session.state = 'IDLE';
   session.url = null;
   ctx.reply('Operacion cancelada.');
+});
+
+bot.command('tendencias', async ctx => {
+  const status = await ctx.reply('Buscando tendencias en RD (Twitter/X + Google)...');
+  try {
+    const { topics, twitterOk, googleOk } = await getTrendingBrief();
+    await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
+
+    if (!topics.length) {
+      return ctx.reply('No se pudieron obtener tendencias ahora mismo. Intenta de nuevo en unos minutos.');
+    }
+
+    const lines = topics.map((t, i) => {
+      const cruzado = t.crossed ? ' — también suena en Twitter/X' : '';
+      const trafico = t.traffic ? ` (${t.traffic} búsquedas)` : '';
+      return `${i + 1}. ${t.title}${trafico}${cruzado}`;
+    });
+
+    const avisos = [];
+    if (!twitterOk) avisos.push('Twitter/X no respondió esta vez');
+    if (!googleOk) avisos.push('Google Trends no respondió esta vez');
+
+    await ctx.reply(
+      `Tendencias en RD ahora mismo:\n\n${lines.join('\n')}\n\n` +
+      `Los marcados "también suena en Twitter/X" tienen doble señal: se buscan y se comentan al mismo tiempo — prioridad alta.\n\n` +
+      `Envía la URL de un artículo sobre alguno de estos temas para redactarlo.` +
+      (avisos.length ? `\n\n(${avisos.join('; ')}.)` : '')
+    );
+  } catch (err) {
+    await ctx.telegram.deleteMessage(ctx.chat.id, status.message_id).catch(() => {});
+    await ctx.reply(`Error al buscar tendencias:\n${err.message}`);
+  }
 });
 
 bot.command('noticia', ctx => {
