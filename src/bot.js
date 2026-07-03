@@ -10,9 +10,10 @@ function escapeAttr(s = '') {
 }
 
 // Inserta la foto (con alt = keyword) tras el primer párrafo, y añade al
-// final el enlace a la fuente (externo) y al archivo del deporte (interno).
-// Rank Math puntúa: imagen con keyword en alt, enlace externo y enlace interno.
-function buildContent({ html, imageAlt, mediaUrl, sourceUrl, deporteNombre, deporteSlug }) {
+// final el enlace interno al archivo del deporte. Rank Math puntúa: imagen
+// con keyword en alt y enlace interno. Sin crédito externo a la fuente
+// (no le regalamos enlace/autoridad a la competencia).
+function buildContent({ html, imageAlt, mediaUrl, deporteNombre, deporteSlug }) {
   let out = html;
   const figure = `<figure class="wp-block-image size-large"><img src="${escapeAttr(mediaUrl)}" alt="${escapeAttr(imageAlt)}"/></figure>`;
   const firstP = out.indexOf('</p>');
@@ -20,10 +21,8 @@ function buildContent({ html, imageAlt, mediaUrl, sourceUrl, deporteNombre, depo
     ? `${out.slice(0, firstP + 4)}\n${figure}\n${out.slice(firstP + 4)}`
     : `${figure}\n${out}`;
 
-  const host = new URL(sourceUrl).hostname.replace(/^www\./, '');
   const siteUrl = (process.env.WORDPRESS_URL || '').replace(/\/$/, '');
-  out += `\n<p><em>Fuente: <a href="${escapeAttr(sourceUrl)}" target="_blank" rel="noopener">${escapeAttr(host)}</a>. ` +
-    `Más noticias de ${escapeAttr(deporteNombre)} en <a href="${siteUrl}/deporte/${escapeAttr(deporteSlug)}/">DeportesDO</a>.</em></p>`;
+  out += `\n<p><em>Más noticias de ${escapeAttr(deporteNombre)} en <a href="${siteUrl}/deporte/${escapeAttr(deporteSlug)}/">DeportesDO</a>.</em></p>`;
   return out;
 }
 
@@ -91,7 +90,6 @@ async function processArticle(ctx, url, photoFileId) {
       html: article.html,
       imageAlt,
       mediaUrl: media.url,
-      sourceUrl: url,
       deporteNombre,
       deporteSlug: article.deporte_slug,
     });
