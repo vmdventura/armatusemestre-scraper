@@ -2,3 +2,6 @@ node_modules/
 .env
 *.log
 .expo/
+tanquelleno-app/dist/
+tanquelleno-app/ios/
+tanquelleno-app/android/
