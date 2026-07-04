@@ -1,12 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity,
+  View, Text, ScrollView, StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../constants/colors';
 import { PriceChip } from '../components/PriceChip';
 import { RegisterCargoModal } from '../components/RegisterCargoModal';
+import { AnimatedPressable } from '../components/AnimatedPressable';
+import { FadeInView } from '../components/FadeInView';
+import { CountUpText } from '../components/CountUpText';
 import { useFuelData } from '../hooks/useFuelData';
 import { useFillups } from '../context/FillupsContext';
 
@@ -145,20 +148,22 @@ export function ConsumoScreen() {
             <Text style={styles.greeting}>{getGreeting()} · {getTodayLabel()}</Text>
             <Text style={styles.name}>TanqueLleno</Text>
           </View>
-          <TouchableOpacity style={styles.notifBtn} onPress={() => setShowModal(true)}>
+          <AnimatedPressable style={styles.notifBtn} onPress={() => setShowModal(true)}>
             <Text style={{ fontSize: 18 }}>⛽</Text>
-          </TouchableOpacity>
+          </AnimatedPressable>
         </View>
 
         {/* Spend hero card */}
-        <View style={styles.spendCard}>
+        <FadeInView style={styles.spendCard} delay={0}>
           <View style={styles.spendGlow} />
           <Text style={styles.eyebrow}>Gasto este mes · {MONTHS[new Date().getMonth()]}</Text>
           <View style={styles.spendAmountRow}>
             <Text style={styles.spendCurrency}>RD$</Text>
-            <Text style={styles.spendAmount}>
-              {monthSpend > 0 ? monthSpend.toLocaleString('es-DO') : '—'}
-            </Text>
+            {monthSpend > 0 ? (
+              <CountUpText value={monthSpend} style={styles.spendAmount} />
+            ) : (
+              <Text style={styles.spendAmount}>—</Text>
+            )}
           </View>
           {spendChange !== null && (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
@@ -169,10 +174,10 @@ export function ConsumoScreen() {
             </View>
           )}
           {chartFillups.length > 0 && <MiniBarChart data={chartFillups} />}
-        </View>
+        </FadeInView>
 
         {/* Quick stats */}
-        <View style={styles.statsRow}>
+        <FadeInView delay={80} style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statVal}>{avgLiters > 0 ? `${avgLiters} L` : '—'}</Text>
             <Text style={styles.statKey}>Avg./carga</Text>
@@ -187,20 +192,21 @@ export function ConsumoScreen() {
             </Text>
             <Text style={styles.statKey}>Próxima</Text>
           </View>
-        </View>
+        </FadeInView>
 
         {/* Prediction card */}
-        <View style={styles.predCard}>
+        <FadeInView delay={140} style={styles.predCard}>
           <Text style={{ fontSize: 22 }}>🗓</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.predTitle}>Próxima carga estimada</Text>
             <Text style={styles.predSub}>{predDateLabel}</Text>
           </View>
-        </View>
+        </FadeInView>
 
         {/* Fuel preference */}
-        <TouchableOpacity
+        <AnimatedPressable
           style={styles.fuelPref}
+          scaleTo={0.98}
           onPress={() => navigation.navigate('precios')}
         >
           <View style={styles.fuelPrefIcon}>
@@ -216,7 +222,7 @@ export function ConsumoScreen() {
             <Text style={styles.fuelPrefPrice}>RD${priceLit}</Text>
             <Text style={styles.fuelPrefUnit}>/litro hoy</Text>
           </View>
-        </TouchableOpacity>
+        </AnimatedPressable>
 
         {/* Recent fill-ups */}
         <Text style={styles.sectionLabel}>ÚLTIMAS CARGAS</Text>
@@ -227,7 +233,7 @@ export function ConsumoScreen() {
             <Text style={styles.emptySub}>Registra tu primera carga para ver el historial</Text>
           </View>
         ) : (
-          <View style={[styles.card, { marginBottom: 16 }]}>
+          <FadeInView delay={200} style={[styles.card, { marginBottom: 16 }]}>
             {recentFills.map((f, i) => {
               const [y, m, d] = f.date.split('-');
               const dateObj = new Date(f.date + 'T12:00:00');
@@ -250,21 +256,22 @@ export function ConsumoScreen() {
                 </React.Fragment>
               );
             })}
-            <TouchableOpacity
+            <AnimatedPressable
               style={styles.seeAll}
+              haptic="selection"
               onPress={() => navigation.navigate('historial')}
             >
               <Text style={{ fontSize: 12, fontWeight: '600', color: colors.amber }}>
                 Ver historial completo →
               </Text>
-            </TouchableOpacity>
-          </View>
+            </AnimatedPressable>
+          </FadeInView>
         )}
 
         {/* FAB */}
-        <TouchableOpacity style={styles.fab} onPress={() => setShowModal(true)}>
+        <AnimatedPressable style={styles.fab} haptic="medium" scaleTo={0.97} onPress={() => setShowModal(true)}>
           <Text style={styles.fabText}>+ Registrar carga</Text>
-        </TouchableOpacity>
+        </AnimatedPressable>
 
       </ScrollView>
 

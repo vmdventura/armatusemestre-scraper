@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator,
+  View, Text, ScrollView, StyleSheet, ActivityIndicator,
 } from 'react-native';
 import Svg, { Path, Circle, Line, Text as SvgText, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import { PriceChip } from '../components/PriceChip';
+import { AnimatedPressable } from '../components/AnimatedPressable';
+import { FadeInView } from '../components/FadeInView';
 import { useFuelData } from '../hooks/useFuelData';
 
 const FUEL_TABS = [
@@ -156,8 +158,10 @@ export function HistorialScreen() {
           {FUEL_TABS.map(tab => {
             const active = tab.key === activeFuel;
             return (
-              <TouchableOpacity
+              <AnimatedPressable
                 key={tab.key}
+                haptic="selection"
+                scaleTo={0.94}
                 onPress={() => setActiveFuel(tab.key)}
                 style={[
                   styles.tab,
@@ -167,7 +171,7 @@ export function HistorialScreen() {
                 <Text style={[styles.tabText, active && { color: tab.accentColor, fontWeight: '700' }]}>
                   {tab.label}
                 </Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             );
           })}
         </ScrollView>
@@ -177,15 +181,17 @@ export function HistorialScreen() {
           {TIME_RANGES.map(r => {
             const active = r.label === activeRange;
             return (
-              <TouchableOpacity
+              <AnimatedPressable
                 key={r.label}
+                haptic="selection"
+                scaleTo={0.92}
                 onPress={() => setActiveRange(r.label)}
                 style={[styles.rangeBtn, active && styles.rangeBtnActive]}
               >
                 <Text style={[styles.rangeBtnText, active && { color: colors.amber, fontWeight: '700' }]}>
                   {r.label}
                 </Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             );
           })}
         </View>
@@ -195,7 +201,7 @@ export function HistorialScreen() {
         ) : (
           <>
             {/* Chart card */}
-            <View style={styles.card}>
+            <FadeInView delay={0} style={styles.card}>
               <View style={styles.chartHeader}>
                 <View>
                   <Text style={styles.chartFuelLabel}>
@@ -215,10 +221,10 @@ export function HistorialScreen() {
                 </View>
               </View>
               <LineChart data={chartData} accentColor={activeFuelMeta?.accentColor ?? colors.amber} />
-            </View>
+            </FadeInView>
 
             {/* Stats */}
-            <View style={styles.statsRow}>
+            <FadeInView delay={90} style={styles.statsRow}>
               {[
                 { label: 'Mínimo', value: statMin, color: colors.down },
                 { label: 'Promedio', value: statAvg, color: colors.textPrimary },
@@ -229,11 +235,11 @@ export function HistorialScreen() {
                   <Text style={[styles.statValue, { color }]}>{value}</Text>
                 </View>
               ))}
-            </View>
+            </FadeInView>
 
             {/* Recent changes */}
             <Text style={styles.sectionLabel}>ÚLTIMOS MOVIMIENTOS</Text>
-            <View style={[styles.card, { overflow: 'hidden' }]}>
+            <FadeInView delay={160} style={[styles.card, { overflow: 'hidden' }]}>
               {history.slice(0, 5).map((entry, i) => {
                 const price = entry.prices?.[activeFuel]?.price_gal;
                 const prevPrice = history[i + 1]?.prices?.[activeFuel]?.price_gal;
@@ -257,7 +263,7 @@ export function HistorialScreen() {
                   </React.Fragment>
                 );
               })}
-            </View>
+            </FadeInView>
           </>
         )}
       </ScrollView>

@@ -1,11 +1,13 @@
 import React from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator,
+  View, Text, ScrollView, StyleSheet, RefreshControl, ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import { PriceChip } from '../components/PriceChip';
+import { AnimatedPressable } from '../components/AnimatedPressable';
+import { FadeInView } from '../components/FadeInView';
 import { useFuelData } from '../hooks/useFuelData';
 import { formatWeek } from '../api/combustibles';
 
@@ -127,27 +129,30 @@ export function PreciosScreen() {
             <Text style={styles.headerLabel}>SEMANA DEL</Text>
             <Text style={styles.headerDate}>{formatWeek(week) || '— — —'}</Text>
           </View>
-          <TouchableOpacity style={styles.bellBtn}>
+          <AnimatedPressable style={styles.bellBtn} haptic="light">
             <BellIcon />
             <View style={styles.notifDot} />
-          </TouchableOpacity>
+          </AnimatedPressable>
         </View>
 
         {loading ? (
           <ActivityIndicator color={colors.amber} size="large" style={{ marginTop: 60 }} />
         ) : (
           <>
-            <HeroCard fuel={prices?.gasolina_premium} change={change('gasolina_premium')} />
+            <FadeInView delay={0}>
+              <HeroCard fuel={prices?.gasolina_premium} change={change('gasolina_premium')} />
+            </FadeInView>
 
             <View style={styles.grid}>
-              {GRID_FUELS.map(({ key, accentColor, accentBg }) => (
-                <FuelGridCard
-                  key={key}
-                  fuel={prices?.[key]}
-                  accentColor={accentColor}
-                  accentBg={accentBg}
-                  change={change(key)}
-                />
+              {GRID_FUELS.map(({ key, accentColor, accentBg }, i) => (
+                <FadeInView key={key} delay={80 + i * 60} style={{ width: '48%' }}>
+                  <FuelGridCard
+                    fuel={prices?.[key]}
+                    accentColor={accentColor}
+                    accentBg={accentBg}
+                    change={change(key)}
+                  />
+                </FadeInView>
               ))}
             </View>
           </>
@@ -295,7 +300,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   gridCard: {
-    width: '48%',
+    width: '100%',
     backgroundColor: colors.surface,
     borderRadius: 20,
     borderWidth: 1,

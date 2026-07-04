@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity,
+  View, Text, ScrollView, StyleSheet,
 } from 'react-native';
 import Svg, { Path, Text as SvgText } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,8 @@ import { useFuelData } from '../hooks/useFuelData';
 import { useFillups } from '../context/FillupsContext';
 import { RegisterCargoModal } from '../components/RegisterCargoModal';
 import { EditVehicleModal } from '../components/EditVehicleModal';
+import { AnimatedPressable } from '../components/AnimatedPressable';
+import { FadeInView } from '../components/FadeInView';
 
 const MONTHS     = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const DAYS       = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -107,13 +109,13 @@ export function MiAutoScreen() {
             <Text style={styles.headerLabel}>GARAGE</Text>
             <Text style={styles.headerTitle}>Mi Vehículo</Text>
           </View>
-          <TouchableOpacity style={styles.addBtn} onPress={() => setShowModal(true)}>
+          <AnimatedPressable style={styles.addBtn} haptic="light" onPress={() => setShowModal(true)}>
             <Text style={{ color: colors.amber, fontSize: 22, lineHeight: 24 }}>+</Text>
-          </TouchableOpacity>
+          </AnimatedPressable>
         </View>
 
         {/* Vehicle card */}
-        <View style={styles.vehicleCard}>
+        <FadeInView delay={0} style={styles.vehicleCard}>
           <View style={styles.vehicleTop}>
             <View style={{ flex: 1 }}>
               <Text style={styles.vehicleName}>{vehicle.name}</Text>
@@ -125,9 +127,9 @@ export function MiAutoScreen() {
                   {vehicle.level < 0.20 ? 'BAJO' : vehicle.level < 0.50 ? 'MEDIO' : 'OK'}
                 </Text>
               </View>
-              <TouchableOpacity onPress={() => setShowEditVehicle(true)} style={styles.editBtn}>
+              <AnimatedPressable onPress={() => setShowEditVehicle(true)} haptic="light" style={styles.editBtn}>
                 <Text style={styles.editBtnText}>Editar</Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             </View>
           </View>
 
@@ -146,11 +148,11 @@ export function MiAutoScreen() {
               </View>
             ))}
           </View>
-        </View>
+        </FadeInView>
 
         {/* Cost estimate */}
         {price > 0 && (
-          <View style={styles.costRow}>
+          <FadeInView delay={90} style={styles.costRow}>
             <View style={styles.costCard}>
               <Text style={styles.costLabel}>Llenar tanque</Text>
               <Text style={[styles.costValue, { color: colors.amber }]}>RD$ {costFull}</Text>
@@ -161,7 +163,7 @@ export function MiAutoScreen() {
               <Text style={[styles.costValue, { color: colors.down }]}>RD$ {costToFill}</Text>
               <Text style={styles.costSub}>{litToFill} L</Text>
             </View>
-          </View>
+          </FadeInView>
         )}
 
         {/* Fill-up history */}
@@ -173,7 +175,7 @@ export function MiAutoScreen() {
             <Text style={styles.emptySub}>Registra tu primera carga para ver el historial</Text>
           </View>
         ) : (
-          <View style={[styles.card, { overflow: 'hidden', marginBottom: 12 }]}>
+          <FadeInView delay={120} style={[styles.card, { overflow: 'hidden', marginBottom: 12 }]}>
             {sortedFillups.map((f, i) => {
               const [y, m, d]  = f.date.split('-');
               const dateObj    = new Date(f.date + 'T12:00:00');
@@ -196,13 +198,13 @@ export function MiAutoScreen() {
                 </React.Fragment>
               );
             })}
-          </View>
+          </FadeInView>
         )}
 
         {/* Log fill-up button */}
-        <TouchableOpacity style={styles.logBtn} onPress={() => setShowModal(true)}>
+        <AnimatedPressable style={styles.logBtn} haptic="medium" scaleTo={0.97} onPress={() => setShowModal(true)}>
           <Text style={styles.logBtnText}>+ Registrar carga</Text>
-        </TouchableOpacity>
+        </AnimatedPressable>
       </ScrollView>
 
       <RegisterCargoModal visible={showModal} onClose={() => setShowModal(false)} />

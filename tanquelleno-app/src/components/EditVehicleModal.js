@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   Modal, View, Text, ScrollView, StyleSheet,
-  TouchableOpacity, TextInput, KeyboardAvoidingView, Platform,
+  TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import { useFillups } from '../context/FillupsContext';
+import { AnimatedPressable } from './AnimatedPressable';
 
 const FUELS = [
   { key: 'gasolina_premium', label: 'G. Premium', color: colors.fPremium },
@@ -56,13 +57,13 @@ export function EditVehicleModal({ visible, onClose }) {
         <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.cancelBtn}>
+            <AnimatedPressable onPress={onClose} haptic="light" style={styles.cancelBtn}>
               <Text style={styles.cancelText}>Cancelar</Text>
-            </TouchableOpacity>
+            </AnimatedPressable>
             <Text style={styles.headerTitle}>Mi Vehículo</Text>
-            <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
+            <AnimatedPressable onPress={handleSave} haptic="success" style={styles.saveBtn}>
               <Text style={styles.saveText}>Guardar</Text>
-            </TouchableOpacity>
+            </AnimatedPressable>
           </View>
 
           <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -85,13 +86,13 @@ export function EditVehicleModal({ visible, onClose }) {
               <View style={styles.stepRow}>
                 <Text style={styles.fieldLabel}>Capacidad</Text>
                 <View style={styles.stepControl}>
-                  <TouchableOpacity style={styles.stepBtn} onPress={() => setTankSize(v => clamp(v - 5, 20, 150))}>
+                  <AnimatedPressable style={styles.stepBtn} haptic="light" onPress={() => setTankSize(v => clamp(v - 5, 20, 150))}>
                     <Text style={styles.stepBtnText}>−</Text>
-                  </TouchableOpacity>
+                  </AnimatedPressable>
                   <Text style={styles.stepValue}>{tankSize} <Text style={styles.stepUnit}>L</Text></Text>
-                  <TouchableOpacity style={styles.stepBtn} onPress={() => setTankSize(v => clamp(v + 5, 20, 150))}>
+                  <AnimatedPressable style={styles.stepBtn} haptic="light" onPress={() => setTankSize(v => clamp(v + 5, 20, 150))}>
                     <Text style={styles.stepBtnText}>+</Text>
-                  </TouchableOpacity>
+                  </AnimatedPressable>
                 </View>
               </View>
             </View>
@@ -102,8 +103,10 @@ export function EditVehicleModal({ visible, onClose }) {
               {FUELS.map(f => {
                 const active = f.key === fuelType;
                 return (
-                  <TouchableOpacity
+                  <AnimatedPressable
                     key={f.key}
+                    haptic="selection"
+                    scaleTo={0.94}
                     onPress={() => setFuelType(f.key)}
                     style={[
                       styles.fuelChip,
@@ -113,7 +116,7 @@ export function EditVehicleModal({ visible, onClose }) {
                     <Text style={[styles.fuelChipText, active && { color: f.color, fontWeight: '700' }]}>
                       {f.label}
                     </Text>
-                  </TouchableOpacity>
+                  </AnimatedPressable>
                 );
               })}
             </View>

@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity,
+  View, Text, ScrollView, StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import { useFuelData } from '../hooks/useFuelData';
+import { AnimatedPressable } from '../components/AnimatedPressable';
+import { FadeInView } from '../components/FadeInView';
 
 const FUELS = [
   { key: 'gasolina_premium', label: 'Premium', accentColor: colors.fPremium },
@@ -17,13 +19,14 @@ const GALLON_TO_LITER = 3.785411784;
 
 function StepButton({ label, onPress, accent }) {
   return (
-    <TouchableOpacity
+    <AnimatedPressable
       onPress={onPress}
+      haptic="light"
+      scaleTo={0.88}
       style={[styles.stepBtn, { borderColor: `${accent}44` }]}
-      activeOpacity={0.7}
     >
       <Text style={[styles.stepBtnText, { color: accent }]}>{label}</Text>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 
@@ -93,8 +96,10 @@ export function CalculadoraScreen() {
           {FUELS.map(f => {
             const active = f.key === selectedFuel;
             return (
-              <TouchableOpacity
+              <AnimatedPressable
                 key={f.key}
+                haptic="selection"
+                scaleTo={0.95}
                 onPress={() => setSelectedFuel(f.key)}
                 style={[
                   styles.fuelChip,
@@ -104,7 +109,7 @@ export function CalculadoraScreen() {
                 <Text style={[styles.fuelChipText, active && { color: f.accentColor, fontWeight: '700' }]}>
                   {f.label}
                 </Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             );
           })}
         </View>
@@ -130,15 +135,17 @@ export function CalculadoraScreen() {
             { id: 'liters', label: '⛽ Por litros' },
             { id: 'budget', label: '💵 Por presupuesto' },
           ].map(m => (
-            <TouchableOpacity
+            <AnimatedPressable
               key={m.id}
+              haptic="selection"
+              scaleTo={0.96}
               onPress={() => setMode(m.id)}
               style={[styles.modeBtn, mode === m.id && { backgroundColor: `${accent}1A`, borderColor: `${accent}44` }]}
             >
               <Text style={[styles.modeBtnText, mode === m.id && { color: accent, fontWeight: '700' }]}>
                 {m.label}
               </Text>
-            </TouchableOpacity>
+            </AnimatedPressable>
           ))}
         </View>
 
@@ -167,12 +174,12 @@ export function CalculadoraScreen() {
 
         {/* Result card */}
         {result && (
-          <View style={[styles.resultCard, { borderColor: `${accent}33` }]}>
+          <FadeInView key={result.value} duration={280} translateY={6} style={[styles.resultCard, { borderColor: `${accent}33` }]}>
             <View style={[styles.resultGlow, { backgroundColor: `${accent}0D` }]} />
             <Text style={styles.resultLabel}>{result.label}</Text>
             <Text style={[styles.resultValue, { color: accent }]}>{result.value}</Text>
             <Text style={styles.resultSub}>{result.sub}</Text>
-          </View>
+          </FadeInView>
         )}
 
         {/* Quick presets */}
@@ -184,8 +191,10 @@ export function CalculadoraScreen() {
             { label: 'RD$ 500',      liters: null, budget: 500  },
             { label: 'RD$ 2,000',    liters: null, budget: 2000 },
           ].map(p => (
-            <TouchableOpacity
+            <AnimatedPressable
               key={p.label}
+              haptic="light"
+              scaleTo={0.94}
               style={styles.presetChip}
               onPress={() => {
                 if (p.liters !== null) { setMode('liters'); setLiters(p.liters); }
@@ -193,7 +202,7 @@ export function CalculadoraScreen() {
               }}
             >
               <Text style={styles.presetChipText}>{p.label}</Text>
-            </TouchableOpacity>
+            </AnimatedPressable>
           ))}
         </View>
       </ScrollView>

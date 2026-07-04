@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import * as Haptics from 'expo-haptics';
 
 import { colors } from './src/constants/colors';
 import { FillupsProvider } from './src/context/FillupsContext';
@@ -77,6 +78,37 @@ function TabIcon({ name, color, size }) {
   return icons[name] ?? null;
 }
 
+function TabBarButton({ label, iconName, isFocused, onPress }) {
+  const scale = useRef(new Animated.Value(isFocused ? 1 : 0.88)).current;
+  const dotScale = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.spring(scale,    { toValue: isFocused ? 1 : 0.88, useNativeDriver: true, speed: 24, bounciness: 9 }).start();
+    Animated.spring(dotScale, { toValue: isFocused ? 1 : 0,    useNativeDriver: true, speed: 24, bounciness: 9 }).start();
+  }, [isFocused]);
+
+  const accent = isFocused ? colors.amber : colors.tabInactive;
+
+  function handlePress() {
+    Haptics.selectionAsync().catch(() => {});
+    onPress();
+  }
+
+  return (
+    <Pressable onPress={handlePress} style={tabStyles.tab} accessibilityRole="button">
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <View style={tabStyles.iconWrap}>
+          <TabIcon name={iconName} color={accent} size={22} />
+          <Animated.View style={[tabStyles.dot, { transform: [{ scale: dotScale }] }]} />
+        </View>
+        <Text style={[tabStyles.label, isFocused && tabStyles.labelActive]}>
+          {label}
+        </Text>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 function TabBar({ state, descriptors, navigation }) {
   return (
     <View style={tabStyles.container}>
@@ -91,24 +123,14 @@ function TabBar({ state, descriptors, navigation }) {
           if (!isFocused && !event.defaultPrevented) navigation.navigate(route.name);
         };
 
-        const accent = isFocused ? colors.amber : colors.tabInactive;
-
         return (
-          <View key={route.key} style={tabStyles.tab}>
-            <Text
-              onPress={onPress}
-              style={tabStyles.touchTarget}
-              accessibilityRole="button"
-            >
-              <View style={tabStyles.iconWrap}>
-                <TabIcon name={iconName} color={accent} size={22} />
-                {isFocused && <View style={tabStyles.dot} />}
-              </View>
-              <Text style={[tabStyles.label, isFocused && tabStyles.labelActive]}>
-                {label}
-              </Text>
-            </Text>
-          </View>
+          <TabBarButton
+            key={route.key}
+            label={label}
+            iconName={iconName}
+            isFocused={isFocused}
+            onPress={onPress}
+          />
         );
       })}
     </View>

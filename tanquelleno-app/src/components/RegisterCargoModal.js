@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal, View, Text, StyleSheet, TouchableOpacity,
+  Modal, View, Text, StyleSheet,
   TextInput, KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 import { useFillups } from '../context/FillupsContext';
 import { useFuelData } from '../hooks/useFuelData';
+import { AnimatedPressable } from './AnimatedPressable';
 
 const GALLON_TO_LITER = 3.785411784;
 
@@ -87,9 +88,9 @@ export function RegisterCargoModal({ visible, onClose }) {
           {/* Header */}
           <View style={st.header}>
             <Text style={st.headerTitle}>Registrar carga</Text>
-            <TouchableOpacity onPress={onClose} style={st.closeBtn}>
+            <AnimatedPressable onPress={onClose} haptic="light" style={st.closeBtn}>
               <Text style={st.closeTxt}>✕</Text>
-            </TouchableOpacity>
+            </AnimatedPressable>
           </View>
 
           <ScrollView style={{ flex: 1 }} contentContainerStyle={st.body} keyboardShouldPersistTaps="handled">
@@ -97,16 +98,17 @@ export function RegisterCargoModal({ visible, onClose }) {
             {/* Date */}
             <Text style={st.label}>FECHA</Text>
             <View style={st.dateRow}>
-              <TouchableOpacity style={st.arrow} onPress={() => setDate(d => shiftDay(d, -1))}>
+              <AnimatedPressable style={st.arrow} haptic="light" onPress={() => setDate(d => shiftDay(d, -1))}>
                 <Text style={[st.arrowTxt, { color: accent }]}>‹</Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
               <Text style={st.dateTxt}>{formatDate(date)}</Text>
-              <TouchableOpacity
+              <AnimatedPressable
                 style={st.arrow}
+                haptic="light"
                 onPress={() => setDate(d => d < today ? shiftDay(d, 1) : d)}
               >
                 <Text style={[st.arrowTxt, { color: date < today ? accent : colors.textDisabled }]}>›</Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             </View>
 
             {/* Fuel */}
@@ -115,15 +117,17 @@ export function RegisterCargoModal({ visible, onClose }) {
               {FUEL_OPTIONS.map(f => {
                 const active = f.key === fuel;
                 return (
-                  <TouchableOpacity
+                  <AnimatedPressable
                     key={f.key}
+                    haptic="selection"
+                    scaleTo={0.94}
                     onPress={() => setFuel(f.key)}
                     style={[st.fuelChip, active && { backgroundColor: `${f.color}22`, borderColor: `${f.color}55` }]}
                   >
                     <Text style={[st.fuelChipTxt, active && { color: f.color, fontWeight: '700' }]}>
                       {f.label}
                     </Text>
-                  </TouchableOpacity>
+                  </AnimatedPressable>
                 );
               })}
             </View>
@@ -131,26 +135,26 @@ export function RegisterCargoModal({ visible, onClose }) {
             {/* Liters */}
             <Text style={st.label}>LITROS</Text>
             <View style={st.stepRow}>
-              <TouchableOpacity style={[st.stepBtn, { borderColor: `${accent}44` }]}
+              <AnimatedPressable style={[st.stepBtn, { borderColor: `${accent}44` }]} haptic="light"
                 onPress={() => setLiters(v => clampL(v - 5))}>
                 <Text style={[st.stepBtnTxt, { color: accent }]}>−5</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[st.stepBtn, { borderColor: `${accent}44` }]}
+              </AnimatedPressable>
+              <AnimatedPressable style={[st.stepBtn, { borderColor: `${accent}44` }]} haptic="light"
                 onPress={() => setLiters(v => clampL(v - 1))}>
                 <Text style={[st.stepBtnTxt, { color: accent }]}>−1</Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
               <View style={st.stepVal}>
                 <Text style={[st.stepNum, { color: accent }]}>{liters}</Text>
                 <Text style={st.stepUnit}>L</Text>
               </View>
-              <TouchableOpacity style={[st.stepBtn, { borderColor: `${accent}44` }]}
+              <AnimatedPressable style={[st.stepBtn, { borderColor: `${accent}44` }]} haptic="light"
                 onPress={() => setLiters(v => clampL(v + 1))}>
                 <Text style={[st.stepBtnTxt, { color: accent }]}>+1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[st.stepBtn, { borderColor: `${accent}44` }]}
+              </AnimatedPressable>
+              <AnimatedPressable style={[st.stepBtn, { borderColor: `${accent}44` }]} haptic="light"
                 onPress={() => setLiters(v => clampL(v + 5))}>
                 <Text style={[st.stepBtnTxt, { color: accent }]}>+5</Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             </View>
 
             {/* Amount */}
@@ -173,11 +177,11 @@ export function RegisterCargoModal({ visible, onClose }) {
             )}
 
             {estimatedAmt > 0 && !amountStr && (
-              <TouchableOpacity onPress={() => setAmountStr(String(estimatedAmt))} style={st.useEstBtn}>
+              <AnimatedPressable onPress={() => setAmountStr(String(estimatedAmt))} haptic="light" style={st.useEstBtn}>
                 <Text style={[st.useEstTxt, { color: accent }]}>
                   Usar precio oficial → RD${estimatedAmt.toLocaleString()}
                 </Text>
-              </TouchableOpacity>
+              </AnimatedPressable>
             )}
 
             {/* Station (optional) */}
@@ -206,13 +210,15 @@ export function RegisterCargoModal({ visible, onClose }) {
             </View>
 
             {/* Save */}
-            <TouchableOpacity
+            <AnimatedPressable
               style={[st.saveBtn, { backgroundColor: accent, opacity: canSave ? 1 : 0.35 }]}
+              haptic="success"
+              scaleTo={0.97}
               onPress={handleSave}
               disabled={!canSave}
             >
               <Text style={st.saveTxt}>Guardar carga</Text>
-            </TouchableOpacity>
+            </AnimatedPressable>
 
           </ScrollView>
         </SafeAreaView>
