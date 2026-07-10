@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>CiudadanoRD</title>
-<meta name="description" content="Combustibles, apagones, clima, divisas y lotería de República Dominicana">
+<meta name="description" content="Combustibles, tasa del dólar, tus finanzas diarias y la luz de tu sector — República Dominicana">
 <meta name="theme-color" content="#0B0F1A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,10 +16,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0B0F1A; --bg2:#0E1424; --card:#141B2E; --card2:#1A2338;
+  --bg:#0B0F1A; --card:#141B2E; --card2:#1A2338;
   --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.12);
   --text:#F2F5FA; --dim:#8B93A7; --faint:#5A6172;
-  --blue:#3B82F6; --blue2:#2563EB; --navy:#002D62;
+  --blue:#3B82F6; --blue2:#2563EB;
   --red:#F0455A; --green:#22C55E; --amber:#F59E0B; --violet:#8B5CF6;
   --r:20px; --r-sm:14px;
 }
@@ -31,8 +31,7 @@ body{
     radial-gradient(1000px 500px at 85% -10%, rgba(37,99,235,.16), transparent 60%),
     radial-gradient(800px 400px at -10% 8%, rgba(200,16,46,.10), transparent 55%),
     var(--bg);
-  color:var(--text);
-  min-height:100vh;
+  color:var(--text); min-height:100vh;
   padding-bottom:calc(110px + env(safe-area-inset-bottom));
   font-feature-settings:'tnum';
 }
@@ -40,7 +39,6 @@ body{
 .screen.active{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-/* ── Header ── */
 .top{padding:calc(20px + env(safe-area-inset-top)) 22px 6px;display:flex;align-items:center;justify-content:space-between}
 .top .hi{font-size:13px;color:var(--dim);font-weight:500}
 .top .tt{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:2px}
@@ -50,10 +48,8 @@ body{
 .page-h{padding:calc(20px + env(safe-area-inset-top)) 22px 14px}
 .page-h .tt{font-size:24px;font-weight:800;letter-spacing:-.4px}
 .page-h .sub{font-size:12.5px;color:var(--dim);margin-top:4px;font-weight:500}
-
 .wrap{padding:12px 16px;display:flex;flex-direction:column;gap:14px}
 
-/* ── Cards ── */
 .card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
   border-radius:var(--r);padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .card .lbl{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--dim);
@@ -61,20 +57,17 @@ body{
 .card .lbl .dot{width:6px;height:6px;border-radius:3px}
 .seeall{margin-left:auto;font-size:11px;color:var(--blue);font-weight:600;letter-spacing:0;text-transform:none;cursor:pointer}
 
-/* ── Divisas ── */
-.fx{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fx .box{border-radius:var(--r-sm);padding:14px;position:relative;overflow:hidden;border:1px solid var(--line)}
-.fx .usd{background:linear-gradient(145deg,rgba(34,197,94,.16),rgba(34,197,94,.05))}
-.fx .eur{background:linear-gradient(145deg,rgba(139,92,246,.16),rgba(139,92,246,.05))}
-.fx .cur{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--dim)}
-.fx .cur .cc{width:22px;height:22px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px}
-.fx .usd .cc{background:rgba(34,197,94,.25)}
-.fx .eur .cc{background:rgba(139,92,246,.25)}
-.fx .v{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:8px}
-.fx .v small{font-size:12px;color:var(--dim);font-weight:600}
-.fx .b{font-size:11px;color:var(--dim);margin-top:4px;font-weight:500}
+/* Dólar hero */
+.usd-hero{border-radius:var(--r);padding:20px;border:1px solid rgba(34,197,94,.28);position:relative;overflow:hidden;
+  background:linear-gradient(150deg,rgba(34,197,94,.2),rgba(34,197,94,.04));box-shadow:0 14px 40px rgba(34,197,94,.12)}
+.usd-hero .h{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#6EE7A0}
+.usd-hero .big{font-size:44px;font-weight:900;letter-spacing:-1.5px;margin-top:6px}
+.usd-hero .big small{font-size:15px;font-weight:700;color:var(--dim);letter-spacing:0}
+.usd-hero .row2{display:flex;gap:18px;margin-top:8px;font-size:12.5px;color:var(--dim);font-weight:600}
+.usd-hero .eur{position:absolute;top:18px;right:18px;text-align:right;font-size:11px;color:var(--dim);font-weight:600}
+.usd-hero .eur b{display:block;font-size:16px;color:var(--text);font-weight:800;margin-top:2px}
 
-/* ── Combustibles ── */
+/* Combustibles */
 .fuel{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line)}
 .fuel:last-of-type{border-bottom:none;padding-bottom:2px}
 .fuel:first-of-type{padding-top:2px}
@@ -95,38 +88,59 @@ body{
 .bar-row .fl{height:100%;border-radius:4px;width:0;transition:width .9s cubic-bezier(.22,.8,.3,1)}
 .bar-row .bv{width:58px;text-align:right;font-size:11px;font-weight:700;flex:0 0 auto}
 
-/* ── Clima ── */
-.sky{border-radius:var(--r);padding:20px;border:1px solid var(--line2);position:relative;overflow:hidden;
-  background:linear-gradient(150deg,#1E3A8A 0%,#2563EB 55%,#3B82F6 100%);box-shadow:0 14px 40px rgba(37,99,235,.35)}
-.sky::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);top:-90px;right:-60px}
-.sky .loc{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;opacity:.9}
-.sky .deg{font-size:56px;font-weight:900;letter-spacing:-2.5px;line-height:1.05;margin-top:6px}
-.sky .cond{font-size:13.5px;font-weight:600;opacity:.95}
-.sky .meta{display:flex;gap:14px;font-size:11.5px;opacity:.85;margin-top:8px;font-weight:500}
-.sky .days{display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.25);position:relative}
-.sky .d{text-align:center}
-.sky .d .n{font-size:10.5px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.5px}
-.sky .d .e{font-size:20px;display:block;margin:5px 0 3px}
-.sky .d .t{font-size:12.5px;font-weight:800}
+/* Finanzas */
+.fin-hero{border-radius:var(--r);padding:20px;border:1px solid var(--line2);
+  background:linear-gradient(150deg,#1E3A8A 0%,#2563EB 60%,#3B82F6 100%);box-shadow:0 14px 40px rgba(37,99,235,.3);
+  position:relative;overflow:hidden}
+.fin-hero::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%);top:-80px;right:-50px}
+.fin-hero .l{font-size:11.5px;font-weight:700;opacity:.85;text-transform:uppercase;letter-spacing:1px}
+.fin-hero .v{font-size:40px;font-weight:900;letter-spacing:-1.4px;margin-top:4px}
+.fin-hero .split{display:flex;gap:22px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25)}
+.fin-hero .s .k{font-size:10.5px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.6px}
+.fin-hero .s .n{font-size:16px;font-weight:800;margin-top:2px}
+.seg-tog{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.seg-tog button{flex:1;border:none;border-radius:10px;background:none;color:var(--dim);font-family:inherit;
+  font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;transition:all .18s}
+.seg-tog button.in.on{background:rgba(34,197,94,.18);color:#4ADE80}
+.seg-tog button.out.on{background:rgba(240,69,90,.18);color:#FF7285}
+.fin-input{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--line2);
+  border-radius:14px;padding:4px 4px 4px 16px;margin-top:10px}
+.fin-input .rdsign{font-size:15px;font-weight:800;color:var(--dim)}
+.fin-input input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:inherit;
+  font-size:22px;font-weight:800;padding:12px 0;min-width:0;letter-spacing:-.4px}
+.fin-input input::placeholder{color:var(--faint)}
+.desc-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;
+  padding:13px 16px;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:500;outline:none;margin-top:10px}
+.desc-input::placeholder{color:var(--faint)}
+.cats{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:2px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex:0 0 auto;padding:8px 13px;border-radius:20px;border:1px solid var(--line2);background:none;
+  font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;font-family:inherit;transition:all .15s}
+.cat.on{background:rgba(59,130,246,.16);border-color:rgba(59,130,246,.5);color:#7DB0FF}
+.add-btn{width:100%;margin-top:14px;border:none;border-radius:16px;padding:15px;font-family:inherit;
+  font-size:14.5px;font-weight:800;color:#fff;cursor:pointer;letter-spacing:.2px;
+  background:linear-gradient(135deg,#2563EB,#3B82F6);box-shadow:0 8px 24px rgba(37,99,235,.4);transition:transform .12s}
+.add-btn:active{transform:scale(.98)}
+.mov{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.mov:last-of-type{border-bottom:none;padding-bottom:2px}
+.mov .mi{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto}
+.mov .mn{font-size:13.5px;font-weight:600}
+.mov .md{font-size:11px;color:var(--faint);margin-top:1px;font-weight:500}
+.mov .mv{margin-left:auto;font-size:14.5px;font-weight:800;letter-spacing:-.2px;text-align:right}
+.mov .mv.in{color:#4ADE80}
+.mov .mv.out{color:#FF7285}
+.mov .del{border:none;background:rgba(255,255,255,.06);color:var(--faint);width:26px;height:26px;border-radius:13px;
+  font-size:12px;cursor:pointer;margin-left:4px;flex:0 0 auto}
+.empty{text-align:center;padding:26px 10px;color:var(--faint);font-size:12.5px;font-weight:500;line-height:1.7}
+.empty .e{font-size:30px;display:block;margin-bottom:6px}
 
-/* ── Lotería ── */
-.lot{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
-.lot:last-of-type{border-bottom:none;padding-bottom:2px}
-.lot:first-of-type{padding-top:2px}
-.lot .em{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
-.lot .nm{font-size:13.5px;font-weight:700}
-.lot .hr{font-size:11px;color:var(--faint);margin-top:1px;font-weight:500}
-.lot .balls{margin-left:auto;display:flex;gap:6px}
-.ball{width:34px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:#fff;box-shadow:inset 0 -3px 6px rgba(0,0,0,.28),0 3px 8px rgba(0,0,0,.3)}
-
-/* ── Apagones ── */
-.status-hero{border-radius:var(--r);padding:20px;border:1px solid var(--line2);position:relative;overflow:hidden}
+/* Luz */
+.status-hero{border-radius:var(--r);padding:20px;border:1px solid var(--line2)}
 .status-hero.on{background:linear-gradient(150deg,rgba(34,197,94,.2),rgba(34,197,94,.04));border-color:rgba(34,197,94,.3)}
 .status-hero.off{background:linear-gradient(150deg,rgba(240,69,90,.22),rgba(240,69,90,.05));border-color:rgba(240,69,90,.32)}
 .status-hero .st{display:flex;align-items:center;gap:14px}
-.pulse{width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;position:relative;flex:0 0 auto}
+.pulse{width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;position:relative;flex:0 0 auto;font-size:23px}
 .pulse.on{background:rgba(34,197,94,.2)}
 .pulse.off{background:rgba(240,69,90,.2)}
 .pulse::before{content:'';position:absolute;inset:0;border-radius:18px;animation:ring 2s infinite}
@@ -135,10 +149,14 @@ body{
 @keyframes ring{70%{box-shadow:0 0 0 14px transparent}100%{box-shadow:0 0 0 0 transparent}}
 .status-hero .big{font-size:19px;font-weight:800;letter-spacing:-.3px}
 .status-hero .sm{font-size:12px;color:var(--dim);margin-top:2px;font-weight:500}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 22px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sel{width:100%;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:14px 16px;
+  color:var(--text);font-family:inherit;font-size:14px;font-weight:600;outline:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B93A7' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .schip{flex:0 0 auto;padding:9px 16px;border-radius:22px;border:1px solid var(--line2);background:var(--card);
-  font-size:12.5px;font-weight:600;color:var(--dim);cursor:pointer;transition:all .18s}
+  font-size:12.5px;font-weight:600;color:var(--dim);cursor:pointer;font-family:inherit;transition:all .18s}
 .schip.on{background:linear-gradient(135deg,#2563EB,#3B82F6);border-color:transparent;color:#fff;
   box-shadow:0 6px 18px rgba(37,99,235,.4)}
 .tl{position:relative;padding-left:24px}
@@ -153,18 +171,11 @@ body{
 .tl .seg.off .lb2{background:rgba(240,69,90,.13);color:#FF7285}
 .note{display:flex;gap:9px;background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.22);
   border-radius:var(--r-sm);padding:13px;font-size:11.5px;color:#FBBF24;line-height:1.55;font-weight:500}
+.mini-luz{display:flex;align-items:center;gap:12px;cursor:pointer}
+.mini-luz .txt{flex:1}
+.mini-luz .arrow{color:var(--faint);font-size:18px}
 
-/* ── Servicios ── */
-.svc{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.svc a{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:var(--r-sm);
-  padding:15px;text-decoration:none;color:var(--text);transition:transform .15s}
-.svc a:active{transform:scale(.97)}
-.svc .ic{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:10px}
-.svc .lb{font-size:13.5px;font-weight:700}
-.svc .sb{font-size:11px;color:var(--faint);margin-top:2px;font-weight:500}
-.foot{text-align:center;color:var(--faint);font-size:11px;padding:18px 0 4px;font-weight:500;line-height:1.7}
-
-/* ── Dock ── */
+/* Dock */
 .dock{position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:90;
   background:rgba(18,24,40,.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
   border:1px solid var(--line2);border-radius:26px;display:flex;padding:7px;
@@ -175,7 +186,6 @@ body{
 .dtab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .dtab.on{color:#fff;background:linear-gradient(135deg,#2563EB,#3B82F6);box-shadow:0 8px 20px rgba(37,99,235,.45)}
 
-/* ── Skeleton ── */
 .sk{border-radius:var(--r-sm);background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 75%);
   background-size:200% 100%;animation:sk 1.3s infinite;height:72px}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -184,6 +194,7 @@ body{
 .stagger>*:nth-child(2){animation-delay:.05s}
 .stagger>*:nth-child(3){animation-delay:.1s}
 .stagger>*:nth-child(4){animation-delay:.15s}
+.foot{text-align:center;color:var(--faint);font-size:11px;padding:14px 0 4px;font-weight:500;line-height:1.7}
 </style>
 </head>
 <body>
@@ -198,19 +209,21 @@ body{
     <div class="flag">🇩🇴</div>
   </div>
   <div class="wrap stagger">
-    <div class="card">
-      <div class="lbl"><span class="dot" style="background:var(--green)"></span> Tasa del día</div>
-      <div class="fx" id="fx"><div class="sk"></div><div class="sk"></div></div>
-    </div>
+    <div id="usd-box"><div class="sk" style="height:130px"></div></div>
     <div class="card">
       <div class="lbl"><span class="dot" style="background:var(--amber)"></span> Combustibles
         <span class="seeall" onclick="go('comb')">Ver todos →</span></div>
       <div id="fuels-mini"><div class="sk"></div></div>
     </div>
-    <div id="sky-box"><div class="sk" style="height:190px"></div></div>
+    <div class="card" id="miluz-card">
+      <div class="lbl"><span class="dot" style="background:var(--green)"></span> Mi luz
+        <span class="seeall" onclick="go('luz')">Cambiar →</span></div>
+      <div id="miluz"><div class="sk" style="height:56px"></div></div>
+    </div>
     <div class="card">
-      <div class="lbl"><span class="dot" style="background:var(--red)"></span> Lotería de hoy</div>
-      <div id="lote"><div class="sk"></div></div>
+      <div class="lbl"><span class="dot" style="background:var(--violet)"></span> Mis finanzas de hoy
+        <span class="seeall" onclick="go('fin')">Registrar →</span></div>
+      <div id="fin-mini"></div>
     </div>
   </div>
 </section>
@@ -232,27 +245,53 @@ body{
   </div>
 </section>
 
-<!-- ═══ APAGONES ═══ -->
-<section class="screen" id="s-apag">
+<!-- ═══ FINANZAS ═══ -->
+<section class="screen" id="s-fin">
   <div class="page-h">
-    <div class="tt">Apagones</div>
-    <div class="sub" id="apag-sub">Programación eléctrica de hoy</div>
+    <div class="tt">Mis Finanzas</div>
+    <div class="sub">Registro diario · privado, solo en tu teléfono 🔒</div>
   </div>
-  <div class="chips" id="sectores"></div>
-  <div class="wrap stagger" id="apag-body">
-    <div class="sk" style="height:90px"></div><div class="sk" style="height:220px"></div>
+  <div class="wrap stagger">
+    <div class="fin-hero">
+      <div class="l">Balance de hoy</div>
+      <div class="v" id="fin-bal">RD$0.00</div>
+      <div class="split">
+        <div class="s"><div class="k">↑ Ingresos hoy</div><div class="n" id="fin-in">RD$0.00</div></div>
+        <div class="s"><div class="k">↓ Gastos hoy</div><div class="n" id="fin-out">RD$0.00</div></div>
+        <div class="s"><div class="k">Balance del mes</div><div class="n" id="fin-mes">RD$0.00</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl"><span class="dot" style="background:var(--violet)"></span> Nuevo movimiento</div>
+      <div class="seg-tog">
+        <button class="in on" id="tog-in">↑ Ingreso</button>
+        <button class="out" id="tog-out">↓ Gasto</button>
+      </div>
+      <div class="fin-input">
+        <span class="rdsign">RD$</span>
+        <input id="fin-monto" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <input class="desc-input" id="fin-desc" type="text" placeholder="Descripción (ej: almuerzo, pasaje, venta...)" maxlength="60">
+      <div class="cats" id="fin-cats"></div>
+      <button class="add-btn" id="fin-add">Agregar movimiento</button>
+    </div>
+    <div class="card">
+      <div class="lbl"><span class="dot" style="background:var(--blue)"></span> Movimientos de hoy</div>
+      <div id="fin-list"></div>
+    </div>
   </div>
 </section>
 
-<!-- ═══ MÁS ═══ -->
-<section class="screen" id="s-mas">
+<!-- ═══ LUZ ═══ -->
+<section class="screen" id="s-luz">
   <div class="page-h">
-    <div class="tt">Servicios</div>
-    <div class="sub">Acceso rápido a portales del Estado</div>
+    <div class="tt">Mi Luz</div>
+    <div class="sub" id="luz-sub">Elige tu distrito y sector — la app lo recordará</div>
   </div>
-  <div class="wrap">
-    <div class="svc" id="svc"></div>
-    <div class="foot">CiudadanoRD v2.0 · hecho en RD 🇩🇴<br>Fuentes: MICM · BCRD · ONAMET · Open-Meteo</div>
+  <div class="wrap stagger">
+    <select class="sel" id="sel-distrito"></select>
+    <div class="chips" id="sel-sectores"></div>
+    <div id="luz-body"><div class="sk" style="height:90px"></div></div>
   </div>
 </section>
 
@@ -262,10 +301,10 @@ body{
     <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</button>
   <button class="dtab" data-s="comb">
     <svg viewBox="0 0 24 24"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><path d="M15 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-2.5-2.5"/><path d="M7 7h6v4H7z"/></svg>Gasolina</button>
-  <button class="dtab" data-s="apag">
-    <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Apagones</button>
-  <button class="dtab" data-s="mas">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Más</button>
+  <button class="dtab" data-s="fin">
+    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>Finanzas</button>
+  <button class="dtab" data-s="luz">
+    <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Mi Luz</button>
 </nav>
 
 <script>
@@ -276,7 +315,7 @@ const get = async r => {
   if (!j.ok) throw new Error(j.error);
   return j.data;
 };
-const fmt = n => 'RD$' + n.toFixed(2);
+const fmt = n => 'RD$' + n.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 // ── Navegación ──
 function go(s) {
@@ -287,30 +326,27 @@ function go(s) {
 document.querySelectorAll('.dtab').forEach(t => t.onclick = () => go(t.dataset.s));
 
 // ── Saludo ──
-const h = new Date().getHours();
-$('saludo').textContent = (h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches') + ' 👋 · ' +
+const hr = new Date().getHours();
+$('saludo').textContent = (hr < 12 ? 'Buenos días' : hr < 19 ? 'Buenas tardes' : 'Buenas noches') + ' 👋 · ' +
   new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long' });
 
-// ── Divisas ──
+// ═══ DÓLAR ═══
 (async () => {
   try {
     const j = await (await fetch('https://open.er-api.com/v6/latest/USD')).json();
     const dop = j.rates.DOP, eur = dop / j.rates.EUR;
-    $('fx').innerHTML = `
-      <div class="box usd">
-        <div class="cur"><span class="cc">🇺🇸</span>DÓLAR</div>
-        <div class="v">${(dop * 1.01).toFixed(2)}<small> venta</small></div>
-        <div class="b">Compra ${(dop * 0.99).toFixed(2)}</div>
-      </div>
-      <div class="box eur">
-        <div class="cur"><span class="cc">🇪🇺</span>EURO</div>
-        <div class="v">${(eur * 1.01).toFixed(2)}<small> venta</small></div>
-        <div class="b">Compra ${(eur * 0.99).toFixed(2)}</div>
+    $('usd-box').innerHTML = `
+      <div class="usd-hero">
+        <div class="h">🇺🇸 TASA DEL DÓLAR HOY</div>
+        <div class="big">${(dop * 1.01).toFixed(2)} <small>venta</small></div>
+        <div class="row2"><span>Compra: <b style="color:var(--text)">${(dop * 0.99).toFixed(2)}</b></span>
+          <span>Fuente: mercado</span></div>
+        <div class="eur">🇪🇺 EURO<b>${(eur * 1.01).toFixed(2)}</b></div>
       </div>`;
-  } catch { $('fx').innerHTML = '<div class="err">Sin conexión</div>'; }
+  } catch { $('usd-box').innerHTML = '<div class="card err">Tasa no disponible — revisa tu conexión</div>'; }
 })();
 
-// ── Combustibles ──
+// ═══ COMBUSTIBLES ═══
 const FUEL_ICON = c => `<svg viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><path d="M15 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-2.5-2.5"/></svg>`;
 const chip = c => c > 0 ? `<span class="chip up">▲ ${c.toFixed(2)}</span>`
   : c < 0 ? `<span class="chip dn">▼ ${Math.abs(c).toFixed(2)}</span>`
@@ -330,7 +366,7 @@ const fuelRow = p => `
     const max = Math.max(...d.precios.map(p => p.precio));
     $('fuel-bars').innerHTML = d.precios.map(p => `
       <div class="bar-row">
-        <span class="bn">${p.nombre.replace('Gasolina ','Gas. ').replace('Gasoil ','Gasoil ').replace(' Licuado (GLP)',' GLP')}</span>
+        <span class="bn">${p.nombre.replace('Gasolina ','Gas. ').replace(' Licuado (GLP)',' GLP')}</span>
         <div class="tr"><div class="fl" data-w="${(p.precio / max * 100).toFixed(1)}" style="background:linear-gradient(90deg,${p.color}99,${p.color})"></div></div>
         <span class="bv" style="color:${p.color}">${p.precio.toFixed(0)}</span>
       </div>`).join('');
@@ -341,65 +377,107 @@ const fuelRow = p => `
   }
 })();
 
-// ── Clima ──
-const WMO = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌦',63:'🌧',65:'🌧',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
-const WDESC = {0:'Despejado',1:'Mayormente despejado',2:'Parcialmente nublado',3:'Nublado',45:'Neblina',51:'Llovizna',61:'Lluvia ligera',63:'Lluvia',65:'Lluvia fuerte',80:'Chubascos',82:'Chubascos fuertes',95:'Tormenta eléctrica'};
-const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-(async () => {
-  try {
-    const p = new URLSearchParams({
-      latitude:'18.4861', longitude:'-69.9312',
-      current:'temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weathercode,uv_index',
-      daily:'weathercode,temperature_2m_max', timezone:'America/Santo_Domingo', forecast_days:'6',
-    });
-    const j = await (await fetch('https://api.open-meteo.com/v1/forecast?' + p)).json();
-    const c = j.current, d = j.daily;
-    $('sky-box').innerHTML = `<div class="sky">
-      <div class="loc">📍 Santo Domingo, R.D.</div>
-      <div class="deg">${Math.round(c.temperature_2m)}°</div>
-      <div class="cond">${WMO[c.weathercode] ?? '🌡'} ${WDESC[c.weathercode] ?? 'Variable'}</div>
-      <div class="meta"><span>🌡 Sensación ${Math.round(c.apparent_temperature)}°</span>
-        <span>💧 ${c.relative_humidity_2m}%</span><span>💨 ${Math.round(c.wind_speed_10m)} km/h</span></div>
-      <div class="days">${d.time.slice(1, 6).map((f, i) => `
-        <div class="d"><span class="n">${DIAS[new Date(f + 'T12:00:00').getDay()]}</span>
-        <span class="e">${WMO[d.weathercode[i + 1]] ?? '🌡'}</span>
-        <span class="t">${Math.round(d.temperature_2m_max[i + 1])}°</span></div>`).join('')}
-      </div></div>`;
-  } catch { $('sky-box').innerHTML = ''; }
-})();
+// ═══ FINANZAS (localStorage — 100% privado) ═══
+const FIN_KEY = 'crd_fin_v1';
+const CATS = { comida:'🍛', transporte:'🚌', hogar:'🏠', negocio:'💼', salud:'💊', ocio:'🎉', otro:'📦' };
+let finTipo = 'in', finCat = 'otro';
 
-// ── Lotería ──
-(async () => {
-  try {
-    const d = await get('loteria');
-    $('lote').innerHTML = d.juegos.map(g => `
-      <div class="lot">
-        <div class="em" style="background:${g.color}22">${g.emoji}</div>
-        <div><div class="nm">${g.nombre}</div><div class="hr">Sorteo ${g.sorteo}</div></div>
-        <div class="balls">${g.numeros.map(n =>
-          `<span class="ball" style="background:radial-gradient(circle at 35% 30%,${g.color}E6,${g.color})">${n}</span>`).join('')}</div>
+const finAll = () => { try { return JSON.parse(localStorage.getItem(FIN_KEY)) ?? []; } catch { return []; } };
+const finSave = a => localStorage.setItem(FIN_KEY, JSON.stringify(a));
+const hoyKey = () => new Date().toISOString().slice(0, 10);
+const mesKey = () => new Date().toISOString().slice(0, 7);
+
+function finRender() {
+  const all = finAll();
+  const hoy = all.filter(m => m.fecha === hoyKey());
+  const mes = all.filter(m => m.fecha.startsWith(mesKey()));
+  const sum = (a, t) => a.filter(m => m.tipo === t).reduce((s, m) => s + m.monto, 0);
+  const inH = sum(hoy, 'in'), outH = sum(hoy, 'out');
+  const balH = inH - outH, balM = sum(mes, 'in') - sum(mes, 'out');
+
+  $('fin-bal').textContent = (balH < 0 ? '−' : '') + fmt(Math.abs(balH));
+  $('fin-in').textContent = fmt(inH);
+  $('fin-out').textContent = fmt(outH);
+  $('fin-mes').textContent = (balM < 0 ? '−' : '') + fmt(Math.abs(balM));
+
+  $('fin-list').innerHTML = hoy.length === 0
+    ? `<div class="empty"><span class="e">🧾</span>Sin movimientos hoy.<br>Registra tu primer ingreso o gasto arriba.</div>`
+    : hoy.slice().reverse().map(m => `
+      <div class="mov">
+        <div class="mi" style="background:${m.tipo === 'in' ? 'rgba(34,197,94,.14)' : 'rgba(240,69,90,.12)'}">${CATS[m.cat] ?? '📦'}</div>
+        <div><div class="mn">${m.desc || (m.tipo === 'in' ? 'Ingreso' : 'Gasto')}</div>
+          <div class="md">${m.cat} · ${m.hora}</div></div>
+        <div class="mv ${m.tipo}">${m.tipo === 'in' ? '+' : '−'}${fmt(m.monto)}</div>
+        <button class="del" onclick="finDel(${m.id})">✕</button>
       </div>`).join('');
-  } catch { $('lote').innerHTML = '<div class="err">No disponible</div>'; }
-})();
 
-// ── Apagones ──
-async function loadApag(sector) {
-  $('apag-body').innerHTML = '<div class="sk" style="height:90px"></div><div class="sk" style="height:220px"></div>';
+  $('fin-mini').innerHTML = hoy.length === 0
+    ? `<div class="empty" style="padding:14px"><span class="e" style="font-size:22px">💰</span>Aún no has registrado nada hoy</div>`
+    : `<div style="display:flex;gap:14px">
+        <div style="flex:1"><div style="font-size:11px;color:var(--dim);font-weight:700">BALANCE HOY</div>
+          <div style="font-size:22px;font-weight:900;letter-spacing:-.5px;margin-top:2px;color:${balH >= 0 ? '#4ADE80' : '#FF7285'}">${(balH < 0 ? '−' : '') + fmt(Math.abs(balH))}</div></div>
+        <div style="text-align:right"><div style="font-size:11px;color:#4ADE80;font-weight:700">↑ ${fmt(inH)}</div>
+          <div style="font-size:11px;color:#FF7285;font-weight:700;margin-top:4px">↓ ${fmt(outH)}</div></div>
+      </div>`;
+}
+window.finDel = id => { finSave(finAll().filter(m => m.id !== id)); finRender(); };
+
+$('fin-cats').innerHTML = Object.entries(CATS).map(([k, e]) =>
+  `<button class="cat ${k === 'otro' ? 'on' : ''}" data-c="${k}">${e} ${k}</button>`).join('');
+document.querySelectorAll('.cat').forEach(c => c.onclick = () => {
+  document.querySelectorAll('.cat').forEach(x => x.classList.remove('on'));
+  c.classList.add('on'); finCat = c.dataset.c;
+});
+$('tog-in').onclick = () => { finTipo = 'in'; $('tog-in').classList.add('on'); $('tog-out').classList.remove('on'); };
+$('tog-out').onclick = () => { finTipo = 'out'; $('tog-out').classList.add('on'); $('tog-in').classList.remove('on'); };
+$('fin-add').onclick = () => {
+  const monto = parseFloat($('fin-monto').value);
+  if (!monto || monto <= 0) { $('fin-monto').focus(); return; }
+  const all = finAll();
+  all.push({
+    id: Date.now(), fecha: hoyKey(),
+    hora: new Date().toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' }),
+    tipo: finTipo, monto, desc: $('fin-desc').value.trim(), cat: finCat,
+  });
+  finSave(all);
+  $('fin-monto').value = ''; $('fin-desc').value = '';
+  finRender();
+};
+finRender();
+
+// ═══ MI LUZ (por distritos, recuerda tu sector) ═══
+const LUZ_KEY = 'crd_luz_v1';
+let DISTRITOS = [];
+const luzPref = () => { try { return JSON.parse(localStorage.getItem(LUZ_KEY)); } catch { return null; } };
+const luzSave = (d, s) => localStorage.setItem(LUZ_KEY, JSON.stringify({ distrito: d, sector: s }));
+
+function renderSectores(distrito, sectorOn) {
+  const d = DISTRITOS.find(x => x.distrito === distrito);
+  $('sel-sectores').innerHTML = (d?.sectores ?? []).map(s =>
+    `<button class="schip ${s === sectorOn ? 'on' : ''}" data-s="${s}">${s}</button>`).join('');
+  document.querySelectorAll('#sel-sectores .schip').forEach(c => c.onclick = () => {
+    document.querySelectorAll('#sel-sectores .schip').forEach(x => x.classList.remove('on'));
+    c.classList.add('on');
+    luzSave($('sel-distrito').value, c.dataset.s);
+    loadLuz(c.dataset.s);
+  });
+}
+
+async function loadLuz(sector) {
+  $('luz-body').innerHTML = '<div class="sk" style="height:90px"></div>';
   try {
     const d = await get('apagones/' + encodeURIComponent(sector));
     const on = d.estadoActual === 'on';
-    $('apag-sub').textContent = `${d.empresa} · Circuito ${d.circuito} · ${d.horasApagonDia ?? '—'}h de apagón estimadas`;
-    $('apag-body').innerHTML = `
+    $('luz-sub').textContent = `${d.empresa} · ${d.distrito} · Circuito ${d.circuito}`;
+    $('luz-body').innerHTML = `
       <div class="status-hero ${on ? 'on' : 'off'}">
         <div class="st">
-          <div class="pulse ${on ? 'on' : 'off'}" style="font-size:23px">${on ? '💡' : '⚡'}</div>
-          <div>
-            <div class="big">${on ? 'Con luz ahora' : 'Apagón en curso'}</div>
-            <div class="sm">${d.sector} · actualizado ahora</div>
-          </div>
+          <div class="pulse ${on ? 'on' : 'off'}">${on ? '💡' : '⚡'}</div>
+          <div><div class="big">${on ? 'Con luz ahora' : 'Apagón en curso'}</div>
+            <div class="sm">${d.sector} · ${d.horasApagonDia}h de apagón estimadas hoy</div></div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="margin-top:14px">
         <div class="lbl"><span class="dot" style="background:var(--amber)"></span> Horario de hoy</div>
         <div class="tl">${d.horario.map(s => `
           <div class="seg ${s.estado}">
@@ -408,39 +486,55 @@ async function loadApag(sector) {
           </div>`).join('')}
         </div>
       </div>
-      ${d.nota ? `<div class="note">⚠️ ${d.nota}</div>` : ''}`;
-  } catch { $('apag-body').innerHTML = '<div class="err">No disponible</div>'; }
+      ${d.nota ? `<div class="note" style="margin-top:14px">⚠️ ${d.nota}</div>` : ''}`;
+
+    // Tarjeta "Mi luz" en Inicio
+    $('miluz').innerHTML = `
+      <div class="mini-luz" onclick="go('luz')">
+        <div class="pulse ${on ? 'on' : 'off'}" style="width:42px;height:42px;border-radius:14px;font-size:18px">${on ? '💡' : '⚡'}</div>
+        <div class="txt">
+          <div style="font-size:14.5px;font-weight:800">${on ? 'Con luz ahora' : 'Apagón en curso'}</div>
+          <div style="font-size:11.5px;color:var(--dim);font-weight:500;margin-top:1px">${d.sector} · ${d.distrito}</div>
+        </div>
+        <span class="arrow">›</span>
+      </div>`;
+  } catch {
+    $('luz-body').innerHTML = '<div class="err">No disponible</div>';
+    $('miluz').innerHTML = '<div class="err">No disponible</div>';
+  }
 }
+
 (async () => {
   try {
-    const sectores = await get('apagones/sectores');
-    $('sectores').innerHTML = sectores.map((s, i) =>
-      `<button class="schip ${i === 0 ? 'on' : ''}" data-s="${s}">${s}</button>`).join('');
-    document.querySelectorAll('.schip').forEach(c => c.onclick = () => {
-      document.querySelectorAll('.schip').forEach(x => x.classList.remove('on'));
-      c.classList.add('on');
-      loadApag(c.dataset.s);
-    });
-    loadApag(sectores[0]);
-  } catch { $('apag-body').innerHTML = '<div class="err">No disponible</div>'; }
+    DISTRITOS = await get('apagones/distritos');
+    const pref = luzPref() ?? { distrito: DISTRITOS[0].distrito, sector: DISTRITOS[0].sectores[0] };
+    $('sel-distrito').innerHTML = DISTRITOS.map(d =>
+      `<option ${d.distrito === pref.distrito ? 'selected' : ''}>${d.distrito}</option>`).join('');
+    $('sel-distrito').onchange = () => {
+      const d = DISTRITOS.find(x => x.distrito === $('sel-distrito').value);
+      const s = d.sectores[0];
+      luzSave(d.distrito, s);
+      renderSectores(d.distrito, s);
+      loadLuz(s);
+    };
+    renderSectores(pref.distrito, pref.sector);
+    loadLuz(pref.sector);
+    if (!luzPref()) {
+      $('miluz').innerHTML = `
+        <div class="mini-luz" onclick="go('luz')">
+          <div class="pulse on" style="width:42px;height:42px;border-radius:14px;font-size:18px">⚡</div>
+          <div class="txt">
+            <div style="font-size:14.5px;font-weight:800">Configura tu sector</div>
+            <div style="font-size:11.5px;color:var(--dim);font-weight:500;margin-top:1px">Elige tu distrito y sector para ver tu horario de luz</div>
+          </div>
+          <span class="arrow">›</span>
+        </div>`;
+    }
+  } catch {
+    $('luz-body').innerHTML = '<div class="err">No disponible</div>';
+    $('miluz').innerHTML = '<div class="err">No disponible</div>';
+  }
 })();
-
-// ── Servicios ──
-const SVC = [
-  ['🎓','UASD','Horarios y asignaturas','#8B5CF6','https://app.uasd.edu.do'],
-  ['🚗','DGII','Marbete y RNC','#F0455A','https://dgii.gov.do'],
-  ['🏥','SeNaSa','Seguro de salud','#22C55E','https://www.senasa.gov.do'],
-  ['🏛','BCRD','Banco Central RD','#3B82F6','https://www.bancentral.gov.do'],
-  ['🌦','ONAMET','Meteorología','#06B6D4','https://onamet.gov.do'],
-  ['⚡','EDESUR','Reportar avería','#F59E0B','https://edesur.com.do'],
-  ['📄','Gaceta Oficial','Leyes y decretos','#A78BFA','https://gacetaoficial.gob.do'],
-  ['🗳','JCE','Junta Electoral','#EF4444','https://jce.gob.do'],
-];
-$('svc').innerHTML = SVC.map(([e, l, s, c, u]) => `
-  <a href="${u}" target="_blank" rel="noopener">
-    <div class="ic" style="background:${c}1F">${e}</div>
-    <div class="lb">${l}</div><div class="sb">${s}</div>
-  </a>`).join('');
 </script>
 </body>
 </html>

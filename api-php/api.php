@@ -173,17 +173,64 @@ function combustibles() {
 }
 
 // ── Apagones (simulado, determinista por sector+día) ─────────────────────────
-const SECTORES = [
-    'Piantini' => 4, 'Naco' => 4, 'Los Prados' => 6, 'Bella Vista' => 6,
-    'Gazcue' => 8, 'Villa Consuelo' => 10, 'Cristo Rey' => 10, 'Herrera' => 12,
-    'Los Alcarrizos' => 12, 'Villa Mella' => 10, 'Boca Chica' => 8,
-    'San Isidro' => 8, 'Arroyo Hondo' => 6, 'Mirador Sur' => 4,
+// Sectores organizados por distrito, con su distribuidora y horas estimadas
+const DISTRITOS = [
+    'Distrito Nacional' => ['empresa' => 'EDESUR', 'sectores' => [
+        'Piantini' => 4, 'Naco' => 4, 'Bella Vista' => 6, 'Mirador Sur' => 4,
+        'Gazcue' => 8, 'Los Prados' => 6, 'Arroyo Hondo' => 6,
+        'Villa Consuelo' => 10, 'Cristo Rey' => 10, 'Villa Juana' => 10,
+    ]],
+    'Santo Domingo Este' => ['empresa' => 'EDEESTE', 'sectores' => [
+        'Alma Rosa' => 8, 'Ensanche Ozama' => 10, 'Los Mina' => 10,
+        'San Isidro' => 8, 'Invivienda' => 12, 'Villa Duarte' => 10,
+    ]],
+    'Santo Domingo Norte' => ['empresa' => 'EDEESTE', 'sectores' => [
+        'Villa Mella' => 10, 'Sabana Perdida' => 12, 'Guaricano' => 12, 'Ciudad Modelo' => 8,
+    ]],
+    'Santo Domingo Oeste' => ['empresa' => 'EDESUR', 'sectores' => [
+        'Herrera' => 12, 'Los Alcarrizos' => 12, 'Engombe' => 10, 'Manoguayabo' => 10,
+    ]],
+    'Boca Chica' => ['empresa' => 'EDEESTE', 'sectores' => [
+        'Boca Chica Centro' => 8, 'Andrés' => 10, 'La Caleta' => 10,
+    ]],
+    'Santiago' => ['empresa' => 'EDENORTE', 'sectores' => [
+        'Centro de la Ciudad' => 6, 'Gurabo' => 8, 'Cienfuegos' => 10,
+        'Los Jardines' => 6, 'Pekín' => 10,
+    ]],
 ];
 
+function buscar_sector(string $sector): array {
+    foreach (DISTRITOS as $distrito => $info) {
+        foreach ($info['sectores'] as $nombre => $horas) {
+            if (strcasecmp($nombre, $sector) === 0) {
+                return [$nombre, $horas, $info['empresa'], $distrito];
+            }
+        }
+    }
+    return ['Piantini', 4, 'EDESUR', 'Distrito Nacional'];
+}
+
+function distritos_lista(): array {
+    $out = [];
+    foreach (DISTRITOS as $distrito => $info) {
+        $out[] = [
+            'distrito' => $distrito,
+            'empresa'  => $info['empresa'],
+            'sectores' => array_keys($info['sectores']),
+        ];
+    }
+    return $out;
+}
+
+function todos_sectores(): array {
+    $out = [];
+    foreach (DISTRITOS as $info) $out = array_merge($out, array_keys($info['sectores']));
+    return $out;
+}
+
 function apagones(string $sector) {
-    $sectores = array_keys(SECTORES);
-    if (!isset(SECTORES[$sector])) $sector = 'Piantini';
-    $horasApagon = SECTORES[$sector];
+    [$sector, $horasApagon, $empresa, $distrito] = buscar_sector($sector);
+    $sectores = todos_sectores();
 
     // Semilla determinista: mismo horario todo el día para el mismo sector
     $seed = crc32($sector . date('Y-m-d'));
@@ -211,13 +258,14 @@ function apagones(string $sector) {
 
     return [
         'sector'             => $sector,
-        'empresa'            => 'EDESUR',
+        'distrito'           => $distrito,
+        'empresa'            => $empresa,
         'circuito'           => 'SD-' . str_pad((string)(crc32($sector) % 90 + 10), 2, '0', STR_PAD_LEFT),
         'estadoActual'       => $estadoActual,
         'horasApagonDia'     => $horasApagon,
         'horario'            => $slots,
         'sectoresDisponibles'=> $sectores,
-        'nota'               => 'Horario estimado — datos simulados. Próximamente EDESUR en tiempo real.',
+        'nota'               => 'Horario estimado — datos simulados. Próximamente en tiempo real.',
     ];
 }
 
@@ -256,8 +304,11 @@ switch (true) {
     case $route === 'combustibles':
         ok(combustibles());
 
+    case $route === 'apagones/distritos':
+        ok(distritos_lista());
+
     case $route === 'apagones/sectores':
-        ok(array_keys(SECTORES));
+        ok(todos_sectores());
 
     case (bool)preg_match('#^apagones/(.+)$#', $route, $m):
         ok(apagones(urldecode($m[1])));
