@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>CiudadanoRD</title>
+<meta name="description" content="Combustibles, apagones, clima, divisas y lotería de República Dominicana">
+<meta name="theme-color" content="#002D62">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CiudadanoRD">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{
+  --blue:#002D62; --red:#C8102E; --green:#1DB954; --amber:#F5A623;
+  --bg:#F5F7FA; --card:#fff; --text:#1A1E2C; --muted:#6B7280; --border:#E8ECF4;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;background:var(--bg);color:var(--text);
+  padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+.header{background:linear-gradient(135deg,#002D62,#003d8a);color:#fff;
+  padding:calc(16px + env(safe-area-inset-top)) 20px 24px}
+.header.dark{background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.header.gray{background:linear-gradient(135deg,#2C3E50,#34495E)}
+.header h1{font-size:22px;font-weight:800}
+.header .sub{font-size:12px;opacity:.75;margin-top:3px}
+.content{padding:16px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(16,24,40,.06)}
+.card h3{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.divisa{background:linear-gradient(135deg,#0D7C3D,#1DB954);border-radius:14px;color:#fff;padding:14px}
+.divisa .lbl{font-size:11px;opacity:.85;font-weight:600}
+.divisa .val{font-size:22px;font-weight:800;margin-top:2px}
+.divisa .sm{font-size:10px;opacity:.75;margin-top:2px}
+.fuel{display:flex;align-items:center;border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 4px rgba(16,24,40,.06)}
+.fuel .bar{width:5px;align-self:stretch}
+.fuel .body{flex:1;display:flex;align-items:center;justify-content:space-between;padding:13px 14px}
+.fuel .nm{font-size:14px;font-weight:600}
+.fuel .pr{font-size:17px;font-weight:800}
+.fuel .ch{font-size:11px;font-weight:600;margin-top:2px;text-align:right}
+.up{color:var(--red)}.down{color:var(--green)}.same{color:var(--muted)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;-webkit-overflow-scrolling:touch}
+.chip{flex:0 0 auto;padding:8px 15px;border-radius:20px;border:1.5px solid var(--border);background:#fff;
+  font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.slot{display:flex;align-items:center;gap:12px;border-radius:12px;padding:13px 14px;background:#F8F9FC}
+.slot.off{background:rgba(200,16,46,.06)}
+.slot .dot{width:10px;height:10px;border-radius:5px;background:var(--green)}
+.slot.off .dot{background:var(--red)}
+.slot .t{flex:1;font-size:14px;font-weight:600}
+.badge{border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700}
+.badge.ok{background:rgba(29,185,84,.12);color:var(--green)}
+.badge.no{background:rgba(200,16,46,.1);color:var(--red)}
+.clima{background:linear-gradient(135deg,#1565C0,#42A5F5);border-radius:16px;color:#fff;padding:16px}
+.clima .big{font-size:44px;font-weight:800}
+.clima .fc{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25)}
+.clima .fd{text-align:center;font-size:11px;opacity:.9}
+.clima .fd .e{font-size:18px;display:block;margin:3px 0}
+.lote{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.lote:last-child{border-bottom:none}
+.lote .nums{display:flex;gap:6px}
+.lote .n{width:32px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.link{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(16,24,40,.06);
+  text-decoration:none;color:var(--text);display:block}
+.link .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:8px}
+.link .lb{font-size:14px;font-weight:700}
+.link .sb{font-size:11px;color:var(--muted);margin-top:2px}
+.nota{display:flex;gap:8px;background:#FFFBEA;border-radius:12px;padding:12px;font-size:11px;color:#7A5C00;line-height:1.5}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);
+  display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:50}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;
+  font-size:10px;font-weight:600;color:#9AA0B8;cursor:pointer;border:none;background:none}
+.tab.on{color:var(--blue)}
+.tab .i{font-size:21px;line-height:1}
+.skel{background:linear-gradient(90deg,#eef1f6 25%,#e3e8f0 50%,#eef1f6 75%);background-size:200% 100%;
+  animation:sk 1.2s infinite;border-radius:12px;height:70px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.center{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- INICIO -->
+<section class="screen active" id="s-inicio">
+  <div class="header">
+    <h1>🇩🇴 CiudadanoRD</h1>
+    <div class="sub" id="fecha">Todo lo que necesitas, en tu bolsillo</div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <h3>💵 Tasa del día</h3>
+      <div class="grid2" id="divisas">
+        <div class="skel"></div><div class="skel"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>⛽ Combustibles · <span id="semana-mini"></span></h3>
+      <div id="fuels-mini" style="display:flex;flex-direction:column;gap:8px">
+        <div class="skel"></div>
+      </div>
+    </div>
+    <div id="clima-box"><div class="skel" style="height:150px"></div></div>
+    <div class="card">
+      <h3>🎰 Lotería de hoy</h3>
+      <div id="loteria"><div class="skel"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMBUSTIBLES -->
+<section class="screen" id="s-comb">
+  <div class="header">
+    <h1>⛽ Combustibles</h1>
+    <div class="sub" id="semana">Precios oficiales MICM</div>
+  </div>
+  <div class="content" id="fuels-full"><div class="skel"></div><div class="skel"></div></div>
+</section>
+
+<!-- APAGONES -->
+<section class="screen" id="s-apag">
+  <div class="header dark">
+    <div class="row">
+      <div>
+        <h1>⚡ Apagones</h1>
+        <div class="sub" id="apag-sub">EDESUR · Horario de hoy</div>
+      </div>
+      <span class="badge" id="apag-badge" style="display:none"></span>
+    </div>
+  </div>
+  <div class="chips" id="sectores"></div>
+  <div class="content" id="horario"><div class="skel"></div><div class="skel"></div></div>
+</section>
+
+<!-- MÁS -->
+<section class="screen" id="s-mas">
+  <div class="header gray">
+    <h1>Servicios</h1>
+    <div class="sub">Acceso rápido a portales del gobierno</div>
+  </div>
+  <div class="content">
+    <div class="links" id="links"></div>
+    <div class="center">CiudadanoRD v1.0 · hecho en RD 🇩🇴<br>Datos: MICM · BCRD · ONAMET</div>
+  </div>
+</section>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab on" data-s="inicio"><span class="i">🏠</span>Inicio</button>
+  <button class="tab" data-s="comb"><span class="i">⛽</span>Combustibles</button>
+  <button class="tab" data-s="apag"><span class="i">⚡</span>Apagones</button>
+  <button class="tab" data-s="mas"><span class="i">▦</span>Más</button>
+</nav>
+
+<script>
+const API = 'https://vmdventura.com/ciudadanoRD';
+
+// ── Navegación ────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
+  t.classList.add('on');
+  document.getElementById('s-' + t.dataset.s).classList.add('active');
+  window.scrollTo(0, 0);
+});
+
+const $ = id => document.getElementById(id);
+const get = async r => {
+  const res = await fetch(`${API}/api/${r}`);
+  const j = await res.json();
+  if (!j.ok) throw new Error(j.error);
+  return j.data;
+};
+
+// ── Fecha ─────────────────────────────────────────────────────
+$('fecha').textContent = new Date().toLocaleDateString('es-DO',
+  { weekday: 'long', day: 'numeric', month: 'long' });
+
+// ── Divisas ───────────────────────────────────────────────────
+(async () => {
+  try {
+    const j = await (await fetch('https://open.er-api.com/v6/latest/USD')).json();
+    const dop = j.rates.DOP, eur = dop / j.rates.EUR;
+    $('divisas').innerHTML = `
+      <div class="divisa"><div class="lbl">🇺🇸 DÓLAR</div>
+        <div class="val">RD$${(dop * 1.01).toFixed(2)}</div>
+        <div class="sm">Compra: RD$${(dop * 0.99).toFixed(2)}</div></div>
+      <div class="divisa" style="background:linear-gradient(135deg,#283593,#5C6BC0)">
+        <div class="lbl">🇪🇺 EURO</div>
+        <div class="val">RD$${(eur * 1.01).toFixed(2)}</div>
+        <div class="sm">Compra: RD$${(eur * 0.99).toFixed(2)}</div></div>`;
+  } catch { $('divisas').innerHTML = '<div class="center">No disponible</div>'; }
+})();
+
+// ── Combustibles ──────────────────────────────────────────────
+const fuelRow = p => {
+  const ch = p.cambio > 0 ? `<div class="ch up">▲ +${p.cambio.toFixed(2)}</div>`
+    : p.cambio < 0 ? `<div class="ch down">▼ ${p.cambio.toFixed(2)}</div>`
+    : `<div class="ch same">= Sin cambio</div>`;
+  return `<div class="fuel"><div class="bar" style="background:${p.color}"></div>
+    <div class="body"><span class="nm">${p.nombre}</span>
+    <span style="text-align:right"><span class="pr" style="color:${p.color}">RD$${p.precio.toFixed(2)}</span>${ch}</span>
+    </div></div>`;
+};
+(async () => {
+  try {
+    const d = await get('combustibles');
+    $('semana').textContent = 'Semana ' + d.semana + ' · ' + d.fuente;
+    $('semana-mini').textContent = d.semana;
+    $('fuels-mini').innerHTML = d.precios.slice(0, 4).map(fuelRow).join('');
+    $('fuels-full').innerHTML = d.precios.map(fuelRow).join('') +
+      `<div class="nota">ℹ️ Los precios son fijados por el MICM cada viernes y rigen por una semana.</div>`;
+  } catch {
+    $('fuels-mini').innerHTML = $('fuels-full').innerHTML = '<div class="center">No disponible</div>';
+  }
+})();
+
+// ── Clima ─────────────────────────────────────────────────────
+const WMO = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',51:'🌦',61:'🌦',63:'🌧',65:'🌧',80:'🌦',82:'⛈',95:'⛈'};
+const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+(async () => {
+  try {
+    const p = new URLSearchParams({
+      latitude: '18.4861', longitude: '-69.9312',
+      current: 'temperature_2m,relative_humidity_2m,apparent_temperature,weathercode',
+      daily: 'weathercode,temperature_2m_max',
+      timezone: 'America/Santo_Domingo', forecast_days: '6',
+    });
+    const j = await (await fetch('https://api.open-meteo.com/v1/forecast?' + p)).json();
+    const c = j.current, d = j.daily;
+    $('clima-box').innerHTML = `<div class="clima">
+      <div class="row"><div>
+        <div style="font-size:12px;opacity:.85">📍 Santo Domingo</div>
+        <div class="big">${Math.round(c.temperature_2m)}°</div>
+        <div style="font-size:13px">${WMO[c.weathercode] ?? '🌡'} Sensación ${Math.round(c.apparent_temperature)}° · 💧${c.relative_humidity_2m}%</div>
+      </div></div>
+      <div class="fc">${d.time.slice(1, 6).map((f, i) => `
+        <div class="fd">${DIAS[new Date(f + 'T12:00:00').getDay()]}
+          <span class="e">${WMO[d.weathercode[i + 1]] ?? '🌡'}</span>${Math.round(d.temperature_2m_max[i + 1])}°</div>`).join('')}
+      </div></div>`;
+  } catch { $('clima-box').innerHTML = ''; }
+})();
+
+// ── Lotería ───────────────────────────────────────────────────
+(async () => {
+  try {
+    const d = await get('loteria');
+    $('loteria').innerHTML = d.juegos.map(g => `
+      <div class="lote">
+        <span style="font-size:20px">${g.emoji}</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:700">${g.nombre}</div>
+          <div style="font-size:11px;color:var(--muted)">Sorteo ${g.sorteo}</div></div>
+        <div class="nums">${g.numeros.map(n => `<span class="n" style="background:${g.color}">${n}</span>`).join('')}</div>
+      </div>`).join('') +
+      `<div style="font-size:10px;color:var(--muted);margin-top:8px">${d.fuente}</div>`;
+  } catch { $('loteria').innerHTML = '<div class="center">No disponible</div>'; }
+})();
+
+// ── Apagones ──────────────────────────────────────────────────
+let sectorActivo = null;
+async function loadApagones(sector) {
+  $('horario').innerHTML = '<div class="skel"></div><div class="skel"></div>';
+  try {
+    const d = await get('apagones/' + encodeURIComponent(sector));
+    $('apag-sub').textContent = `${d.empresa} · ${d.sector} · Circuito ${d.circuito}`;
+    const b = $('apag-badge');
+    b.style.display = 'inline-block';
+    b.className = 'badge ' + (d.estadoActual === 'on' ? 'ok' : 'no');
+    b.textContent = d.estadoActual === 'on' ? '✓ Con luz' : '✗ Apagón';
+    $('horario').innerHTML = d.horario.map(s => `
+      <div class="slot ${s.estado === 'off' ? 'off' : ''}"><span class="dot"></span>
+        <span class="t">${s.inicio} – ${s.fin}</span>
+        <span class="badge ${s.estado === 'off' ? 'no' : 'ok'}">${s.estado === 'off' ? '⚡ Apagón' : '💡 Con luz'}</span>
+      </div>`).join('') +
+      (d.nota ? `<div class="nota">⚠️ ${d.nota}</div>` : '');
+  } catch { $('horario').innerHTML = '<div class="center">No disponible</div>'; }
+}
+(async () => {
+  try {
+    const sectores = await get('apagones/sectores');
+    sectorActivo = sectores[0];
+    $('sectores').innerHTML = sectores.map(s =>
+      `<button class="chip ${s === sectorActivo ? 'on' : ''}" data-s="${s}">${s}</button>`).join('');
+    document.querySelectorAll('#sectores .chip').forEach(c => c.onclick = () => {
+      document.querySelectorAll('#sectores .chip').forEach(x => x.classList.remove('on'));
+      c.classList.add('on');
+      loadApagones(c.dataset.s);
+    });
+    loadApagones(sectorActivo);
+  } catch { $('horario').innerHTML = '<div class="center">No disponible</div>'; }
+})();
+
+// ── Links ─────────────────────────────────────────────────────
+const LINKS = [
+  ['🎓','UASD','Horarios y asignaturas','#5B2D8E','https://app.uasd.edu.do'],
+  ['🚗','DGII','Marbete y RNC','#C8102E','https://dgii.gov.do'],
+  ['🏥','SeNaSa','Seguro de salud','#0D7C3D','https://www.senasa.gov.do'],
+  ['🏛','BCRD','Banco Central RD','#002D62','https://www.bancentral.gov.do'],
+  ['🌦','ONAMET','Meteorología','#1565C0','https://onamet.gov.do'],
+  ['⚡','EDESUR','Reportar avería','#E65100','https://edesur.com.do'],
+  ['📄','Gaceta','Leyes y decretos','#4A148C','https://gacetaoficial.gob.do'],
+  ['🗳','JCE','Junta Electoral','#B71C1C','https://jce.gob.do'],
+];
+$('links').innerHTML = LINKS.map(([e, l, s, c, u]) => `
+  <a class="link" href="${u}" target="_blank" rel="noopener">
+    <div class="ic" style="background:${c}18">${e}</div>
+    <div class="lb">${l}</div><div class="sb">${s}</div>
+  </a>`).join('');
+</script>
+</body>
+</html>
