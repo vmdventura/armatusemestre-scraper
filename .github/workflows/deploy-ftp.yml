@@ -1,0 +1,27 @@
+name: Deploy API a BanaHosting
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - claude/dominican-citizen-app-expansion-t2lw0v
+      - main
+    paths:
+      - 'api-php/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Subir api-php por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: single2480a.banahosting.com
+          username: vmdventura@amsmultimedia.com
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: api-php/
+          server-dir: ciudadanoRD/
