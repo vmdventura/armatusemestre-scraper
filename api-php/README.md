@@ -44,4 +44,4 @@ ni tener la Mac encendida — la app funciona desde cualquier red.
   durante todo el día (semilla por fecha)
 - Requiere PHP 7.4+ con cURL (estándar en BanaHosting)
 
-<!-- deploy: v2 -->
+<!-- deploy: v3 -->

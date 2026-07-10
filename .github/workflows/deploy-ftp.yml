@@ -16,16 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Listar estructura del servidor
+      - name: Limpiar carpeta equivocada en la raíz
         env:
           FTP_PASS: ${{ secrets.FTP_PASSWORD }}
         run: |
           sudo apt-get install -y -q lftp > /dev/null 2>&1
           lftp -u "vmdventura@amsmultimedia.com,$FTP_PASS" ftp://single2480a.banahosting.com -e "
             set ssl:verify-certificate no;
-            echo '=== RAIZ ==='; cls -la /;
-            echo '=== /vmdventura.com ==='; cls -la /vmdventura.com || true;
-            echo '=== /public_html ==='; cls -la /public_html || true;
+            rm -rf /ciudadanoRD || true;
             quit" || true
 
       - name: Subir api-php por FTP
@@ -36,4 +34,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: api-php/
-          server-dir: ciudadanoRD/
+          server-dir: vmdventura.com/ciudadanoRD/

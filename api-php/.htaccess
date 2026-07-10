@@ -1,7 +1,7 @@
 # CiudadanoRD API — rutas limpias para hosting compartido
-# /api/combustibles → api.php?r=combustibles
+# /ciudadanoRD/combustibles → api.php?r=combustibles
 RewriteEngine On
-RewriteBase /api/
+RewriteBase /ciudadanoRD/
 
 # No reescribir archivos reales
 RewriteCond %{REQUEST_FILENAME} !-f
