@@ -1,0 +1,14 @@
+# CiudadanoRD API — rutas limpias para hosting compartido
+# /api/combustibles → api.php?r=combustibles
+RewriteEngine On
+RewriteBase /api/
+
+# No reescribir archivos reales
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ api.php?r=$1 [QSA,L]
+
+# Proteger la carpeta de caché
+<FilesMatch "\.json$">
+    Require all denied
+</FilesMatch>
