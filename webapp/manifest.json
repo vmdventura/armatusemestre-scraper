@@ -4,8 +4,8 @@
   "description": "Combustibles, apagones, clima, divisas y lotería de República Dominicana",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#002D62",
-  "theme_color": "#002D62",
+  "background_color": "#0B0F1A",
+  "theme_color": "#0B0F1A",
   "lang": "es",
   "icons": [
     { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },

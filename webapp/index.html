@@ -5,311 +5,440 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>CiudadanoRD</title>
 <meta name="description" content="Combustibles, apagones, clima, divisas y lotería de República Dominicana">
-<meta name="theme-color" content="#002D62">
+<meta name="theme-color" content="#0B0F1A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CiudadanoRD">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --blue:#002D62; --red:#C8102E; --green:#1DB954; --amber:#F5A623;
-  --bg:#F5F7FA; --card:#fff; --text:#1A1E2C; --muted:#6B7280; --border:#E8ECF4;
+  --bg:#0B0F1A; --bg2:#0E1424; --card:#141B2E; --card2:#1A2338;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.12);
+  --text:#F2F5FA; --dim:#8B93A7; --faint:#5A6172;
+  --blue:#3B82F6; --blue2:#2563EB; --navy:#002D62;
+  --red:#F0455A; --green:#22C55E; --amber:#F59E0B; --violet:#8B5CF6;
+  --r:20px; --r-sm:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;background:var(--bg);color:var(--text);
-  padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-.screen{display:none;min-height:100vh}
+html{background:var(--bg)}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:
+    radial-gradient(1000px 500px at 85% -10%, rgba(37,99,235,.16), transparent 60%),
+    radial-gradient(800px 400px at -10% 8%, rgba(200,16,46,.10), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-bottom:calc(110px + env(safe-area-inset-bottom));
+  font-feature-settings:'tnum';
+}
+.screen{display:none;animation:fadeUp .32s cubic-bezier(.22,.8,.3,1)}
 .screen.active{display:block}
-.header{background:linear-gradient(135deg,#002D62,#003d8a);color:#fff;
-  padding:calc(16px + env(safe-area-inset-top)) 20px 24px}
-.header.dark{background:linear-gradient(135deg,#1a1a2e,#16213e)}
-.header.gray{background:linear-gradient(135deg,#2C3E50,#34495E)}
-.header h1{font-size:22px;font-weight:800}
-.header .sub{font-size:12px;opacity:.75;margin-top:3px}
-.content{padding:16px;display:flex;flex-direction:column;gap:12px}
-.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(16,24,40,.06)}
-.card h3{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.divisa{background:linear-gradient(135deg,#0D7C3D,#1DB954);border-radius:14px;color:#fff;padding:14px}
-.divisa .lbl{font-size:11px;opacity:.85;font-weight:600}
-.divisa .val{font-size:22px;font-weight:800;margin-top:2px}
-.divisa .sm{font-size:10px;opacity:.75;margin-top:2px}
-.fuel{display:flex;align-items:center;border-radius:12px;background:var(--card);overflow:hidden;box-shadow:0 1px 4px rgba(16,24,40,.06)}
-.fuel .bar{width:5px;align-self:stretch}
-.fuel .body{flex:1;display:flex;align-items:center;justify-content:space-between;padding:13px 14px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── Header ── */
+.top{padding:calc(20px + env(safe-area-inset-top)) 22px 6px;display:flex;align-items:center;justify-content:space-between}
+.top .hi{font-size:13px;color:var(--dim);font-weight:500}
+.top .tt{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:2px}
+.top .tt .rd{background:linear-gradient(90deg,#4E8FFF,#7DB0FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.flag{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#002D62 46%,#fff 46%,#fff 54%,#C8102E 54%);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.4);font-size:18px}
+.page-h{padding:calc(20px + env(safe-area-inset-top)) 22px 14px}
+.page-h .tt{font-size:24px;font-weight:800;letter-spacing:-.4px}
+.page-h .sub{font-size:12.5px;color:var(--dim);margin-top:4px;font-weight:500}
+
+.wrap{padding:12px 16px;display:flex;flex-direction:column;gap:14px}
+
+/* ── Cards ── */
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
+  border-radius:var(--r);padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.card .lbl{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--dim);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px}
+.card .lbl .dot{width:6px;height:6px;border-radius:3px}
+.seeall{margin-left:auto;font-size:11px;color:var(--blue);font-weight:600;letter-spacing:0;text-transform:none;cursor:pointer}
+
+/* ── Divisas ── */
+.fx{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fx .box{border-radius:var(--r-sm);padding:14px;position:relative;overflow:hidden;border:1px solid var(--line)}
+.fx .usd{background:linear-gradient(145deg,rgba(34,197,94,.16),rgba(34,197,94,.05))}
+.fx .eur{background:linear-gradient(145deg,rgba(139,92,246,.16),rgba(139,92,246,.05))}
+.fx .cur{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--dim)}
+.fx .cur .cc{width:22px;height:22px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.fx .usd .cc{background:rgba(34,197,94,.25)}
+.fx .eur .cc{background:rgba(139,92,246,.25)}
+.fx .v{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:8px}
+.fx .v small{font-size:12px;color:var(--dim);font-weight:600}
+.fx .b{font-size:11px;color:var(--dim);margin-top:4px;font-weight:500}
+
+/* ── Combustibles ── */
+.fuel{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line)}
+.fuel:last-of-type{border-bottom:none;padding-bottom:2px}
+.fuel:first-of-type{padding-top:2px}
+.fuel .ic{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.fuel .ic svg{width:19px;height:19px}
 .fuel .nm{font-size:14px;font-weight:600}
-.fuel .pr{font-size:17px;font-weight:800}
-.fuel .ch{font-size:11px;font-weight:600;margin-top:2px;text-align:right}
-.up{color:var(--red)}.down{color:var(--green)}.same{color:var(--muted)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;-webkit-overflow-scrolling:touch}
-.chip{flex:0 0 auto;padding:8px 15px;border-radius:20px;border:1.5px solid var(--border);background:#fff;
-  font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
-.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
-.slot{display:flex;align-items:center;gap:12px;border-radius:12px;padding:13px 14px;background:#F8F9FC}
-.slot.off{background:rgba(200,16,46,.06)}
-.slot .dot{width:10px;height:10px;border-radius:5px;background:var(--green)}
-.slot.off .dot{background:var(--red)}
-.slot .t{flex:1;font-size:14px;font-weight:600}
-.badge{border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700}
-.badge.ok{background:rgba(29,185,84,.12);color:var(--green)}
-.badge.no{background:rgba(200,16,46,.1);color:var(--red)}
-.clima{background:linear-gradient(135deg,#1565C0,#42A5F5);border-radius:16px;color:#fff;padding:16px}
-.clima .big{font-size:44px;font-weight:800}
-.clima .fc{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.25)}
-.clima .fd{text-align:center;font-size:11px;opacity:.9}
-.clima .fd .e{font-size:18px;display:block;margin:3px 0}
-.lote{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
-.lote:last-child{border-bottom:none}
-.lote .nums{display:flex;gap:6px}
-.lote .n{width:32px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:#fff}
-.links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.link{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(16,24,40,.06);
-  text-decoration:none;color:var(--text);display:block}
-.link .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  font-size:20px;margin-bottom:8px}
-.link .lb{font-size:14px;font-weight:700}
-.link .sb{font-size:11px;color:var(--muted);margin-top:2px}
-.nota{display:flex;gap:8px;background:#FFFBEA;border-radius:12px;padding:12px;font-size:11px;color:#7A5C00;line-height:1.5}
-.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);
-  display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:50}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;
-  font-size:10px;font-weight:600;color:#9AA0B8;cursor:pointer;border:none;background:none}
-.tab.on{color:var(--blue)}
-.tab .i{font-size:21px;line-height:1}
-.skel{background:linear-gradient(90deg,#eef1f6 25%,#e3e8f0 50%,#eef1f6 75%);background-size:200% 100%;
-  animation:sk 1.2s infinite;border-radius:12px;height:70px}
+.fuel .ds{font-size:11px;color:var(--faint);margin-top:1px;font-weight:500}
+.fuel .right{margin-left:auto;text-align:right}
+.fuel .pr{font-size:15.5px;font-weight:800;letter-spacing:-.3px}
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;border-radius:8px;padding:2.5px 7px;margin-top:3px}
+.chip.up{background:rgba(240,69,90,.14);color:#FF7285}
+.chip.dn{background:rgba(34,197,94,.14);color:#4ADE80}
+.chip.eq{background:rgba(255,255,255,.07);color:var(--dim)}
+.bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-row .bn{width:64px;font-size:10.5px;font-weight:600;color:var(--dim);flex:0 0 auto}
+.bar-row .tr{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.05);overflow:hidden}
+.bar-row .fl{height:100%;border-radius:4px;width:0;transition:width .9s cubic-bezier(.22,.8,.3,1)}
+.bar-row .bv{width:58px;text-align:right;font-size:11px;font-weight:700;flex:0 0 auto}
+
+/* ── Clima ── */
+.sky{border-radius:var(--r);padding:20px;border:1px solid var(--line2);position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1E3A8A 0%,#2563EB 55%,#3B82F6 100%);box-shadow:0 14px 40px rgba(37,99,235,.35)}
+.sky::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);top:-90px;right:-60px}
+.sky .loc{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;opacity:.9}
+.sky .deg{font-size:56px;font-weight:900;letter-spacing:-2.5px;line-height:1.05;margin-top:6px}
+.sky .cond{font-size:13.5px;font-weight:600;opacity:.95}
+.sky .meta{display:flex;gap:14px;font-size:11.5px;opacity:.85;margin-top:8px;font-weight:500}
+.sky .days{display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.25);position:relative}
+.sky .d{text-align:center}
+.sky .d .n{font-size:10.5px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.5px}
+.sky .d .e{font-size:20px;display:block;margin:5px 0 3px}
+.sky .d .t{font-size:12.5px;font-weight:800}
+
+/* ── Lotería ── */
+.lot{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.lot:last-of-type{border-bottom:none;padding-bottom:2px}
+.lot:first-of-type{padding-top:2px}
+.lot .em{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
+.lot .nm{font-size:13.5px;font-weight:700}
+.lot .hr{font-size:11px;color:var(--faint);margin-top:1px;font-weight:500}
+.lot .balls{margin-left:auto;display:flex;gap:6px}
+.ball{width:34px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff;box-shadow:inset 0 -3px 6px rgba(0,0,0,.28),0 3px 8px rgba(0,0,0,.3)}
+
+/* ── Apagones ── */
+.status-hero{border-radius:var(--r);padding:20px;border:1px solid var(--line2);position:relative;overflow:hidden}
+.status-hero.on{background:linear-gradient(150deg,rgba(34,197,94,.2),rgba(34,197,94,.04));border-color:rgba(34,197,94,.3)}
+.status-hero.off{background:linear-gradient(150deg,rgba(240,69,90,.22),rgba(240,69,90,.05));border-color:rgba(240,69,90,.32)}
+.status-hero .st{display:flex;align-items:center;gap:14px}
+.pulse{width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;position:relative;flex:0 0 auto}
+.pulse.on{background:rgba(34,197,94,.2)}
+.pulse.off{background:rgba(240,69,90,.2)}
+.pulse::before{content:'';position:absolute;inset:0;border-radius:18px;animation:ring 2s infinite}
+.pulse.on::before{box-shadow:0 0 0 0 rgba(34,197,94,.5)}
+.pulse.off::before{box-shadow:0 0 0 0 rgba(240,69,90,.5)}
+@keyframes ring{70%{box-shadow:0 0 0 14px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.status-hero .big{font-size:19px;font-weight:800;letter-spacing:-.3px}
+.status-hero .sm{font-size:12px;color:var(--dim);margin-top:2px;font-weight:500}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 22px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.schip{flex:0 0 auto;padding:9px 16px;border-radius:22px;border:1px solid var(--line2);background:var(--card);
+  font-size:12.5px;font-weight:600;color:var(--dim);cursor:pointer;transition:all .18s}
+.schip.on{background:linear-gradient(135deg,#2563EB,#3B82F6);border-color:transparent;color:#fff;
+  box-shadow:0 6px 18px rgba(37,99,235,.4)}
+.tl{position:relative;padding-left:24px}
+.tl::before{content:'';position:absolute;left:8px;top:10px;bottom:10px;width:2px;background:var(--line2);border-radius:1px}
+.tl .seg{position:relative;display:flex;align-items:center;gap:10px;padding:11px 0}
+.tl .seg::before{content:'';position:absolute;left:-21px;width:12px;height:12px;border-radius:6px;border:2.5px solid var(--bg)}
+.tl .seg.on::before{background:var(--green);box-shadow:0 0 10px rgba(34,197,94,.6)}
+.tl .seg.off::before{background:var(--red);box-shadow:0 0 10px rgba(240,69,90,.6)}
+.tl .tm{font-size:13.5px;font-weight:700;letter-spacing:.2px}
+.tl .lb2{margin-left:auto;font-size:10.5px;font-weight:700;border-radius:8px;padding:3.5px 9px}
+.tl .seg.on .lb2{background:rgba(34,197,94,.13);color:#4ADE80}
+.tl .seg.off .lb2{background:rgba(240,69,90,.13);color:#FF7285}
+.note{display:flex;gap:9px;background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.22);
+  border-radius:var(--r-sm);padding:13px;font-size:11.5px;color:#FBBF24;line-height:1.55;font-weight:500}
+
+/* ── Servicios ── */
+.svc{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.svc a{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:15px;text-decoration:none;color:var(--text);transition:transform .15s}
+.svc a:active{transform:scale(.97)}
+.svc .ic{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:10px}
+.svc .lb{font-size:13.5px;font-weight:700}
+.svc .sb{font-size:11px;color:var(--faint);margin-top:2px;font-weight:500}
+.foot{text-align:center;color:var(--faint);font-size:11px;padding:18px 0 4px;font-weight:500;line-height:1.7}
+
+/* ── Dock ── */
+.dock{position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:90;
+  background:rgba(18,24,40,.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid var(--line2);border-radius:26px;display:flex;padding:7px;
+  box-shadow:0 18px 45px rgba(0,0,0,.55)}
+.dtab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0 7px;border:none;
+  background:none;border-radius:19px;font-size:10px;font-weight:600;color:var(--faint);cursor:pointer;
+  font-family:inherit;transition:all .2s}
+.dtab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dtab.on{color:#fff;background:linear-gradient(135deg,#2563EB,#3B82F6);box-shadow:0 8px 20px rgba(37,99,235,.45)}
+
+/* ── Skeleton ── */
+.sk{border-radius:var(--r-sm);background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.04) 75%);
+  background-size:200% 100%;animation:sk 1.3s infinite;height:72px}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.center{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.err{text-align:center;color:var(--faint);font-size:12.5px;padding:22px;font-weight:500}
+.stagger>*{animation:fadeUp .4s cubic-bezier(.22,.8,.3,1) both}
+.stagger>*:nth-child(2){animation-delay:.05s}
+.stagger>*:nth-child(3){animation-delay:.1s}
+.stagger>*:nth-child(4){animation-delay:.15s}
 </style>
 </head>
 <body>
 
-<!-- INICIO -->
+<!-- ═══ INICIO ═══ -->
 <section class="screen active" id="s-inicio">
-  <div class="header">
-    <h1>🇩🇴 CiudadanoRD</h1>
-    <div class="sub" id="fecha">Todo lo que necesitas, en tu bolsillo</div>
+  <div class="top">
+    <div>
+      <div class="hi" id="saludo">Hola 👋</div>
+      <div class="tt">Ciudadano<span class="rd">RD</span></div>
+    </div>
+    <div class="flag">🇩🇴</div>
   </div>
-  <div class="content">
+  <div class="wrap stagger">
     <div class="card">
-      <h3>💵 Tasa del día</h3>
-      <div class="grid2" id="divisas">
-        <div class="skel"></div><div class="skel"></div>
-      </div>
+      <div class="lbl"><span class="dot" style="background:var(--green)"></span> Tasa del día</div>
+      <div class="fx" id="fx"><div class="sk"></div><div class="sk"></div></div>
     </div>
     <div class="card">
-      <h3>⛽ Combustibles · <span id="semana-mini"></span></h3>
-      <div id="fuels-mini" style="display:flex;flex-direction:column;gap:8px">
-        <div class="skel"></div>
-      </div>
+      <div class="lbl"><span class="dot" style="background:var(--amber)"></span> Combustibles
+        <span class="seeall" onclick="go('comb')">Ver todos →</span></div>
+      <div id="fuels-mini"><div class="sk"></div></div>
     </div>
-    <div id="clima-box"><div class="skel" style="height:150px"></div></div>
+    <div id="sky-box"><div class="sk" style="height:190px"></div></div>
     <div class="card">
-      <h3>🎰 Lotería de hoy</h3>
-      <div id="loteria"><div class="skel"></div></div>
+      <div class="lbl"><span class="dot" style="background:var(--red)"></span> Lotería de hoy</div>
+      <div id="lote"><div class="sk"></div></div>
     </div>
   </div>
 </section>
 
-<!-- COMBUSTIBLES -->
+<!-- ═══ COMBUSTIBLES ═══ -->
 <section class="screen" id="s-comb">
-  <div class="header">
-    <h1>⛽ Combustibles</h1>
-    <div class="sub" id="semana">Precios oficiales MICM</div>
+  <div class="page-h">
+    <div class="tt">Combustibles</div>
+    <div class="sub" id="semana">Precios oficiales por galón · MICM</div>
   </div>
-  <div class="content" id="fuels-full"><div class="skel"></div><div class="skel"></div></div>
+  <div class="wrap stagger">
+    <div class="card"><div class="lbl"><span class="dot" style="background:var(--amber)"></span> Precios por galón</div>
+      <div id="fuels-full"><div class="sk"></div><div class="sk"></div></div>
+    </div>
+    <div class="card"><div class="lbl"><span class="dot" style="background:var(--blue)"></span> Comparativa</div>
+      <div class="bars" id="fuel-bars"></div>
+    </div>
+    <div class="note">ℹ️ Los precios son fijados por resolución del MICM cada viernes y rigen por una semana en todo el territorio nacional.</div>
+  </div>
 </section>
 
-<!-- APAGONES -->
+<!-- ═══ APAGONES ═══ -->
 <section class="screen" id="s-apag">
-  <div class="header dark">
-    <div class="row">
-      <div>
-        <h1>⚡ Apagones</h1>
-        <div class="sub" id="apag-sub">EDESUR · Horario de hoy</div>
-      </div>
-      <span class="badge" id="apag-badge" style="display:none"></span>
-    </div>
+  <div class="page-h">
+    <div class="tt">Apagones</div>
+    <div class="sub" id="apag-sub">Programación eléctrica de hoy</div>
   </div>
   <div class="chips" id="sectores"></div>
-  <div class="content" id="horario"><div class="skel"></div><div class="skel"></div></div>
+  <div class="wrap stagger" id="apag-body">
+    <div class="sk" style="height:90px"></div><div class="sk" style="height:220px"></div>
+  </div>
 </section>
 
-<!-- MÁS -->
+<!-- ═══ MÁS ═══ -->
 <section class="screen" id="s-mas">
-  <div class="header gray">
-    <h1>Servicios</h1>
-    <div class="sub">Acceso rápido a portales del gobierno</div>
+  <div class="page-h">
+    <div class="tt">Servicios</div>
+    <div class="sub">Acceso rápido a portales del Estado</div>
   </div>
-  <div class="content">
-    <div class="links" id="links"></div>
-    <div class="center">CiudadanoRD v1.0 · hecho en RD 🇩🇴<br>Datos: MICM · BCRD · ONAMET</div>
+  <div class="wrap">
+    <div class="svc" id="svc"></div>
+    <div class="foot">CiudadanoRD v2.0 · hecho en RD 🇩🇴<br>Fuentes: MICM · BCRD · ONAMET · Open-Meteo</div>
   </div>
 </section>
 
-<!-- TABS -->
-<nav class="tabs">
-  <button class="tab on" data-s="inicio"><span class="i">🏠</span>Inicio</button>
-  <button class="tab" data-s="comb"><span class="i">⛽</span>Combustibles</button>
-  <button class="tab" data-s="apag"><span class="i">⚡</span>Apagones</button>
-  <button class="tab" data-s="mas"><span class="i">▦</span>Más</button>
+<!-- ═══ DOCK ═══ -->
+<nav class="dock">
+  <button class="dtab on" data-s="inicio">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</button>
+  <button class="dtab" data-s="comb">
+    <svg viewBox="0 0 24 24"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><path d="M15 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-2.5-2.5"/><path d="M7 7h6v4H7z"/></svg>Gasolina</button>
+  <button class="dtab" data-s="apag">
+    <svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Apagones</button>
+  <button class="dtab" data-s="mas">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Más</button>
 </nav>
 
 <script>
 const API = 'https://vmdventura.com/ciudadanoRD';
-
-// ── Navegación ────────────────────────────────────────────────
-document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-  document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
-  t.classList.add('on');
-  document.getElementById('s-' + t.dataset.s).classList.add('active');
-  window.scrollTo(0, 0);
-});
-
 const $ = id => document.getElementById(id);
 const get = async r => {
-  const res = await fetch(`${API}/api/${r}`);
-  const j = await res.json();
+  const j = await (await fetch(`${API}/api/${r}`)).json();
   if (!j.ok) throw new Error(j.error);
   return j.data;
 };
+const fmt = n => 'RD$' + n.toFixed(2);
 
-// ── Fecha ─────────────────────────────────────────────────────
-$('fecha').textContent = new Date().toLocaleDateString('es-DO',
-  { weekday: 'long', day: 'numeric', month: 'long' });
+// ── Navegación ──
+function go(s) {
+  document.querySelectorAll('.dtab').forEach(x => x.classList.toggle('on', x.dataset.s === s));
+  document.querySelectorAll('.screen').forEach(x => x.classList.toggle('active', x.id === 's-' + s));
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll('.dtab').forEach(t => t.onclick = () => go(t.dataset.s));
 
-// ── Divisas ───────────────────────────────────────────────────
+// ── Saludo ──
+const h = new Date().getHours();
+$('saludo').textContent = (h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches') + ' 👋 · ' +
+  new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long' });
+
+// ── Divisas ──
 (async () => {
   try {
     const j = await (await fetch('https://open.er-api.com/v6/latest/USD')).json();
     const dop = j.rates.DOP, eur = dop / j.rates.EUR;
-    $('divisas').innerHTML = `
-      <div class="divisa"><div class="lbl">🇺🇸 DÓLAR</div>
-        <div class="val">RD$${(dop * 1.01).toFixed(2)}</div>
-        <div class="sm">Compra: RD$${(dop * 0.99).toFixed(2)}</div></div>
-      <div class="divisa" style="background:linear-gradient(135deg,#283593,#5C6BC0)">
-        <div class="lbl">🇪🇺 EURO</div>
-        <div class="val">RD$${(eur * 1.01).toFixed(2)}</div>
-        <div class="sm">Compra: RD$${(eur * 0.99).toFixed(2)}</div></div>`;
-  } catch { $('divisas').innerHTML = '<div class="center">No disponible</div>'; }
+    $('fx').innerHTML = `
+      <div class="box usd">
+        <div class="cur"><span class="cc">🇺🇸</span>DÓLAR</div>
+        <div class="v">${(dop * 1.01).toFixed(2)}<small> venta</small></div>
+        <div class="b">Compra ${(dop * 0.99).toFixed(2)}</div>
+      </div>
+      <div class="box eur">
+        <div class="cur"><span class="cc">🇪🇺</span>EURO</div>
+        <div class="v">${(eur * 1.01).toFixed(2)}<small> venta</small></div>
+        <div class="b">Compra ${(eur * 0.99).toFixed(2)}</div>
+      </div>`;
+  } catch { $('fx').innerHTML = '<div class="err">Sin conexión</div>'; }
 })();
 
-// ── Combustibles ──────────────────────────────────────────────
-const fuelRow = p => {
-  const ch = p.cambio > 0 ? `<div class="ch up">▲ +${p.cambio.toFixed(2)}</div>`
-    : p.cambio < 0 ? `<div class="ch down">▼ ${p.cambio.toFixed(2)}</div>`
-    : `<div class="ch same">= Sin cambio</div>`;
-  return `<div class="fuel"><div class="bar" style="background:${p.color}"></div>
-    <div class="body"><span class="nm">${p.nombre}</span>
-    <span style="text-align:right"><span class="pr" style="color:${p.color}">RD$${p.precio.toFixed(2)}</span>${ch}</span>
-    </div></div>`;
-};
+// ── Combustibles ──
+const FUEL_ICON = c => `<svg viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><path d="M15 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-2.5-2.5"/></svg>`;
+const chip = c => c > 0 ? `<span class="chip up">▲ ${c.toFixed(2)}</span>`
+  : c < 0 ? `<span class="chip dn">▼ ${Math.abs(c).toFixed(2)}</span>`
+  : `<span class="chip eq">— igual</span>`;
+const fuelRow = p => `
+  <div class="fuel">
+    <div class="ic" style="background:${p.color}22">${FUEL_ICON(p.color)}</div>
+    <div><div class="nm">${p.nombre}</div><div class="ds">por galón</div></div>
+    <div class="right"><div class="pr">${fmt(p.precio)}</div>${chip(p.cambio)}</div>
+  </div>`;
 (async () => {
   try {
     const d = await get('combustibles');
-    $('semana').textContent = 'Semana ' + d.semana + ' · ' + d.fuente;
-    $('semana-mini').textContent = d.semana;
+    $('semana').textContent = `Semana ${d.semana} · ${d.fuente}`;
     $('fuels-mini').innerHTML = d.precios.slice(0, 4).map(fuelRow).join('');
-    $('fuels-full').innerHTML = d.precios.map(fuelRow).join('') +
-      `<div class="nota">ℹ️ Los precios son fijados por el MICM cada viernes y rigen por una semana.</div>`;
+    $('fuels-full').innerHTML = d.precios.map(fuelRow).join('');
+    const max = Math.max(...d.precios.map(p => p.precio));
+    $('fuel-bars').innerHTML = d.precios.map(p => `
+      <div class="bar-row">
+        <span class="bn">${p.nombre.replace('Gasolina ','Gas. ').replace('Gasoil ','Gasoil ').replace(' Licuado (GLP)',' GLP')}</span>
+        <div class="tr"><div class="fl" data-w="${(p.precio / max * 100).toFixed(1)}" style="background:linear-gradient(90deg,${p.color}99,${p.color})"></div></div>
+        <span class="bv" style="color:${p.color}">${p.precio.toFixed(0)}</span>
+      </div>`).join('');
+    requestAnimationFrame(() => setTimeout(() =>
+      document.querySelectorAll('.fl').forEach(b => b.style.width = b.dataset.w + '%'), 80));
   } catch {
-    $('fuels-mini').innerHTML = $('fuels-full').innerHTML = '<div class="center">No disponible</div>';
+    $('fuels-mini').innerHTML = $('fuels-full').innerHTML = '<div class="err">No disponible</div>';
   }
 })();
 
-// ── Clima ─────────────────────────────────────────────────────
-const WMO = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',51:'🌦',61:'🌦',63:'🌧',65:'🌧',80:'🌦',82:'⛈',95:'⛈'};
+// ── Clima ──
+const WMO = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌦',63:'🌧',65:'🌧',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+const WDESC = {0:'Despejado',1:'Mayormente despejado',2:'Parcialmente nublado',3:'Nublado',45:'Neblina',51:'Llovizna',61:'Lluvia ligera',63:'Lluvia',65:'Lluvia fuerte',80:'Chubascos',82:'Chubascos fuertes',95:'Tormenta eléctrica'};
 const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 (async () => {
   try {
     const p = new URLSearchParams({
-      latitude: '18.4861', longitude: '-69.9312',
-      current: 'temperature_2m,relative_humidity_2m,apparent_temperature,weathercode',
-      daily: 'weathercode,temperature_2m_max',
-      timezone: 'America/Santo_Domingo', forecast_days: '6',
+      latitude:'18.4861', longitude:'-69.9312',
+      current:'temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weathercode,uv_index',
+      daily:'weathercode,temperature_2m_max', timezone:'America/Santo_Domingo', forecast_days:'6',
     });
     const j = await (await fetch('https://api.open-meteo.com/v1/forecast?' + p)).json();
     const c = j.current, d = j.daily;
-    $('clima-box').innerHTML = `<div class="clima">
-      <div class="row"><div>
-        <div style="font-size:12px;opacity:.85">📍 Santo Domingo</div>
-        <div class="big">${Math.round(c.temperature_2m)}°</div>
-        <div style="font-size:13px">${WMO[c.weathercode] ?? '🌡'} Sensación ${Math.round(c.apparent_temperature)}° · 💧${c.relative_humidity_2m}%</div>
-      </div></div>
-      <div class="fc">${d.time.slice(1, 6).map((f, i) => `
-        <div class="fd">${DIAS[new Date(f + 'T12:00:00').getDay()]}
-          <span class="e">${WMO[d.weathercode[i + 1]] ?? '🌡'}</span>${Math.round(d.temperature_2m_max[i + 1])}°</div>`).join('')}
+    $('sky-box').innerHTML = `<div class="sky">
+      <div class="loc">📍 Santo Domingo, R.D.</div>
+      <div class="deg">${Math.round(c.temperature_2m)}°</div>
+      <div class="cond">${WMO[c.weathercode] ?? '🌡'} ${WDESC[c.weathercode] ?? 'Variable'}</div>
+      <div class="meta"><span>🌡 Sensación ${Math.round(c.apparent_temperature)}°</span>
+        <span>💧 ${c.relative_humidity_2m}%</span><span>💨 ${Math.round(c.wind_speed_10m)} km/h</span></div>
+      <div class="days">${d.time.slice(1, 6).map((f, i) => `
+        <div class="d"><span class="n">${DIAS[new Date(f + 'T12:00:00').getDay()]}</span>
+        <span class="e">${WMO[d.weathercode[i + 1]] ?? '🌡'}</span>
+        <span class="t">${Math.round(d.temperature_2m_max[i + 1])}°</span></div>`).join('')}
       </div></div>`;
-  } catch { $('clima-box').innerHTML = ''; }
+  } catch { $('sky-box').innerHTML = ''; }
 })();
 
-// ── Lotería ───────────────────────────────────────────────────
+// ── Lotería ──
 (async () => {
   try {
     const d = await get('loteria');
-    $('loteria').innerHTML = d.juegos.map(g => `
-      <div class="lote">
-        <span style="font-size:20px">${g.emoji}</span>
-        <div style="flex:1"><div style="font-size:13px;font-weight:700">${g.nombre}</div>
-          <div style="font-size:11px;color:var(--muted)">Sorteo ${g.sorteo}</div></div>
-        <div class="nums">${g.numeros.map(n => `<span class="n" style="background:${g.color}">${n}</span>`).join('')}</div>
-      </div>`).join('') +
-      `<div style="font-size:10px;color:var(--muted);margin-top:8px">${d.fuente}</div>`;
-  } catch { $('loteria').innerHTML = '<div class="center">No disponible</div>'; }
+    $('lote').innerHTML = d.juegos.map(g => `
+      <div class="lot">
+        <div class="em" style="background:${g.color}22">${g.emoji}</div>
+        <div><div class="nm">${g.nombre}</div><div class="hr">Sorteo ${g.sorteo}</div></div>
+        <div class="balls">${g.numeros.map(n =>
+          `<span class="ball" style="background:radial-gradient(circle at 35% 30%,${g.color}E6,${g.color})">${n}</span>`).join('')}</div>
+      </div>`).join('');
+  } catch { $('lote').innerHTML = '<div class="err">No disponible</div>'; }
 })();
 
-// ── Apagones ──────────────────────────────────────────────────
-let sectorActivo = null;
-async function loadApagones(sector) {
-  $('horario').innerHTML = '<div class="skel"></div><div class="skel"></div>';
+// ── Apagones ──
+async function loadApag(sector) {
+  $('apag-body').innerHTML = '<div class="sk" style="height:90px"></div><div class="sk" style="height:220px"></div>';
   try {
     const d = await get('apagones/' + encodeURIComponent(sector));
-    $('apag-sub').textContent = `${d.empresa} · ${d.sector} · Circuito ${d.circuito}`;
-    const b = $('apag-badge');
-    b.style.display = 'inline-block';
-    b.className = 'badge ' + (d.estadoActual === 'on' ? 'ok' : 'no');
-    b.textContent = d.estadoActual === 'on' ? '✓ Con luz' : '✗ Apagón';
-    $('horario').innerHTML = d.horario.map(s => `
-      <div class="slot ${s.estado === 'off' ? 'off' : ''}"><span class="dot"></span>
-        <span class="t">${s.inicio} – ${s.fin}</span>
-        <span class="badge ${s.estado === 'off' ? 'no' : 'ok'}">${s.estado === 'off' ? '⚡ Apagón' : '💡 Con luz'}</span>
-      </div>`).join('') +
-      (d.nota ? `<div class="nota">⚠️ ${d.nota}</div>` : '');
-  } catch { $('horario').innerHTML = '<div class="center">No disponible</div>'; }
+    const on = d.estadoActual === 'on';
+    $('apag-sub').textContent = `${d.empresa} · Circuito ${d.circuito} · ${d.horasApagonDia ?? '—'}h de apagón estimadas`;
+    $('apag-body').innerHTML = `
+      <div class="status-hero ${on ? 'on' : 'off'}">
+        <div class="st">
+          <div class="pulse ${on ? 'on' : 'off'}" style="font-size:23px">${on ? '💡' : '⚡'}</div>
+          <div>
+            <div class="big">${on ? 'Con luz ahora' : 'Apagón en curso'}</div>
+            <div class="sm">${d.sector} · actualizado ahora</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="lbl"><span class="dot" style="background:var(--amber)"></span> Horario de hoy</div>
+        <div class="tl">${d.horario.map(s => `
+          <div class="seg ${s.estado}">
+            <span class="tm">${s.inicio} — ${s.fin}</span>
+            <span class="lb2">${s.estado === 'off' ? 'Apagón' : 'Con luz'}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+      ${d.nota ? `<div class="note">⚠️ ${d.nota}</div>` : ''}`;
+  } catch { $('apag-body').innerHTML = '<div class="err">No disponible</div>'; }
 }
 (async () => {
   try {
     const sectores = await get('apagones/sectores');
-    sectorActivo = sectores[0];
-    $('sectores').innerHTML = sectores.map(s =>
-      `<button class="chip ${s === sectorActivo ? 'on' : ''}" data-s="${s}">${s}</button>`).join('');
-    document.querySelectorAll('#sectores .chip').forEach(c => c.onclick = () => {
-      document.querySelectorAll('#sectores .chip').forEach(x => x.classList.remove('on'));
+    $('sectores').innerHTML = sectores.map((s, i) =>
+      `<button class="schip ${i === 0 ? 'on' : ''}" data-s="${s}">${s}</button>`).join('');
+    document.querySelectorAll('.schip').forEach(c => c.onclick = () => {
+      document.querySelectorAll('.schip').forEach(x => x.classList.remove('on'));
       c.classList.add('on');
-      loadApagones(c.dataset.s);
+      loadApag(c.dataset.s);
     });
-    loadApagones(sectorActivo);
-  } catch { $('horario').innerHTML = '<div class="center">No disponible</div>'; }
+    loadApag(sectores[0]);
+  } catch { $('apag-body').innerHTML = '<div class="err">No disponible</div>'; }
 })();
 
-// ── Links ─────────────────────────────────────────────────────
-const LINKS = [
-  ['🎓','UASD','Horarios y asignaturas','#5B2D8E','https://app.uasd.edu.do'],
-  ['🚗','DGII','Marbete y RNC','#C8102E','https://dgii.gov.do'],
-  ['🏥','SeNaSa','Seguro de salud','#0D7C3D','https://www.senasa.gov.do'],
-  ['🏛','BCRD','Banco Central RD','#002D62','https://www.bancentral.gov.do'],
-  ['🌦','ONAMET','Meteorología','#1565C0','https://onamet.gov.do'],
-  ['⚡','EDESUR','Reportar avería','#E65100','https://edesur.com.do'],
-  ['📄','Gaceta','Leyes y decretos','#4A148C','https://gacetaoficial.gob.do'],
-  ['🗳','JCE','Junta Electoral','#B71C1C','https://jce.gob.do'],
+// ── Servicios ──
+const SVC = [
+  ['🎓','UASD','Horarios y asignaturas','#8B5CF6','https://app.uasd.edu.do'],
+  ['🚗','DGII','Marbete y RNC','#F0455A','https://dgii.gov.do'],
+  ['🏥','SeNaSa','Seguro de salud','#22C55E','https://www.senasa.gov.do'],
+  ['🏛','BCRD','Banco Central RD','#3B82F6','https://www.bancentral.gov.do'],
+  ['🌦','ONAMET','Meteorología','#06B6D4','https://onamet.gov.do'],
+  ['⚡','EDESUR','Reportar avería','#F59E0B','https://edesur.com.do'],
+  ['📄','Gaceta Oficial','Leyes y decretos','#A78BFA','https://gacetaoficial.gob.do'],
+  ['🗳','JCE','Junta Electoral','#EF4444','https://jce.gob.do'],
 ];
-$('links').innerHTML = LINKS.map(([e, l, s, c, u]) => `
-  <a class="link" href="${u}" target="_blank" rel="noopener">
-    <div class="ic" style="background:${c}18">${e}</div>
+$('svc').innerHTML = SVC.map(([e, l, s, c, u]) => `
+  <a href="${u}" target="_blank" rel="noopener">
+    <div class="ic" style="background:${c}1F">${e}</div>
     <div class="lb">${l}</div><div class="sb">${s}</div>
   </a>`).join('');
 </script>
