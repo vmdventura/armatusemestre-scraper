@@ -1,6 +1,6 @@
 # CiudadanoRD API — rutas limpias para hosting compartido
 # /ciudadanoRD/combustibles → api.php?r=combustibles
-DirectoryIndex api.php
+DirectoryIndex api.php index.html
 RewriteEngine On
 RewriteBase /ciudadanoRD/
 

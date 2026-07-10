@@ -1,0 +1,3 @@
+# CiudadanoRD web app — archivos estáticos
+DirectoryIndex index.html
+RewriteEngine Off
