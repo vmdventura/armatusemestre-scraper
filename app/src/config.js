@@ -1,11 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// CONFIGURA TU IP ANTES DE PROBAR EN EL IPHONE
-//
-// 1. En tu Mac: abre Terminal y corre → ipconfig getifaddr en0
-// 2. Reemplaza "TU_IP_AQUI" con el resultado (ej: "192.168.1.15")
-// 3. Tu iPhone y Mac deben estar en el mismo WiFi
+// Backend en producción (BanaHosting) — funciona desde cualquier red.
+// Para desarrollo local con el Express de api/, cambia a 'http://TU_IP:3001'.
 // ─────────────────────────────────────────────────────────────────────────────
-export const API_BASE = 'http://TU_IP_AQUI:3001';
+export const API_BASE = 'https://vmdventura.com/ciudadanoRD';
 
-// Segundos antes de declarar timeout en cada petición
+// Milisegundos antes de declarar timeout en cada petición
 export const FETCH_TIMEOUT = 8000;

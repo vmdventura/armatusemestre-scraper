@@ -241,6 +241,7 @@ function loteria() {
 // ── Router ────────────────────────────────────────────────────────────────────
 $route = $_GET['r'] ?? 'health';
 $route = trim($route, '/');
+$route = preg_replace('#^api/#', '', $route); // la app llama /api/...
 
 switch (true) {
     case $route === 'health':
